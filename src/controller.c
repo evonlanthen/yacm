@@ -16,7 +16,7 @@
  * The entry point of the program.
  */
 int main(int argc, char* argv[]) {
-	struct CoffeeMaker coffeeMaker;
+	//struct CoffeeMaker coffeeMaker;
 
 	printf("Hello world!\n");
 
