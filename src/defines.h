@@ -8,6 +8,15 @@
 #ifndef DEFINES_H_
 #define DEFINES_H_
 
+/**
+ * Define the BOARD to use CARME or ORCHID
+ */
+#define	ORCHID
+#undef CARME
+
+/**
+ * Define symbols for the boolean values true and false
+ */
 #define TRUE 1
 #define FALSE 0
 
