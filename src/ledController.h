@@ -1,26 +1,53 @@
 /**
- * @file   ledController.h
- * @author Elmar Vonlanthen (vonle1@bfh.ch)
- * @date   May 20, 2011
- * @brief  Controls the LEDs.
+ * LED controlling
  *
- * Initializes and controls the LEDs.
+ * Initialize and control the LEDs.
+ *
+ * @file    ledController.h
+ * @version 0.1
+ * @author  Elmar Vonlanthen (vonle1@bfh.ch)
+ * @date    May 20, 2011
  */
 
 #ifndef LEDCONTROLLER_H_
 #define LEDCONTROLLER_H_
 
 /**
+ * Predefined LED states
+ */
+enum LedStates {
+  led_off = 0,
+  led_on,
+  led_blinking
+};
+
+/**
  * Initialize LEDs
- * @see initLeds()
+ *
+ * @return Returns TRUE if initializing was successful
  */
 extern int initLeds(void);
+
 /**
- * Set one single LED
- * @param num Select the LED number.
- * @param enable If set to TRUE, the LED will be enabled, else disabled.
- * @return success value
+ * Update LED state
+ *
+ * Update LED according to the overall (on/off) or blinking state.
+ *
+ * @param id LED identifier
+ * @param state LED state (on, off or blinking)
+ * @return Returns TRUE if LED updating was successful
  */
-extern int setLed(int num, int enable);
+extern int updateLed(int id, int state);
+
+/**
+ * Set LED blinking interval
+ *
+ * Set the LED blinking interval values in milliseconds
+ *
+ * @param id LED indentifier
+ * @param intervalOn Duration while LED is on
+ * @param intervalOff Duration while LED is off
+ */
+extern int setBlinkingFreq(int id, int intervalOn, int intervalOff);
 
 #endif /* LEDCONTROLLER_H_ */
