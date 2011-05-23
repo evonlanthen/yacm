@@ -9,7 +9,7 @@
 #define DEFINES_H_
 
 /**
- * Define the BOARD to use CARME or ORCHID
+ * Define the BOARD to use (CARME or ORCHID)
  */
 #define	ORCHID
 #undef CARME
