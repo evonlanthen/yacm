@@ -1,8 +1,10 @@
-/*
- * defines.h
+/**
+ * Preprocessor definitions
  *
- *  Created on: May 20, 2011
- *      Author: elmar
+ * @file    defines.h
+ * @version 0.1
+ * @author  Elmar Vonlanthen (vonle1@bfh.ch)
+ * @date    May 20, 2011
  */
 
 #ifndef DEFINES_H_
@@ -19,5 +21,17 @@
  */
 #define TRUE 1
 #define FALSE 0
+
+/**
+ * Define NULL pointer
+ */
+#ifndef NULL
+ #define NULL ((void*)0)
+#endif
+
+/**
+ * Define end of file value
+ */
+#define EOF (-1)
 
 #endif /* DEFINES_H_ */
