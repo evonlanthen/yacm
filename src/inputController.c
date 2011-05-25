@@ -5,8 +5,8 @@
  *      Author: elmar
  */
 
-#include "inputController.h"
 #include "defines.h"
+#include "inputController.h"
 
 int initInputDevices(void)
 {

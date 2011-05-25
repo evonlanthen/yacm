@@ -85,15 +85,6 @@
 #define	GPIO_PIN_52	52
 #define	GPIO_PIN_19	19
 
-#define	LED_1	(1 << 3)
-#define	LED_2	(1 << 5)
-#define	LED_3	(1 << 4)
-#define	LED_4	(1 << 15)
-#define	LED_5	(1 << 15)
-#define	LED_6	(1 << 16)
-#define	LED_7	(1 << 20)
-#define	LED_8	(1 << 19)
-
 #define SEGMENT_ENABLE_1	(1 << 23)
 #define SEGMENT_ENABLE_2	(1 << 24)
 #define SEGMENT_ENABLE_3	(1 << 25)

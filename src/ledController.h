@@ -12,21 +12,53 @@
 #ifndef LEDCONTROLLER_H_
 #define LEDCONTROLLER_H_
 
+#ifdef CARME
+ #define	LED_1			(1 << 0)
+ #define	LED_2			(1 << 1)
+ #define	LED_3			(1 << 2)
+ #define	LED_4			(1 << 3)
+ #define	LED_5			(1 << 4)
+ #define	LED_6			(1 << 5)
+ #define	LED_7			(1 << 6)
+ #define	LED_8			(1 << 7)
+ #define    NUM_OF_LEDS     8
+#elif defined(ORCHID)
+ #define	LED_1			(1 << 0)
+ #define	LED_2			(1 << 1)
+ #define	LED_3			(1 << 2)
+ #define	LED_4			(1 << 3)
+ #define	LED_5			(1 << 4)
+ #define	LED_6			(1 << 5)
+ #define	LED_7			(1 << 6)
+ #define	LED_8			(1 << 7)
+ #define    NUM_OF_LEDS     8
+#endif
+/* Get LED ID: */
+#define		LED_ID(x) (1 << ((x)-1))
+
+
 /**
  * Predefined LED states
  */
-enum LedStates {
+enum LedState {
   led_off = 0,
   led_on,
   led_blinking
 };
 
 /**
- * Initialize LEDs
+ * Initialize LED controller
  *
  * @return Returns TRUE if initializing was successful
  */
-extern int initLeds(void);
+extern int initLedController(void);
+
+/**
+ * Clean up LED controller
+ *
+ * @return Returns TRUE if cleaning up was successful
+ */
+extern int cleanUpLedController(void);
 
 /**
  * Update LED state
@@ -37,7 +69,7 @@ extern int initLeds(void);
  * @param state LED state (on, off or blinking)
  * @return Returns TRUE if LED updating was successful
  */
-extern int updateLed(int id, int state);
+extern int updateLed(int id, enum LedState state);
 
 /**
  * Set LED blinking interval
