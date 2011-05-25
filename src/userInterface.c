@@ -20,7 +20,12 @@ int updateView(int view) {
  * Initialize display
  */
 int initDisplay(void) {
-	return TRUE;
+	int retval = TRUE;
+	/* Try to open the graphic device */
+	if (GrOpen() < 0) {
+		retval = FALSE;
+	}
+	return retval;
 
 }
 
@@ -28,6 +33,7 @@ int initDisplay(void) {
  * turn off display and clean up
  */
 int shutdownDisplay(void) {
+	GrClose();
 	return TRUE;
 
 }
