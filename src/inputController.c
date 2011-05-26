@@ -8,20 +8,26 @@
 #include "defines.h"
 #include "inputController.h"
 
-int initInputDevices(void)
+int setUpInputDevices(void)
 {
 	int ret = TRUE;
 	return ret;
 }
 
-int getSwitchState(int num)
+int tearDownInputDevices(void)
 {
 	int ret = TRUE;
 	return ret;
 }
 
-int getButtonState(int num)
+enum SwitchState getSwitchState(int id)
 {
-	int ret = TRUE;
-	return ret;
+	enum SwitchState state = switch_off;
+	return state;
+}
+
+enum ButtonState getButtonState(int id)
+{
+	enum ButtonState state = button_off;
+	return state;
 }

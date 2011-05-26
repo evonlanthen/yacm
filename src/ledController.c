@@ -30,7 +30,7 @@ typedef struct {
 int ledStates;
 LedInterval ledIntervals[NUM_OF_LEDS];
 
-int initLedController(void)
+int setUpLedController(void)
 {
 	int i, id;
 	for (i = 0; i < NUM_OF_LEDS; i++) {
@@ -44,7 +44,7 @@ int initLedController(void)
 	return TRUE;
 }
 
-int cleanUpLedController(void)
+int tearDownLedController(void)
 {
 	int i, id;
 	for (i = 0; i < NUM_OF_LEDS; i++) {
