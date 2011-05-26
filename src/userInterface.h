@@ -17,12 +17,12 @@ extern int updateView(struct CoffeeMaker coffeemaker);
 /**
  * Initialize display
  */
-extern int initDisplay(void);
+extern int setUpDisplay(void);
 
 /**
  * turn off display and clean up
  */
-extern int shutdownDisplay(void);
+extern int tearDownDisplay(void);
 
 struct DisplayState {
 	GR_WINDOW_ID	gWinID;

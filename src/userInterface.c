@@ -29,7 +29,7 @@ int updateView(struct CoffeeMaker coffeemaker) {
 /**
  * Initialize display
  */
-int initDisplay(void) {
+int setUpDisplay(void) {
 	int retval = TRUE;
 	/* Try to open the graphic device */
 	if (GrOpen() < 0) {
@@ -52,7 +52,7 @@ int initDisplay(void) {
 /**
  * turn off display and clean up
  */
-int shutdownDisplay(void) {
+int tearDownDisplay(void) {
 	GrClose();
 	return TRUE;
 
