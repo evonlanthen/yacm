@@ -24,16 +24,6 @@ extern int setUpDisplay(void);
  */
 extern int tearDownDisplay(void);
 
-struct DisplayState {
-	GR_WINDOW_ID	gWinID;
-	GR_IMAGE_ID 	imageID;
-	GR_IMAGE_INFO 	imageInfo;
-	GR_GC_ID		gContextID, gTestID, gRectID, gElliID, gElli2ID;
-	GR_EVENT	   	event;
-	GR_SCREEN_INFO  screenInfo;
-	GR_FONT_ID		font;
-	int				winSizeX, winSizeY;
-};
 
 #endif /* USERINTERFACE_H_ */
 
