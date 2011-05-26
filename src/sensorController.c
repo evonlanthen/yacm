@@ -5,17 +5,23 @@
  *      Author: elmar
  */
 
-#include "machineController.h"
 #include "defines.h"
+#include "sensorController.h"
 
-int initSensors(void)
+int setUpSensorController(void)
 {
 	int ret = TRUE;
 	return ret;
 }
 
-int getSensorState(void)
+int tearDownSensorController(void)
 {
 	int ret = TRUE;
 	return ret;
+}
+
+enum SensorState getSensorState(int id)
+{
+	enum SensorState state = sensor_normal;
+	return state;
 }

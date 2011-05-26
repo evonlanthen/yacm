@@ -51,14 +51,14 @@ enum LedState {
  *
  * @return Returns TRUE if initializing was successful
  */
-extern int initLedController(void);
+extern int setUpLedController(void);
 
 /**
  * Clean up LED controller
  *
  * @return Returns TRUE if cleaning up was successful
  */
-extern int cleanUpLedController(void);
+extern int tearDownLedController(void);
 
 /**
  * Update LED state

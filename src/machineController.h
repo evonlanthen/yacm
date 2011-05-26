@@ -12,8 +12,8 @@
 #ifndef MACHINECONTROLLER_H_
 #define MACHINECONTROLLER_H_
 
-extern int initMachineController(void);
-extern int cleanUpMachineController(void);
+extern int setUpMachineController(void);
+extern int tearDownMachineController(void);
 extern int startMachine(void);
 extern int stopMachine(void);
 extern int machineRunning(void);
