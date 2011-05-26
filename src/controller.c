@@ -2,22 +2,22 @@
  * @file   controller.c
  * @author Ronny Stauffer (staur3@bfh.ch)
  * @date   May 23, 2011
- * @brief  Controls the program.
+ * @brief  Controls the application.
  *
- * Initializes and controls the program. Contains the entry point.
+ * Initializes and controls the application. Contains the entry point.
  */
 
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "defines.h"
 #include "model.h"
 
+#ifndef TEST
 /**
- * The entry point of the program.
+ * The entry point of the application.
  */
 int main(int argc, char* argv[]) {
-	//struct CoffeeMaker coffeeMaker;
-
 	printf("Hello world!\n");
 
 	while (TRUE) {
@@ -25,5 +25,6 @@ int main(int argc, char* argv[]) {
 
 	}
 
-	return 0;
+	exit(0);
 }
+#endif

@@ -2,7 +2,7 @@
  * model.h
  *
  *  Created on: May 23, 2011
- *      Author: staufferr
+ *      Author: Ronny Stauffer (staur3@bfh.ch)
  */
 
 #ifndef MODEL_H_
@@ -15,6 +15,9 @@ enum CoffeeMakerState {
 	coffeeMaker_producing
 };
 
+/**
+ * Models the coffee ingredient.
+ */
 struct Coffee {
 	int isAvailable;
 };
@@ -24,12 +27,12 @@ struct Milk {
 };
 
 struct Product {
-	char *name;
+	char name[256];
 };
 
 struct ProductListElement {
 	struct Product *product;
-	struct ListElement *next;
+	struct ProductListElement *next;
 };
 
 struct CoffeeMaker {
@@ -39,15 +42,17 @@ struct CoffeeMaker {
 	struct ProductListElement *products;
 };
 
-struct ProductViewModel {
-	char *name;
-};
 
-struct ViewModel {
-	enum CoffeeMakerState coffeeMakerState;
+struct CoffeeMakerViewModel {
+	enum CoffeeMakerState state;
 	int isCoffeeAvailable;
 	int isMilkAvailable;
-	struct ProductViewModel products[];
+	unsigned int numberOfProducts;
 };
+
+struct ProductViewModel {
+	char name[256];
+};
+
 
 #endif /* MODEL_H_ */

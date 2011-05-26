@@ -37,6 +37,7 @@ Thumbs.db
 ####################
 .project
 .cproject
+Debug
 Release
 
 # doxygen config #
