@@ -33,7 +33,7 @@ char *mmap_base = NULL;
 int fd_mem;
 static off_t io_base = IO_BASE;
 
-int initMachineController(void)
+int setUpMachineController(void)
 {
 	/* Try to open the mem device special file */
 	if ((fd_mem = open(MEM_DEV, O_RDWR | O_SYNC)) < 1) {
@@ -61,7 +61,7 @@ int initMachineController(void)
 	return TRUE;
 }
 
-int cleanUpMachineController(void) {
+int tearDownMachineController(void) {
 	munmap(mmap_base, MAP_SIZE);
 	close(fd_mem);
 	return TRUE;

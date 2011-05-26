@@ -15,7 +15,16 @@
 #define SENSOR_1	1
 #define SENSOR_2	2
 
-extern int initSensors(void);
-extern int getSensorState(int id);
+/**
+ * Predefined sensor states
+ */
+enum SensorState {
+  sensor_normal = 0,
+  sensor_alert
+};
+
+extern int setUpSensorController(void);
+extern int tearDownSensorController(void);
+extern enum SensorState getSensorState(int id);
 
 #endif /* SENSORCONTROLLER_H_ */

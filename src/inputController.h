@@ -38,7 +38,7 @@
 /**
  * Predefined switch states
  */
-enum SwitchStates {
+enum SwitchState {
   switch_off = 0,
   switch_on
 };
@@ -46,14 +46,14 @@ enum SwitchStates {
 /**
  * Predefined button states
  */
-enum ButtonStates {
+enum ButtonState {
   button_off = 0,
   button_on
 };
 
-extern int initInputController(void);
-extern int cleanUpInputController(void);
-extern int getSwitchState(int num);
-extern int getButtonState(int num);
+extern int setUpInputController(void);
+extern int tearDownInputController(void);
+extern enum SwitchState getSwitchState(int id);
+extern enum ButtonState getButtonState(int id);
 
 #endif /* INPUTCONTROLLER_H_ */
