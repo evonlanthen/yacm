@@ -12,7 +12,7 @@
  * Update current view on display
  * parameter should be the state construct
  */
-extern int updateView(struct CoffeeMaker coffeemaker);
+extern int updateView(struct CoffeeMaker newcoffeemaker);
 
 /**
  * Initialize display

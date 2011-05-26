@@ -14,6 +14,8 @@
 
 /* Some window related constants */
 #define WIN_BORDER	5
+/* Define font name and location */
+#define FONTNAME	"/usr/fonts/truetype/arial.ttf"
 
 struct DisplayState {
 	GR_WINDOW_ID	gWinID;
@@ -29,12 +31,80 @@ struct DisplayState {
 /* Current state of display with handles and elements */
 static struct DisplayState displaystate;
 
+/* current CoffeMaker state */
+static struct CoffeeMaker coffeemaker;
+
+/**
+ * Show View Offstate
+ */
+int showViewOff(void) {
+	int retval = TRUE;
+	displaystate.gContextID = GrNewGC();
+	/* Back- Foreground color related stuff */
+	GrSetGCForeground(displaystate.gContextID, YELLOW);
+	GrSetGCUseBackground(displaystate.gContextID, GR_FALSE);
+	/* Select fonts */
+	displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 14, NULL);
+	GrSetGCFont(displaystate.gContextID, displaystate.font);
+	GrText(displaystate.gWinID, displaystate.gContextID, 120, 30, "No Power!", -1, GR_TFASCII | GR_TFTOP);
+	GrDestroyFont(displaystate.font);
+	return retval;
+}
+/**
+ * Show View Init
+ */
+int showViewInit(void) {
+	int retval = TRUE;
+	displaystate.gContextID = GrNewGC();
+		/* Back- Foreground color related stuff */
+		GrSetGCForeground(displaystate.gContextID, YELLOW);
+		GrSetGCUseBackground(displaystate.gContextID, GR_FALSE);
+		/* Select fonts */
+		displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 14, NULL);
+		GrSetGCFont(displaystate.gContextID, displaystate.font);
+		GrText(displaystate.gWinID, displaystate.gContextID, 120, 30, "Initializing...", -1, GR_TFASCII | GR_TFTOP);
+		GrDestroyFont(displaystate.font);
+	return retval;
+}
+
+/**
+ * Show View Idle
+ */
+int showViewIdle(void) {
+	int retval = TRUE;
+	return retval;
+}
+
+/**
+ * Show View Working
+ */
+int showViewWorking(void) {
+	int retval = TRUE;
+	return retval;
+}
+
+
 /**
  * Update current view on display
  * parameter should be the state construct
  */
-int updateView(struct CoffeeMaker coffeemaker) {
-	return TRUE;
+int updateView(struct CoffeeMaker newcoffeemaker) {
+	int retval = TRUE;
+	coffeemaker = newcoffeemaker;
+	/* call the right view according to state */
+	if (coffeemaker.state == coffeeMaker_off) {
+		if (showViewOff() != TRUE) retval = FALSE;
+	}
+	if (coffeemaker.state == coffeeMaker_initializing) {
+		if (showViewInit() != TRUE) retval = FALSE;
+	}
+	if (coffeemaker.state == coffeeMaker_idle) {
+		if (showViewIdle() != TRUE) retval = FALSE;
+	}
+	if (coffeemaker.state == coffeeMaker_producing) {
+		if (showViewWorking() != TRUE) retval = FALSE;
+	}
+	return retval;
 }
 
 /**
@@ -64,6 +134,9 @@ int setUpDisplay(void) {
  * turn off display and clean up
  */
 int tearDownDisplay(void) {
+	/* Cleanup */
+	GrDestroyFont(displaystate.font);
+	GrDestroyGC(displaystate.gContextID);
 	GrClose();
 	return TRUE;
 
