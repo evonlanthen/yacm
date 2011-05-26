@@ -76,6 +76,7 @@ struct CoffeeMaker {
 	struct Coffee coffee;
 	struct Milk milk;
 	struct ProductListElement *products;
+	enum MilkPreselectionState milkPreselectionState;
 	struct MakeCoffeeProcessInstance *ongoingCoffeeMaking;
 };
 
@@ -99,6 +100,10 @@ struct CoffeeMakerViewModel {
 	 * The number of defined products.
 	 */
 	unsigned int numberOfProducts;
+	/*
+	 * The milk preselection state.
+	 */
+	int milkPreselectionState;
 	/*
 	 * Is the coffee maker currently making coffee?
 	 */

@@ -46,8 +46,11 @@ int tearDownBusinessLogic() {
 	return TRUE;
 }
 
+// TODO Implement method.
 void runBusinessLogic() {
+	// Check empty ingredient tank sensors
 
+	// Run possibly ongoing coffee making process instance
 }
 
 void registerModelObserver(NotifyModelChanged pObserver) {
@@ -72,7 +75,8 @@ static void * newObject(void *initializer, size_t size) {
 
 /**
  * Sets up product definitions.
- * The setup is done preliminary hardcoded. In the future definitions could by read from a file?.
+ * Preliminary the setup is done hardcoded.
+ * In the future definitions could possibly read from a file?
  */
 static void setUpProducts() {
 	//struct Product coffeeProduct = {
@@ -136,7 +140,9 @@ struct CoffeeMakerViewModel getCoffeeMakerViewModel() {
 			.state = coffeeMaker.state,
 			.isCoffeeAvailable = coffeeMaker.coffee.isAvailable,
 			.isMilkAvailable = coffeeMaker.milk.isAvailable,
-			.numberOfProducts = numberOfProducts
+			.numberOfProducts = numberOfProducts,
+			.milkPreselectionState = coffeeMaker.milkPreselectionState,
+			.isMakingCoffee = coffeeMaker.ongoingCoffeeMaking ? TRUE : FALSE
 	};
 
 	return coffeeMakerViewModel;
@@ -185,10 +191,12 @@ struct MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewMode
 	return inexistentCoffeeMakingProcessInstance;
 }
 
+// TODO Implement method.
 void switchOn() {
 
 }
 
+// TODO Implement method.
 void switchOff() {
 
 }
@@ -199,14 +207,17 @@ void setCoffeeMakerState(enum CoffeeMakerState state) {
 	notifyObservers();
 }
 
+// TODO Implement method.
 void setMilkPreselection(enum MilkPreselectionState state) {
 
 }
 
+// TODO Implement method.
 void startMakingCoffee(unsigned int productIndex) {
 
 }
 
+// TODO Implement method.
 void abortMakingCoffee() {
 
 }

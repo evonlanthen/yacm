@@ -19,7 +19,8 @@
 #include "ledController.h"
 #include "timer.h"
 
-#define TONITESTS
+//#define ELMITESTS
+//#define TONITESTS
 
 static void setUpSubsystems();
 static void tearDownSubsystems();
@@ -29,34 +30,15 @@ static void tearDownSubsystems();
  * The entry point of the application.
  */
 int main(int argc, char* argv[]) {
-#ifdef ELMITESTS
-	TimerDescriptor timer;
-#endif
-	//struct CoffeeMaker coffeeMaker;
-#ifdef TONITESTS
-	struct CoffeeMaker coffeeMaker = {
-		.state = coffeeMaker_off,
-		.coffee.isAvailable = TRUE,
-		.milk.isAvailable = TRUE//,
-		//.products = &coffeeProductListElement
-	};
-
-	setUpDisplay();
-
-	updateView(coffeeMaker);
-#endif
+	setUpSubsystems();
 
 #ifdef ELMITESTS
-	//struct CoffeeMaker coffeeMaker;
-
 	#ifdef CARME
 		printf("Initializing for board CARME\n");
 	#elif defined(ORCHID)
 		printf("Initializing for board ORCHID\n");
 	#endif
 
-	setUpMachineController();
-	setUpLedController();
 	printf("Setting led1 on...\n");
 	updateLed(LED_1, led_on);
 	sleep(3);
@@ -68,10 +50,7 @@ int main(int argc, char* argv[]) {
 	sleep(3);
 	printf("hello\n");
 
-	tearDownLedController();
-	tearDownMachineController();
-
-	timer = setUpTimer(3000);
+	TimerDescriptor timer = setUpTimer(3000);
 	while (!isTimerElapsed(timer)) {
 		printf("Timer is not elapsed\n");
 		sleep(1);
@@ -79,8 +58,20 @@ int main(int argc, char* argv[]) {
 	printf("Timer is elapsed\n");
 #endif
 
+#ifdef TONITESTS
+	struct CoffeeMaker coffeeMaker = {
+		.state = coffeeMaker_off,
+		.coffee.isAvailable = TRUE,
+		.milk.isAvailable = TRUE//,
+		//.products = &coffeeProductListElement
+	};
+
+	updateView(coffeeMaker);
+#endif
+
 	while (TRUE) {
-		// Catch and dispatch events
+		// Propagate "heartbeat"
+		runBusinessLogic();
 	}
 
 	tearDownSubsystems();
@@ -89,11 +80,17 @@ int main(int argc, char* argv[]) {
 }
 
 void setUpSubsystems() {
+	setUpMachineController();
+	setUpLedController();
 	setUpBusinessLogic();
+	setUpDisplay();
 }
 
 void tearDownSubsystems() {
+	tearDownDisplay();
 	tearDownBusinessLogic();
+	tearDownLedController();
+	tearDownMachineController();
 }
 
 #endif
