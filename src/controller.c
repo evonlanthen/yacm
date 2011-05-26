@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 	};
 	setUpDisplay();
 	printf("Hello world!\n");
-	updateView(coffeemaker);
+	updateView(coffeeMaker);
 #endif
 
 	while (TRUE) {
