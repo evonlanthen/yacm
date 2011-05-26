@@ -16,11 +16,15 @@
 #include "userInterface.h"
 #include "machineController.h"
 #include "ledController.h"
+#include "timer.h"
 
 /**
  * The entry point of the program.
  */
 int main(int argc, char* argv[]) {
+#ifdef ELMITESTS
+	TimerDescriptor timer;
+#endif
 	//struct CoffeeMaker coffeeMaker;
 #ifdef TONITESTS
 	struct CoffeeMaker coffeeMaker = {
@@ -43,8 +47,8 @@ int main(int argc, char* argv[]) {
 		printf("Initializing for board ORCHID\n");
 	#endif
 
-	initMachineController();
-	initLedController();
+	setUpMachineController();
+	setUpLedController();
 	printf("Setting led1 on...\n");
 	updateLed(LED_1, led_on);
 	sleep(3);
@@ -56,8 +60,15 @@ int main(int argc, char* argv[]) {
 	sleep(3);
 	printf("hello\n");
 
-	cleanUpLedController();
-	cleanUpMachineController();
+	tearDownLedController();
+	tearDownMachineController();
+
+	timer = setUpTimer(3000);
+	while (!isTimerElapsed(timer)) {
+		printf("Timer is not elapsed\n");
+		sleep(1);
+	}
+	printf("Timer is elapsed\n");
 #endif
 
 	while (TRUE) {
