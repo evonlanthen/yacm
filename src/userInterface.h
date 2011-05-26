@@ -12,17 +12,18 @@
  * Update current view on display
  * parameter should be the state construct
  */
-extern int updateView(int view);
+extern int updateView(struct CoffeeMaker coffeemaker);
 
 /**
  * Initialize display
  */
-extern int initDisplay(void);
+extern int setUpDisplay(void);
 
 /**
  * turn off display and clean up
  */
-extern int shutdownDisplay(void);
+extern int tearDownDisplay(void);
+
 
 #endif /* USERINTERFACE_H_ */
 

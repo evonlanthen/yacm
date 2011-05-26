@@ -67,6 +67,7 @@ static void * newObject(void *initializer, size_t size) {
  * Sets up product definitions (either hardcoded or by reading from a file?).
  */
 static void setUpProducts() {
+	int i = 2;
 	//struct Product coffeeProduct = {
 	//		.name = "Coffee"
 	//};
@@ -102,7 +103,7 @@ static void setUpProducts() {
 			ristrettoProduct
 	};
 	struct ProductListElement *nextProductListElement = NULL;
-	for (int i = 2; i >= 0; i--) {
+	for (i = 2; i >= 0; i--) {
 		struct ProductListElement *productListElement = newObject(&(struct ProductListElement) {
 			.product = products[i],
 			.next = nextProductListElement
@@ -112,6 +113,7 @@ static void setUpProducts() {
 	coffeeMaker.products = nextProductListElement;
 }
 
+/* Many errors
 struct CoffeeMakerViewModel getCoffeeMakerViewModel() {
 	// Count number of products
 	unsigned int numberOfProducts = 0;
@@ -132,7 +134,7 @@ struct CoffeeMakerViewModel getCoffeeMakerViewModel() {
 
 	return coffeeMakerViewModel;
 }
-
+*/
 static struct ProductListElement * getProductListElement(unsigned int productIndex) {
 	unsigned int i = 0;
 	struct ProductListElement *productListElement = coffeeMaker.products;
