@@ -6,41 +6,54 @@
  *
  * Initializes and controls the application. Contains the entry point.
  */
-#define TONITESTS
 
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "defines.h"
-#include "model.h"
+#include "logic.h"
 #include "userInterface.h"
+
+#define TONITESTS
+
+static void setUpSubsystems();
+static void tearDownSubsystems();
 
 #ifndef TEST
 /**
  * The entry point of the application.
  */
 int main(int argc, char* argv[]) {
-<<<<<<< HEAD
-=======
-	//struct CoffeeMaker coffeeMaker;
+	setUpSubsystems();
+
 #ifdef TONITESTS
 	struct CoffeeMaker coffeeMaker = {
-			.state = coffeeMaker_off,
-			.coffee.isAvailable = TRUE,
-			.milk.isAvailable = TRUE//,
-			//.products = &coffeeProductListElement
+		.state = coffeeMaker_off,
+		.coffee.isAvailable = TRUE,
+		.milk.isAvailable = TRUE//,
+		//.products = &coffeeProductListElement
 	};
+
 	setUpDisplay();
->>>>>>> 97cd09daae41d1081b0f55b3f9880cc258715423
-	printf("Hello world!\n");
+
 	updateView(coffeeMaker);
 #endif
 
 	while (TRUE) {
 		// Catch and dispatch events
-
 	}
+
+	tearDownSubsystems();
 
 	exit(0);
 }
+
+void setUpSubsystems() {
+	setUpBusinessLogic();
+}
+
+void tearDownSubsystems() {
+	tearDownBusinessLogic();
+}
+
 #endif

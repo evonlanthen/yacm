@@ -11,20 +11,28 @@
 #include "model.h"
 
 /**
- * Initialize business logic.
+ * Sets up the business logic.
  */
-// TODO Rename to setUp()?
-extern int initBusinessLogic();
+extern int setUpBusinessLogic();
 
 /**
- * Shut down business logic.
+ * Tears down the business logic.
  */
-// TODO Rename to tearDown()?
-extern int shutdownBusinessLogic();
+extern int tearDownBusinessLogic();
 
+extern void runBusinessLogic();
+
+/**
+ * A handler which will be called upon a model change.
+ */
 typedef void (*NotifyModelChanged)();
 
-extern void registerModelObserver(NotifyModelChanged);
+/**
+ * Registers a model observer.
+ * A model observer is notified if the model changes.
+ * @param observer The handler which will be called if the model changes.
+ */
+extern void registerModelObserver(NotifyModelChanged observer);
 
 /**
  * Gets the view model of the coffee maker.
@@ -33,19 +41,51 @@ extern void registerModelObserver(NotifyModelChanged);
 extern struct CoffeeMakerViewModel getCoffeeMakerViewModel();
 
 /**
- * Gets the view model of the specified product.
- * @param productIndex The index of the product.
+ * Gets the view model of the specified product definition.
+ * @param productIndex The index of the product definition.
  * @return The view model.
  */
 extern struct ProductViewModel getProductViewModel(unsigned int productIndex);
 
 /**
+ * Gets the view model of an ongoing coffee making process instance.
+ * @return The view model.
+ */
+extern struct MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewModel();
+
+/**
+ * Switches the coffee maker on.
+ */
+extern void switchOn();
+
+/**
+ * Switches the coffee maker off.
+ */
+extern void switchOff();
+
+/**
  * Sets the coffee maker's state.
- *
- * ...
- *
  * @param state The coffee maker's state.
  */
+// TODO Remove this method.
 extern void setCoffeeMakerState(enum CoffeeMakerState state);
+
+/**
+ * Sets the milk preselection state.
+ * @param @state The milk preselection state.
+ */
+extern void setMilkPreselection(enum MilkPreselectionState state);
+
+/**
+ * Requests the coffee maker to start making coffee.
+ * This triggers the start of the coffee making process.
+ * @param The index of the product to produce.
+ */
+extern void startMakingCoffee(unsigned int productIndex);
+
+/**
+ * Aborts an ongoing coffee making process.
+ */
+extern void abortMakingCoffee();
 
 #endif /* LOGIC_H_ */
