@@ -33,4 +33,12 @@ TimerDescriptor setUpTimer(unsigned int time);
  */
 int isTimerElapsed(TimerDescriptor timerDescriptor);
 
+/**
+ * Check if timer is elapsed.
+ *
+ * @param TimerDescriptor Timer descriptor structure
+ * @return Returns TRUE if time is elapsed and FALSE if not
+ */
+int isTimerElapsed(TimerDescriptor timerDescriptor);
+
 #endif /* TIMER_H_ */
