@@ -2,17 +2,16 @@
  * @file   controller.c
  * @author Ronny Stauffer (staur3@bfh.ch)
  * @date   May 23, 2011
- * @brief  Controls the program.
+ * @brief  Controls the application.
  *
- * Initializes and controls the program. Contains the entry point.
+ * Initializes and controls the application. Contains the entry point.
  */
-#define TONITESTS
-#undef ELMITESTS
 
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "defines.h"
-#include "model.h"
+#include "logic.h"
 #include "userInterface.h"
 #include "machineController.h"
 #include "inputController.h"
@@ -21,40 +20,25 @@
 #include "timer.h"
 #include "mmap.h"
 
+//#define ELMITESTS
+//#define TONITESTS
+
+static void setUpSubsystems();
+static void tearDownSubsystems();
+
+#ifndef TEST
 /**
- * The entry point of the program.
+ * The entry point of the application.
  */
 int main(int argc, char* argv[]) {
-#ifdef ELMITESTS
-	TimerDescriptor timer;
-#endif
-	//struct CoffeeMaker coffeeMaker;
-#ifdef TONITESTS
-	struct CoffeeMaker coffeeMaker = {
-			.state = coffeeMaker_off,
-			.coffee.isAvailable = TRUE,
-			.milk.isAvailable = TRUE//,
-			//.products = &coffeeProductListElement
-	};
-	setUpDisplay();
-	printf("Hello world!\n");
-	updateView(coffeeMaker);
-#endif
+	setUpSubsystems();
 
 #ifdef ELMITESTS
-	//struct CoffeeMaker coffeeMaker;
-
 	#ifdef CARME
 		printf("Initializing for board CARME\n");
 	#elif defined(ORCHID)
 		printf("Initializing for board ORCHID\n");
 	#endif
-
-	setUpMmap();
-	setUpMachineController();
-	setUpInputController();
-	setUpLedController();
-	setUpSensorController();
 
 	printf("Setting led1 on...\n");
 	updateLed(LED_1, led_on);
@@ -72,7 +56,7 @@ int main(int argc, char* argv[]) {
 	setBlinkingFreq(LED_3, 500, 500);
 	updateLed(LED_3, led_blinking);
 
-	timer = setUpTimer(10000);
+	TimerDescriptor timer = setUpTimer(10000);
 	while (!isTimerElapsed(timer)) {
 		updateAllLeds();
 	}
@@ -83,17 +67,47 @@ int main(int argc, char* argv[]) {
 	}
 	printf("Timer is elapsed\n");
 
+#endif
+
+#ifdef TONITESTS
+	struct CoffeeMaker coffeeMaker = {
+		.state = coffeeMaker_off,
+		.coffee.isAvailable = TRUE,
+		.milk.isAvailable = TRUE//,
+		//.products = &coffeeProductListElement
+	};
+
+	updateView(coffeeMaker);
+#endif
+
+	while (TRUE) {
+		// Propagate "heartbeat"
+		runBusinessLogic();
+	}
+
+	tearDownSubsystems();
+
+	exit(0);
+}
+
+void setUpSubsystems() {
+	setUpMmap();
+	setUpMachineController();
+	setUpInputController();
+	setUpLedController();
+	setUpSensorController();
+	setUpBusinessLogic();
+	setUpDisplay();
+}
+
+void tearDownSubsystems() {
+	tearDownDisplay();
+	tearDownBusinessLogic();
 	tearDownSensorController();
 	tearDownLedController();
 	tearDownInputController();
 	tearDownMachineController();
 	tearDownMmap();
-#endif
-
-	while (TRUE) {
-		// Catch and dispatch events
-
-	}
-
-	return 0;
 }
+
+#endif
