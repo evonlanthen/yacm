@@ -20,7 +20,8 @@
  */
 enum SensorState {
   sensor_normal = 0,
-  sensor_alert
+  sensor_alert,
+  sensor_unknown
 };
 
 extern int setUpSensorController(void);

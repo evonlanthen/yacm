@@ -18,4 +18,7 @@ extern int startMachine(void);
 extern int stopMachine(void);
 extern int machineRunning(void);
 
+// Set coffee making time to 5 seconds:
+#define COFFEE_MAKING_TIME 5000
+
 #endif /* MACHINECONTROLLER_H_ */

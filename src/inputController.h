@@ -40,7 +40,8 @@
  */
 enum SwitchState {
   switch_off = 0,
-  switch_on
+  switch_on,
+  switch_unknown
 };
 
 /**
@@ -48,7 +49,8 @@ enum SwitchState {
  */
 enum ButtonState {
   button_off = 0,
-  button_on
+  button_on,
+  button_unknown
 };
 
 extern int setUpInputController(void);

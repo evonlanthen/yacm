@@ -6,81 +6,65 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/mman.h>
-#include <time.h>
-#include <fcntl.h>
 
 #include "defines.h"
-#include "types.h"
+#include "mmap.h"
 #include "machineController.h"
+#include "timer.h"
 
-#ifdef CARME
- #include "carme.h"
-#elif defined(ORCHID)
- #include "orchid.h"
-#else
- #error "no board defined!"
-#endif
-
-#define MEM_DEV "/dev/mem"
-
-char *mmap_base = NULL;
-int fd_mem;
-static off_t io_base = IO_BASE;
+static TimerDescriptor timer;
+static int isMachineControllerSetUp = FALSE;
 
 int setUpMachineController(void)
 {
-	/* Try to open the mem device special file */
-	if ((fd_mem = open(MEM_DEV, O_RDWR | O_SYNC)) < 1) {
-		perror("open(\"/dev/mem\")");
-		return(FALSE);
+	// check if machine controller is already set up:
+	if (isMachineControllerSetUp) {
+		return FALSE;
 	}
 
-	/* Map memory region for memory controller registers */
-	mmap_base = mmap(NULL,				/* Start address */
-			    MAP_SIZE,				/* The IO space */
-			    PROT_READ | PROT_WRITE, /* Allow read and write */
-			    MAP_SHARED,				/* Share this mapping with all processes */
-			    fd_mem,					/* Device is /dev/mem */
-			    io_base);				/* IO memory region base */
-
-	if (mmap_base == (void*) -1) {
-		perror("mmap()");
-		return(FALSE);
+	// check if memory mapping is already set up, if not try to set it up:
+	if (!getMmapSetUpState()) {
+		if (!setUpMmap()) {
+			return FALSE;
+		}
 	}
 
-	#ifdef ORCHID
-		GPIO_init();
-	#endif
-
+	isMachineControllerSetUp = TRUE;
 	return TRUE;
 }
 
 int tearDownMachineController(void) {
-	munmap(mmap_base, MAP_SIZE);
-	close(fd_mem);
+	// check if machine controller was already torn down:
+	if (!isMachineControllerSetUp) {
+		return FALSE;
+	}
+
+	isMachineControllerSetUp = FALSE;
 	return TRUE;
 }
 
 int startMachine(void)
 {
-	int ret = TRUE;
-	return ret;
+	if (!isMachineControllerSetUp) {
+		return FALSE;
+	}
+	timer = setUpTimer(COFFEE_MAKING_TIME);
+	return TRUE;
 }
 
 int stopMachine(void)
 {
-	int ret = TRUE;
-	return ret;
+	if (!isMachineControllerSetUp) {
+		return FALSE;
+	}
+	timer = setUpTimer(0);
+	return TRUE;
 }
 
 int machineRunning(void)
 {
-	int ret = TRUE;
-	return ret;
+	if (!isMachineControllerSetUp) {
+		return FALSE;
+	}
+	return isTimerElapsed(timer);
 }
