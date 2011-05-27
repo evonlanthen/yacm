@@ -5,9 +5,20 @@
  *      Author: elmar
  */
 
+#include <unistd.h>
+
 #include "defines.h"
+#include "types.h"
 #include "mmap.h"
 #include "sensorController.h"
+
+#ifdef CARME
+ #include "carme.h"
+#elif defined(ORCHID)
+ #include "orchid.h"
+#else
+ #error "no board defined!"
+#endif
 
 static int isSensorControllerSetUp = FALSE;
 
@@ -48,8 +59,8 @@ enum SensorState getSensorState(int id)
 	sleep(1);
     sensors = GPIO_read_switch();
     if (sensors & id) {
-    	return sensor_on;
+    	return sensor_alert;
     } else {
-    	return sensor_off;
+    	return sensor_normal;
     }
 }

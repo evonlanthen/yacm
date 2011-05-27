@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "defines.h"
 #include "logic.h"
@@ -20,7 +21,7 @@
 #include "timer.h"
 #include "mmap.h"
 
-//#define ELMITESTS
+#define ELMITESTS
 //#define TONITESTS
 
 static void setUpSubsystems();
@@ -49,24 +50,68 @@ int main(int argc, char* argv[]) {
 	printf("Setting led1 off...\n");
 	updateLed(LED_1, led_off);
 	sleep(1);
+
+	// check switches:
+	enum SwitchState switchState = getSwitchState(SWITCH_2);
+	if (switchState == switch_on) {
+		printf("Switch 2 is on\n");
+		updateLed(LED_2, led_on);
+	} else if (switchState == switch_off){
+		printf("Switch 2 is off\n");
+	} else {
+		printf("Switch 2 state is unknown\n");
+	}
+
+	// check buttons:
+	enum ButtonState buttonState = getButtonState(BUTTON_1);
+	if (buttonState == button_on) {
+		printf("Button 1 is on\n");
+		updateLed(LED_5, led_on);
+	} else if (buttonState == button_off) {
+		printf("Button 1 is off\n");
+	} else {
+		printf("Button 1 state is unknown\n");
+	}
+
+	// check sensors:
+	enum SensorState sensorState = getSensorState(SENSOR_1);
+	if (sensorState == sensor_alert) {
+		printf("Sensor 1 state: alert\n");
+	} else if(sensorState == sensor_normal) {
+		printf("Sensor 1 state: normal\n");
+	} else {
+		printf("Sensor 1 state: unknown\n");
+	}
+
+	// blink for 10 seconds:
 	printf("Setting led4 blinking...\n");
 	setBlinkingFreq(LED_4, 3000, 1000);
 	updateLed(LED_4, led_blinking);
 	printf("Setting led3 blinking...\n");
 	setBlinkingFreq(LED_3, 500, 500);
 	updateLed(LED_3, led_blinking);
-
 	TimerDescriptor timer = setUpTimer(10000);
 	while (!isTimerElapsed(timer)) {
 		updateAllLeds();
 	}
+	// blink for 5 seconds:
 	setBlinkingFreq(LED_3, 100, 100);
 	timer = setUpTimer(5000);
 	while (!isTimerElapsed(timer)) {
 		updateAllLeds();
 	}
-	printf("Timer is elapsed\n");
+	printf("Blinking disabled\n");
 
+	// start coffee maker:
+	printf("Starting coffee machine...\n");
+	startMachine();
+	setBlinkingFreq(LED_1, 500, 500);
+	updateLed(LED_1, led_blinking);
+	while (machineRunning()) {
+		updateAllLeds();
+	}
+	printf("Coffee is ready!\n");
+	updateLed(LED_1, led_off);
 #endif
 
 #ifdef TONITESTS
