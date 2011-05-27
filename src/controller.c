@@ -15,8 +15,11 @@
 #include "model.h"
 #include "userInterface.h"
 #include "machineController.h"
+#include "inputController.h"
 #include "ledController.h"
+#include "sensorController.h"
 #include "timer.h"
+#include "mmap.h"
 
 /**
  * The entry point of the program.
@@ -47,28 +50,44 @@ int main(int argc, char* argv[]) {
 		printf("Initializing for board ORCHID\n");
 	#endif
 
+	setUpMmap();
 	setUpMachineController();
+	setUpInputController();
 	setUpLedController();
+	setUpSensorController();
+
 	printf("Setting led1 on...\n");
 	updateLed(LED_1, led_on);
-	sleep(3);
-	printf("Setting led5 on...\n");
-	updateLed(LED_5, led_on);
-	sleep(3);
+	sleep(1);
+	printf("Setting led8 on...\n");
+	updateLed(LED_8, led_on);
+	sleep(1);
 	printf("Setting led1 off...\n");
 	updateLed(LED_1, led_off);
-	sleep(3);
-	printf("hello\n");
+	sleep(1);
+	printf("Setting led4 blinking...\n");
+	setBlinkingFreq(LED_4, 3000, 1000);
+	updateLed(LED_4, led_blinking);
+	printf("Setting led3 blinking...\n");
+	setBlinkingFreq(LED_3, 500, 500);
+	updateLed(LED_3, led_blinking);
 
-	tearDownLedController();
-	tearDownMachineController();
-
-	timer = setUpTimer(3000);
+	timer = setUpTimer(10000);
 	while (!isTimerElapsed(timer)) {
-		printf("Timer is not elapsed\n");
-		sleep(1);
+		updateAllLeds();
+	}
+	setBlinkingFreq(LED_3, 100, 100);
+	timer = setUpTimer(5000);
+	while (!isTimerElapsed(timer)) {
+		updateAllLeds();
 	}
 	printf("Timer is elapsed\n");
+
+	tearDownSensorController();
+	tearDownLedController();
+	tearDownInputController();
+	tearDownMachineController();
+	tearDownMmap();
 #endif
 
 	while (TRUE) {
