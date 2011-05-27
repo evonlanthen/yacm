@@ -33,7 +33,7 @@
  #define	LED_8			(1 << 7)
  #define    NUM_OF_LEDS     8
 #endif
-/* Get LED ID: */
+/* Get LED ID (e.g.: LED_ID(4) == LED_4) */
 #define		LED_ID(x) (1 << ((x)-1))
 
 
@@ -61,9 +61,18 @@ extern int setUpLedController(void);
 extern int tearDownLedController(void);
 
 /**
+ * Update all LEDs
+ *
+ * Update all LEDs according to the state in the array 'leds'.
+ *
+ * @return Returns TRUE if LED updating was successful
+ */
+extern int updateAllLeds();
+
+/**
  * Update LED state
  *
- * Update LED according to the overall (on/off) or blinking state.
+ * Update LED state for one LED in array 'leds' and update all leds with function updateAllLeds().
  *
  * @param id LED identifier
  * @param state LED state (on, off or blinking)
@@ -77,9 +86,9 @@ extern int updateLed(int id, enum LedState state);
  * Set the LED blinking interval values in milliseconds
  *
  * @param id LED indentifier
- * @param intervalOn Duration while LED is on
- * @param intervalOff Duration while LED is off
+ * @param durationOn Duration while LED is on
+ * @param durationOff Duration while LED is off
  */
-extern int setBlinkingFreq(int id, int intervalOn, int intervalOff);
+extern int setBlinkingFreq(int id, int durationOn, int durationOff);
 
 #endif /* LEDCONTROLLER_H_ */

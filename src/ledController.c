@@ -12,6 +12,7 @@
 #include "defines.h"
 #include "types.h"
 #include "ledController.h"
+#include "timer.h"
 
 #ifdef CARME
  #include "carme.h"
@@ -23,72 +24,138 @@
 
 typedef struct {
 	int id;
-	int on;
-	int off;
-} LedInterval;
+	int state;
+	int durationOn;
+	int durationOff;
+	int blinkingState;
+	TimerDescriptor timer;
+} LedDescriptor;
 
-int ledStates;
-LedInterval ledIntervals[NUM_OF_LEDS];
+static LedDescriptor leds[NUM_OF_LEDS];
+static isLedControllerSetUp = FALSE;
 
 int setUpLedController(void)
 {
-	int i, id;
-	for (i = 0; i < NUM_OF_LEDS; i++) {
-		id = LED_ID(id+1);
-		ledIntervals[i].id = id;
-		ledIntervals[i].on = 0;
-		ledIntervals[i].off = 0;
-		updateLed(id, led_off);
+	// check if led controller is already set up:
+	if (isLedControllerSetUp) {
+		return FALSE;
 	}
-	ledStates = led_off;
+
+	// check if memory mapping is already set up, if not try to set it up:
+	if (!getMmapSetUpState()) {
+		if (!setUpMmap()) {
+			return FALSE;
+		}
+	}
+
+	int id;
+	for (int i = 0; i < NUM_OF_LEDS; i++) {
+		id = LED_ID(i+1);
+		leds[i].id = id;
+		leds[i].state = led_off;
+		leds[i].durationOn = 1000;
+		leds[i].durationOff = 1000;
+		leds[i].blinkingState = led_off;
+		leds[i].timer = setUpTimer(0);
+	}
+	updateAllLeds();
+	isLedControllerSetUp = TRUE;
 	return TRUE;
 }
 
 int tearDownLedController(void)
 {
-	int i, id;
-	for (i = 0; i < NUM_OF_LEDS; i++) {
+	int id;
+	for (int i = 0; i < NUM_OF_LEDS; i++) {
 		id = LED_ID(i+1);
-		updateLed(id, led_off);
+		leds[i].state = led_off;
+		leds[i].durationOn = 0;
+		leds[i].durationOff = 0;
+		leds[i].blinkingState = led_off;
+		leds[i].timer = setUpTimer(0);
 	}
-	ledStates = led_off;
+	updateAllLeds();
+	isLedControllerSetUp = FALSE;
 	return TRUE;
+}
+
+void updateBlinkingState(LedDescriptor *led) {
+	if (!isLedControllerSetUp) {
+		return FALSE;
+	}
+	// check if current timer is elapsed:
+	if (isTimerElapsed(led->timer)) {
+		// state was led on, set new timer for duration led off:
+		if (led->blinkingState == led_on) {
+			led->blinkingState = led_off;
+			led->timer = setUpTimer(led->durationOff);
+		// state was led off, set new timer for duration led on:
+		} else {
+			led->blinkingState = led_on;
+			led->timer = setUpTimer(led->durationOn);
+		}
+	}
+}
+
+int updateAllLeds() {
+	if (!isLedControllerSetUp) {
+		return FALSE;
+	}
+	int ret = TRUE, newStates = 0;
+	LedDescriptor *led;
+
+	// update structure:
+	for (int i = 0; i < NUM_OF_LEDS; i++) {
+
+		if (leds[i].state == led_on) {
+			newStates |= leds[i].id;
+		// update blinking states an get new states:
+		} else if (leds[i].state == led_blinking) {
+			led = &leds[i];
+			updateBlinkingState(led);
+			if (leds[i].blinkingState == led_on) {
+				newStates |= leds[i].id;
+			}
+		}
+	}
+
+	#ifdef CARME
+		*(volatile unsigned char *) (mmap_base + LED_OFFSET) = newStates;
+	#elif defined(ORCHID)
+		GPIO_write_led(newStates);
+	#endif
+	return ret;
 }
 
 int updateLed(int id, enum LedState state)
 {
-	int curStates;
-
-	curStates = ledStates & id;
-	switch(state) {
-	case led_blinking:
-		// not every instruction, use intervals!!!
-		ledStates &= ~curStates;
-		break;
-	case led_on:
-		ledStates |= id;
-		break;
-	case led_off:
-		ledStates &= ~id;
-		break;
-	default:
+	if (!isLedControllerSetUp) {
 		return FALSE;
 	}
-
-	#ifdef CARME
-		*(volatile unsigned char *) (mmap_base + LED_OFFSET) = ledStates;
-	#elif defined(ORCHID)
-		GPIO_write_led(ledStates);
-	#endif
-	return TRUE;
+	// update structure:
+	for (int i = 0; i < NUM_OF_LEDS; i++) {
+		// update led state for specified id in structure:
+		if (leds[i].id == id) {
+			leds[i].state = state;
+			// now update all leds:
+			updateAllLeds();
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
-int setBlinkingFreq(int id, int intervalOn, int intervalOff)
+int setBlinkingFreq(int id, int durationOn, int durationOff)
 {
-	if (id > NUM_OF_LEDS) {
+	if (!isLedControllerSetUp) {
 		return FALSE;
 	}
-	ledIntervals[id].on = intervalOn;
-	ledIntervals[id].off = intervalOff;
-	return TRUE;
+	for (int i = 0; i < NUM_OF_LEDS; i++) {
+		if (leds[i].id == id) {
+			leds[i].durationOn = durationOn;
+			leds[i].durationOff = durationOff;
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
