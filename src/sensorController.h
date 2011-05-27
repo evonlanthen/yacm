@@ -12,8 +12,8 @@
 #ifndef SENSORCONTROLLER_H_
 #define SENSORCONTROLLER_H_
 
-#define SENSOR_1	1
-#define SENSOR_2	2
+#define SENSOR_1		(1 << 2)
+#define SENSOR_2		(1 << 3)
 
 /**
  * Predefined sensor states

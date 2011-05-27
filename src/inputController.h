@@ -14,25 +14,25 @@
 
 #ifdef CARME
  /* Define swiches */
- #define SWITCH_1		(1 << 1)
- #define SWITCH_2		(1 << 2)
- #define SWITCH_3		(1 << 3)
- #define SWITCH_4		(1 << 4)
+ #define SWITCH_1		(1 << 0)
+ #define SWITCH_2		(1 << 1)
+ #define SWITCH_3		(1 << 2)
+ #define SWITCH_4		(1 << 3)
  /* Define buttons */
- #define BUTTON_1		(1 << 1)
- #define BUTTON_2		(1 << 2)
- #define BUTTON_3		(1 << 3)
- #define BUTTON_4		(1 << 4)
+ #define BUTTON_1		(1 << 0)
+ #define BUTTON_2		(1 << 1)
+ #define BUTTON_3		(1 << 2)
+ #define BUTTON_4		(1 << 3)
 #elif defined(ORCHID)
- #define SWITCH_1		(1 << 1)
- #define SWITCH_2		(1 << 2)
- #define SWITCH_3		(1 << 3)
- #define SWITCH_4		(1 << 4)
+ #define SWITCH_1		(1 << 0)
+ #define SWITCH_2		(1 << 1)
+ #define SWITCH_3		(1 << 2)
+ #define SWITCH_4		(1 << 3)
  /* Define buttons */
- #define BUTTON_1		(1 << 1)
- #define BUTTON_2		(1 << 2)
- #define BUTTON_3		(1 << 3)
- #define BUTTON_4		(1 << 4)
+ #define BUTTON_1		(1 << 0)
+ #define BUTTON_2		(1 << 1)
+ #define BUTTON_3		(1 << 2)
+ #define BUTTON_4		(1 << 3)
 #endif
 
 /**

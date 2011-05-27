@@ -40,9 +40,16 @@ int tearDownSensorController(void)
 
 enum SensorState getSensorState(int id)
 {
+	UINT8 sensors;
 	if (!isSensorControllerSetUp) {
 		return sensor_unknown;
 	}
-	enum SensorState state = sensor_normal;
-	return state;
+	// it is important to sleep for a second, else the result would not be reliable:
+	sleep(1);
+    sensors = GPIO_read_switch();
+    if (sensors & id) {
+    	return sensor_on;
+    } else {
+    	return sensor_off;
+    }
 }

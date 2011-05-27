@@ -5,9 +5,20 @@
  *      Author: elmar
  */
 
+#include <unistd.h>
+
 #include "defines.h"
+#include "types.h"
 #include "mmap.h"
 #include "inputController.h"
+
+#ifdef CARME
+ #include "carme.h"
+#elif defined(ORCHID)
+ #include "orchid.h"
+#else
+ #error "no board defined!"
+#endif
 
 static int isInputControllerSetUp = FALSE;
 
@@ -40,18 +51,34 @@ int tearDownInputController(void)
 
 enum SwitchState getSwitchState(int id)
 {
+	UINT8 switches;
+
 	if (!isInputControllerSetUp) {
 		return switch_unknown;
 	}
-	enum SwitchState state = switch_off;
-	return state;
+	// it is important to sleep for a second, else the result would not be reliable:
+	sleep(1);
+    switches = GPIO_read_switch();
+    if (switches & id) {
+    	return switch_on;
+    } else {
+    	return switch_off;
+    }
 }
 
 enum ButtonState getButtonState(int id)
 {
+	UINT8 buttons;
+
 	if (!isInputControllerSetUp) {
 		return button_unknown;
 	}
-	enum ButtonState state = button_off;
-	return state;
+	// it is important to sleep for a second, else the result would not be reliable:
+    sleep(1);
+	buttons = GPIO_read_button();
+    if (buttons & id) {
+    	return button_on;
+    } else {
+    	return button_off;
+    }
 }
