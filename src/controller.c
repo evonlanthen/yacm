@@ -21,7 +21,7 @@
 #include "timer.h"
 #include "mmap.h"
 
-#define ELMITESTS
+//#define ELMITESTS
 //#define TONITESTS
 
 static void setUpSubsystems();
