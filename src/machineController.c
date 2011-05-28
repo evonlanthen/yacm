@@ -66,5 +66,9 @@ int machineRunning(void)
 	if (!isMachineControllerSetUp) {
 		return FALSE;
 	}
-	return isTimerElapsed(timer);
+	if (isTimerElapsed(timer)) {
+		return FALSE;
+	} else {
+		return TRUE;
+	}
 }
