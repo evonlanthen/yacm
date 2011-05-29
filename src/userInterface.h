@@ -58,6 +58,12 @@ struct DisplayState {
  */
 extern struct DisplayState* getDisplayState(void);
 
+/**
+ * Heartbeat function for ongoing view tasks.
+ * Gets constantly called by controller.c
+ */
+extern int runUserInterface(void);
+
 
 #endif /* USERINTERFACE_H_ */
 

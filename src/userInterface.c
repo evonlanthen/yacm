@@ -107,6 +107,10 @@ int setUpDisplay(void) {
 
 	/* Show the window */
 	GrMapWindow(displaystate.gWinID);
+	/* Show our initial state */
+	if (displaystate.activate) {
+		(*displaystate.activate)();
+	}
 	return retval;
 
 }
