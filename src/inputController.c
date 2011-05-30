@@ -5,8 +5,6 @@
  *      Author: elmar
  */
 
-#include <unistd.h>
-
 #include "defines.h"
 #include "types.h"
 #include "mmap.h"
@@ -56,10 +54,16 @@ enum SwitchState getSwitchState(int id)
 	if (!isInputControllerSetUp) {
 		return switch_unknown;
 	}
+
+#ifdef CARME
+	switches = *(volatile unsigned char *) (mmap_base + SWITCH_OFFSET));
+#elif defined(ORCHID)
 	// it is important to read twice, else the result would not be reliable
 	// (usleep for some microseconds would work as well):
 	GPIO_read_switch();
     switches = GPIO_read_switch();
+#endif
+
     if (switches & id) {
     	return switch_on;
     } else {
@@ -74,10 +78,16 @@ enum ButtonState getButtonState(int id)
 	if (!isInputControllerSetUp) {
 		return button_unknown;
 	}
+
+#ifdef CARME
+	buttons = *(volatile unsigned char *) (mmap_base + SWITCH_OFFSET));
+#elif defined(ORCHID)
 	// it is important to read twice, else the result would not be reliable
 	// (usleep for some microseconds would work as well):
 	GPIO_read_button();
 	buttons = GPIO_read_button();
+#endif
+
     if (buttons & id) {
     	return button_on;
     } else {
