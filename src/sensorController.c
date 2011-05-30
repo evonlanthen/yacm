@@ -21,6 +21,7 @@
 #endif
 
 static int isSensorControllerSetUp = FALSE;
+extern void *mmap_base;
 
 int setUpSensorController(void)
 {
@@ -55,9 +56,16 @@ enum SensorState getSensorState(int id)
 	if (!isSensorControllerSetUp) {
 		return sensor_unknown;
 	}
-	// it is important to sleep for a second, else the result would not be reliable:
-	sleep(1);
+
+#ifdef CARME
+	sensors = *(volatile unsigned char *) (mmap_base + SWITCH_OFFSET);
+#elif defined(ORCHID)
+	// it is important to read twice, else the result would not be reliable
+	// (usleep for some microseconds would work as well):
+	GPIO_read_switch();
     sensors = GPIO_read_switch();
+#endif
+
     if (sensors & id) {
     	return sensor_alert;
     } else {
