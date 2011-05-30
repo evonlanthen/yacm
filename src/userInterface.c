@@ -11,100 +11,77 @@
 #include "nano-X.h"
 #include "model.h"
 #include "userInterface.h"
+#include "uiViewIdle.h"
+#include "uiViewInit.h"
+#include "uiViewOff.h"
+#include "uiViewWork.h"
+#include "logic.h"
 
-/* Some window related constants */
-#define WIN_BORDER	5
-/* Define font name and location */
-#define FONTNAME	"/usr/fonts/truetype/arial.ttf"
-
-struct DisplayState {
-	GR_WINDOW_ID	gWinID;
-	GR_IMAGE_ID 	imageID;
-	GR_IMAGE_INFO 	imageInfo;
-	GR_GC_ID		gContextID, gTestID, gRectID, gElliID, gElli2ID;
-	GR_EVENT	   	event;
-	GR_SCREEN_INFO  screenInfo;
-	GR_FONT_ID		font;
-	int				winSizeX, winSizeY;
-};
 
 /* Current state of display with handles and elements */
 static struct DisplayState displaystate;
 
 /* current CoffeMaker state */
-static struct CoffeeMaker coffeemaker;
+static struct CoffeeMakerViewModel coffeemaker;
 
 /**
- * Show View Offstate
+ * Set correct Action pointers for active view in displaystate
  */
-int showViewOff(void) {
-	int retval = TRUE;
-	displaystate.gContextID = GrNewGC();
-	/* Back- Foreground color related stuff */
-	GrSetGCForeground(displaystate.gContextID, YELLOW);
-	GrSetGCUseBackground(displaystate.gContextID, GR_FALSE);
-	/* Select fonts */
-	displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 14, NULL);
-	GrSetGCFont(displaystate.gContextID, displaystate.font);
-	GrText(displaystate.gWinID, displaystate.gContextID, 120, 30, "No Power!", -1, GR_TFASCII | GR_TFTOP);
-	GrDestroyFont(displaystate.font);
-	return retval;
-}
-/**
- * Show View Init
- */
-int showViewInit(void) {
-	int retval = TRUE;
-	displaystate.gContextID = GrNewGC();
-		/* Back- Foreground color related stuff */
-		GrSetGCForeground(displaystate.gContextID, YELLOW);
-		GrSetGCUseBackground(displaystate.gContextID, GR_FALSE);
-		/* Select fonts */
-		displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 14, NULL);
-		GrSetGCFont(displaystate.gContextID, displaystate.font);
-		GrText(displaystate.gWinID, displaystate.gContextID, 120, 30, "Initializing...", -1, GR_TFASCII | GR_TFTOP);
-		GrDestroyFont(displaystate.font);
-	return retval;
-}
+void setCallViewActions(void) {
+	if (coffeemaker.state == coffeeMaker_off) {
+		displaystate.run = getViewOffActionRun();
+		displaystate.activate = getViewOffActionActivate();
+		displaystate.deactivate = getViewOffActionDeactivate();
+		displaystate.update = getViewOffActionUpdate();
+	}
+	if (coffeemaker.state == coffeeMaker_idle) {
+			displaystate.run = getViewIdleActionRun();
+			displaystate.activate = getViewIdleActionActivate();
+			displaystate.deactivate = getViewIdleActionDeactivate();
+			displaystate.update = getViewIdleActionUpdate();
+	}
+	if (coffeemaker.state == coffeeMaker_producing) {
+		displaystate.run = getViewWorkActionRun();
+		displaystate.activate = getViewWorkActionActivate();
+		displaystate.deactivate = getViewWorkActionDeactivate();
+		displaystate.update = getViewWorkActionUpdate();
+	}
+	if (coffeemaker.state == coffeeMaker_initializing) {
+		displaystate.run = getViewInitActionRun();
+		displaystate.activate = getViewInitActionActivate();
+		displaystate.deactivate = getViewInitActionDeactivate();
+		displaystate.update = getViewInitActionUpdate();
+	}
 
-/**
- * Show View Idle
- */
-int showViewIdle(void) {
-	int retval = TRUE;
-	return retval;
-}
-
-/**
- * Show View Working
- */
-int showViewWorking(void) {
-	int retval = TRUE;
-	return retval;
 }
 
 
 /**
  * Update current view on display
- * parameter should be the state construct
+ * This function gets registered in logic.c as an observer
  */
-int updateView(struct CoffeeMaker newcoffeemaker) {
-	int retval = TRUE;
-	coffeemaker = newcoffeemaker;
-	/* call the right view according to state */
-	if (coffeemaker.state == coffeeMaker_off) {
-		if (showViewOff() != TRUE) retval = FALSE;
+void updateView() {
+	struct CoffeeMakerViewModel newCoffeeMaker;
+	/* get the current state and update*/
+	newCoffeeMaker = getCoffeeMakerViewModel();
+	/*Did we change state?*/
+	if (newCoffeeMaker.state != coffeemaker.state) {
+		/*Deactivate old view*/
+		if (displaystate.deactivate) {
+			(*displaystate.deactivate)();
+		}
+		/*this changes about everything, let's set the new model*/
+		coffeemaker = newCoffeeMaker;
+		setCallViewActions();
+		/*let's activate the new view*/
+		if (displaystate.activate) {
+			(*displaystate.activate)();
+		}
+
 	}
-	if (coffeemaker.state == coffeeMaker_initializing) {
-		if (showViewInit() != TRUE) retval = FALSE;
-	}
-	if (coffeemaker.state == coffeeMaker_idle) {
-		if (showViewIdle() != TRUE) retval = FALSE;
-	}
-	if (coffeemaker.state == coffeeMaker_producing) {
-		if (showViewWorking() != TRUE) retval = FALSE;
-	}
-	return retval;
+
+	/* Finally clean old values with updated model*/
+	coffeemaker = newCoffeeMaker;
 }
 
 /**
@@ -112,6 +89,10 @@ int updateView(struct CoffeeMaker newcoffeemaker) {
  */
 int setUpDisplay(void) {
 	int retval = TRUE;
+	/* get initial coffeemakerview model*/
+	coffeemaker = getCoffeeMakerViewModel();
+	/* Initialize view actions in displaystate*/
+	setCallViewActions();
 	/* Try to open the graphic device */
 	if (GrOpen() < 0) {
 		retval = FALSE;
@@ -126,6 +107,13 @@ int setUpDisplay(void) {
 
 	/* Show the window */
 	GrMapWindow(displaystate.gWinID);
+	/* Show our initial state */
+	if (displaystate.activate) {
+		(*displaystate.activate)();
+	}
+
+	/*Register with logic.c as observer */
+	registerModelObserver(&updateView);
 	return retval;
 
 }
@@ -141,3 +129,27 @@ int tearDownDisplay(void) {
 	return TRUE;
 
 }
+
+/**
+ * Heartbeat function for ongoing view tasks.
+ * Gets constantly called by controller.c
+ */
+int runUserInterface(void) {
+	if (displaystate.run) {
+			(*displaystate.run)();
+		}
+	else {
+		return FALSE;
+	}
+	return TRUE;
+}
+
+/**
+ * get displaystate reference
+ * called by uiView modules
+ */
+struct DisplayState* getDisplayState(void) {
+	return &displaystate;
+
+}
+

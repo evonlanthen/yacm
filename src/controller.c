@@ -115,18 +115,12 @@ int main(int argc, char* argv[]) {
 #endif
 
 #ifdef TONITESTS
-	struct CoffeeMaker coffeeMaker = {
-		.state = coffeeMaker_off,
-		.coffee.isAvailable = TRUE,
-		.milk.isAvailable = TRUE//,
-		//.products = &coffeeProductListElement
-	};
 
-	updateView(coffeeMaker);
 #endif
 
 	while (TRUE) {
 		// Propagate "heartbeat"
+		runUserInterface();
 		runBusinessLogic();
 	}
 
