@@ -56,8 +56,9 @@ enum SwitchState getSwitchState(int id)
 	if (!isInputControllerSetUp) {
 		return switch_unknown;
 	}
-	// it is important to sleep for a second, else the result would not be reliable:
-	sleep(1);
+	// it is important to read twice, else the result would not be reliable
+	// (usleep for some microseconds would work as well):
+	GPIO_read_switch();
     switches = GPIO_read_switch();
     if (switches & id) {
     	return switch_on;
@@ -73,8 +74,9 @@ enum ButtonState getButtonState(int id)
 	if (!isInputControllerSetUp) {
 		return button_unknown;
 	}
-	// it is important to sleep for a second, else the result would not be reliable:
-    sleep(1);
+	// it is important to read twice, else the result would not be reliable
+	// (usleep for some microseconds would work as well):
+	GPIO_read_button();
 	buttons = GPIO_read_button();
     if (buttons & id) {
     	return button_on;
