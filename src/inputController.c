@@ -19,6 +19,7 @@
 #endif
 
 static int isInputControllerSetUp = FALSE;
+extern void *mmap_base;
 
 int setUpInputController(void)
 {
@@ -56,7 +57,7 @@ enum SwitchState getSwitchState(int id)
 	}
 
 #ifdef CARME
-	switches = *(volatile unsigned char *) (mmap_base + SWITCH_OFFSET));
+	switches = *(volatile unsigned char *) (mmap_base + SWITCH_OFFSET);
 #elif defined(ORCHID)
 	// it is important to read twice, else the result would not be reliable
 	// (usleep for some microseconds would work as well):
@@ -80,7 +81,7 @@ enum ButtonState getButtonState(int id)
 	}
 
 #ifdef CARME
-	buttons = *(volatile unsigned char *) (mmap_base + SWITCH_OFFSET));
+	buttons = *(volatile unsigned char *) (mmap_base + SWITCH_OFFSET);
 #elif defined(ORCHID)
 	// it is important to read twice, else the result would not be reliable
 	// (usleep for some microseconds would work as well):

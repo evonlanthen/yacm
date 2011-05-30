@@ -31,6 +31,7 @@ typedef struct {
 	TimerDescriptor timer;
 } LedDescriptor;
 
+extern void *mmap_base;
 static LedDescriptor leds[NUM_OF_LEDS];
 static isLedControllerSetUp = FALSE;
 
@@ -79,7 +80,7 @@ int tearDownLedController(void)
 	return TRUE;
 }
 
-void updateBlinkingState(LedDescriptor *led) {
+int updateBlinkingState(LedDescriptor *led) {
 	if (!isLedControllerSetUp) {
 		return FALSE;
 	}
@@ -95,6 +96,7 @@ void updateBlinkingState(LedDescriptor *led) {
 			led->timer = setUpTimer(led->durationOn);
 		}
 	}
+	return TRUE;
 }
 
 int updateAllLeds() {
