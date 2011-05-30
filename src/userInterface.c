@@ -111,6 +111,9 @@ int setUpDisplay(void) {
 	if (displaystate.activate) {
 		(*displaystate.activate)();
 	}
+
+	/*Register with logic.c as observer */
+	registerModelObserver(&updateView);
 	return retval;
 
 }
