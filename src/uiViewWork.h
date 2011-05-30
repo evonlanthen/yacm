@@ -8,13 +8,6 @@
 #ifndef UIVIEWWORK_H_
 #define UIVIEWWORK_H_
 
-extern callViewAction getViewWorkActionRun(void);
-
-extern callViewAction getViewWorkActionActivate(void);
-
-extern callViewAction getViewWorkActionDeactivate(void);
-
-extern callViewAction getViewWorkActionUpdate(void);
-
+extern struct callViewActions getViewWorkActions(void);
 
 #endif /* UIVIEWWORK_H_ */

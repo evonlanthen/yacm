@@ -8,13 +8,8 @@
 #ifndef UIVIEWOFF_H_
 #define UIVIEWOFF_H_
 
-extern callViewAction getViewOffActionRun(void);
+#include "userInterface.h"
 
-extern callViewAction getViewOffActionActivate(void);
-
-extern callViewAction getViewOffActionDeactivate(void);
-
-extern callViewAction getViewOffActionUpdate(void);
-
+extern struct callViewActions getViewOffActions(void);
 
 #endif /* UIVIEWOFF_H_ */

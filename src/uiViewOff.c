@@ -37,19 +37,9 @@ static void update(void) {
 }
 
 
-callViewAction getViewOffActionRun(void) {
-	return &run;
+struct callViewActions getViewOffActions(void) {
+	struct callViewActions retval = { &run, &activate, &deactivate, &update };
+	return retval;
 }
 
-callViewAction getViewOffActionActivate(void) {
-	return &activate;
-}
-
-callViewAction getViewOffActionDeactivate(void) {
-	return &deactivate;
-}
-
-callViewAction getViewOffActionUpdate(void) {
-	return &update;
-}
 

@@ -21,6 +21,7 @@
 typedef void (*callViewAction)();
 
 
+
 /**
  * Update current view on display
  * gets called by logic.c as an observer
@@ -37,19 +38,24 @@ extern int setUpDisplay(void);
  */
 extern int tearDownDisplay(void);
 
-struct DisplayState {
-	GR_WINDOW_ID	gWinID;
-	GR_IMAGE_ID 	imageID;
-	GR_IMAGE_INFO 	imageInfo;
-	GR_GC_ID		gContextID, gTestID, gRectID, gElliID, gElli2ID;
-	GR_EVENT	   	event;
-	GR_SCREEN_INFO  screenInfo;
-	GR_FONT_ID		font;
-	int				winSizeX, winSizeY;
+struct callViewActions {
 	callViewAction	activate;
 	callViewAction	deactivate;
 	callViewAction	update;
 	callViewAction	run;
+};
+
+struct DisplayState {
+	GR_WINDOW_ID			gWinID;
+	GR_IMAGE_ID 			imageID;
+	GR_IMAGE_INFO 			imageInfo;
+	GR_GC_ID				gContextID, gTestID, gRectID, gElliID, gElli2ID;
+	GR_EVENT	   			event;
+	GR_SCREEN_INFO  		screenInfo;
+	GR_FONT_ID				font;
+	int						winSizeX, winSizeY;
+	struct callViewActions	actions;
+
 };
 
 

@@ -24,19 +24,7 @@ static void update(void) {
 }
 
 
-callViewAction getViewWorkActionRun(void) {
-	return &run;
+struct callViewActions getViewWorkActions(void) {
+	struct callViewActions retval = { &run, &activate, &deactivate, &update };
+	return retval;
 }
-
-callViewAction getViewWorkActionActivate(void) {
-	return &activate;
-}
-
-callViewAction getViewWorkActionDeactivate(void) {
-	return &deactivate;
-}
-
-callViewAction getViewWorkActionUpdate(void) {
-	return &update;
-}
-

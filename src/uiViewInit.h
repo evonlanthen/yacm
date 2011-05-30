@@ -8,13 +8,7 @@
 #ifndef UIVIEWINIT_H_
 #define UIVIEWINIT_H_
 
-extern callViewAction getViewInitActionRun(void);
-
-extern callViewAction getViewInitActionActivate(void);
-
-extern callViewAction getViewInitActionDeactivate(void);
-
-extern callViewAction getViewInitActionUpdate(void);
+extern struct callViewActions getViewInitActions(void);
 
 
 #endif /* UIVIEWINIT_H_ */

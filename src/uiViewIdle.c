@@ -23,20 +23,7 @@ static void update(void) {
 
 }
 
-
-callViewAction getViewIdleActionRun(void) {
-	return &run;
+struct callViewActions getViewIdleActions(void) {
+	struct callViewActions retval = { &run, &activate, &deactivate, &update };
+	return retval;
 }
-
-callViewAction getViewIdleActionActivate(void) {
-	return &activate;
-}
-
-callViewAction getViewIdleActionDeactivate(void) {
-	return &deactivate;
-}
-
-callViewAction getViewIdleActionUpdate(void) {
-	return &update;
-}
-

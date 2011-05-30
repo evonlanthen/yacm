@@ -29,28 +29,16 @@ static struct CoffeeMakerViewModel coffeemaker;
  */
 void setCallViewActions(void) {
 	if (coffeemaker.state == coffeeMaker_off) {
-		displaystate.run = getViewOffActionRun();
-		displaystate.activate = getViewOffActionActivate();
-		displaystate.deactivate = getViewOffActionDeactivate();
-		displaystate.update = getViewOffActionUpdate();
+		displaystate.actions = getViewOffActions();
 	}
 	if (coffeemaker.state == coffeeMaker_idle) {
-			displaystate.run = getViewIdleActionRun();
-			displaystate.activate = getViewIdleActionActivate();
-			displaystate.deactivate = getViewIdleActionDeactivate();
-			displaystate.update = getViewIdleActionUpdate();
+			displaystate.actions = getViewIdleActions();
 	}
 	if (coffeemaker.state == coffeeMaker_producing) {
-		displaystate.run = getViewWorkActionRun();
-		displaystate.activate = getViewWorkActionActivate();
-		displaystate.deactivate = getViewWorkActionDeactivate();
-		displaystate.update = getViewWorkActionUpdate();
+		displaystate.actions = getViewWorkActions();
 	}
 	if (coffeemaker.state == coffeeMaker_initializing) {
-		displaystate.run = getViewInitActionRun();
-		displaystate.activate = getViewInitActionActivate();
-		displaystate.deactivate = getViewInitActionDeactivate();
-		displaystate.update = getViewInitActionUpdate();
+		displaystate.actions = getViewInitActions();
 	}
 
 }
@@ -67,15 +55,15 @@ void updateView() {
 	/*Did we change state?*/
 	if (newCoffeeMaker.state != coffeemaker.state) {
 		/*Deactivate old view*/
-		if (displaystate.deactivate) {
-			(*displaystate.deactivate)();
+		if (displaystate.actions.deactivate) {
+			(*displaystate.actions.deactivate)();
 		}
 		/*this changes about everything, let's set the new model*/
 		coffeemaker = newCoffeeMaker;
 		setCallViewActions();
 		/*let's activate the new view*/
-		if (displaystate.activate) {
-			(*displaystate.activate)();
+		if (displaystate.actions.activate) {
+			(*displaystate.actions.activate)();
 		}
 
 	}
@@ -108,8 +96,8 @@ int setUpDisplay(void) {
 	/* Show the window */
 	GrMapWindow(displaystate.gWinID);
 	/* Show our initial state */
-	if (displaystate.activate) {
-		(*displaystate.activate)();
+	if (displaystate.actions.activate) {
+		(*displaystate.actions.activate)();
 	}
 
 	/*Register with logic.c as observer */
@@ -135,8 +123,8 @@ int tearDownDisplay(void) {
  * Gets constantly called by controller.c
  */
 int runUserInterface(void) {
-	if (displaystate.run) {
-			(*displaystate.run)();
+	if (displaystate.actions.run) {
+			(*displaystate.actions.run)();
 		}
 	else {
 		return FALSE;
