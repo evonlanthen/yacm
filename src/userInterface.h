@@ -8,11 +8,20 @@
 #ifndef USERINTERFACE_H_
 #define USERINTERFACE_H_
 
+#ifdef CARME
+ #define POWER_SWITCH		SWITCH_4
+ #define POWER_SWITCH_TEXT	S4
+#elif defined(ORCHID)
+ #define POWER_SWITCH		SWITCH_1
+ #define POWER_SWITCH_TEXT	S1
+#endif
+
 /* Some window related constants */
 #define WIN_BORDER	5
 /* Define font name and location */
 #define FONTNAME	"/usr/fonts/truetype/arial.ttf"
 
+#define MWINCLUDECOLORS
 #include "nano-X.h"
 
 /**

@@ -46,7 +46,8 @@ void setCallViewActions(void) {
 
 /**
  * Update current view on display
- * This function gets registered in logic.c as an observer
+ * This function is registered in logic.c as an observer
+ * and gets triggered as a change occurs.
  */
 void updateView() {
 	struct CoffeeMakerViewModel newCoffeeMaker;

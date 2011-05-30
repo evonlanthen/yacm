@@ -5,10 +5,8 @@
  * @brief  Defines the Init view for userInterface.c
  */
 
-#define MWINCLUDECOLORS
 #include "defines.h"
 #include "userInterface.h"
-#include "nano-X.h"
 
 static void run(void) {
 

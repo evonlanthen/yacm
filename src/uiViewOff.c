@@ -5,12 +5,17 @@
  * @brief  Defines the Off view for userInterface.c
  */
 
-#define MWINCLUDECOLORS
 #include "defines.h"
 #include "userInterface.h"
-#include "nano-X.h"
+#include "inputController.h"
+#include "ledController.h"
+#include "logic.h"
 
 static void run(void) {
+	/* Did someone turn the coffeemaker on? */
+	if (getSwitchState(POWER_SWITCH) == switch_on) {
+		switchOn();
+	}
 
 }
 
@@ -25,7 +30,6 @@ static void activate(void) {
 	GrSetGCFont(displaystate->gContextID, displaystate->font);
 	GrText(displaystate->gWinID, displaystate->gContextID, 120, 30, "Power Off!", -1, GR_TFASCII | GR_TFTOP);
 	GrDestroyFont(displaystate->font);
-
 }
 
 static void deactivate(void) {
