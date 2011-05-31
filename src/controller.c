@@ -7,9 +7,10 @@
  * Initializes and controls the application. Contains the entry point.
  */
 
-#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <signal.h>
 
 #include "defines.h"
 #include "logic.h"
@@ -21,8 +22,16 @@
 #include "timer.h"
 #include "mmap.h"
 
-//#define ELMITESTS
+#define ELMITESTS
 //#define TONITESTS
+
+static volatile int ctrlCPressed = FALSE;
+
+static void sigCtrlC(int sig)
+{
+	ctrlCPressed = TRUE;
+	(void) signal(SIGINT, SIG_DFL);
+}
 
 static void setUpSubsystems();
 static void tearDownSubsystems();
@@ -54,7 +63,7 @@ int main(int argc, char* argv[]) {
 	// check switches:
 	enum SwitchState switchState = getSwitchState(SWITCH_2);
 	if (switchState == switch_on) {
-		printf("Switch 2 is on\n");
+		printf("Switch 2 is on, setting LED_2 on\n");
 		updateLed(LED_2, led_on);
 	} else if (switchState == switch_off){
 		printf("Switch 2 is off\n");
@@ -90,7 +99,7 @@ int main(int argc, char* argv[]) {
 	printf("Setting led3 blinking...\n");
 	setBlinkingFreq(LED_3, 500, 500);
 	updateLed(LED_3, led_blinking);
-	TimerDescriptor timer = setUpTimer(10000);
+	TIMER timer = setUpTimer(10000);
 	while (!isTimerElapsed(timer)) {
 		updateAllLeds();
 	}
@@ -118,12 +127,15 @@ int main(int argc, char* argv[]) {
 
 #endif
 
-	while (TRUE) {
+	(void) signal(SIGINT, sigCtrlC);
+
+	while (!ctrlCPressed) {
 		// Propagate "heartbeat"
 		runUserInterface();
 		runBusinessLogic();
 	}
 
+	printf("\nShutting down system...\n");
 	tearDownSubsystems();
 
 	exit(0);

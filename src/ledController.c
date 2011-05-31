@@ -13,6 +13,7 @@
 #include "types.h"
 #include "ledController.h"
 #include "timer.h"
+#include "mmap.h"
 
 #ifdef CARME
  #include "carme.h"
@@ -28,12 +29,12 @@ typedef struct {
 	int durationOn;
 	int durationOff;
 	int blinkingState;
-	TimerDescriptor timer;
+	TIMER timer;
 } LedDescriptor;
 
 extern void *mmap_base;
 static LedDescriptor leds[NUM_OF_LEDS];
-static isLedControllerSetUp = FALSE;
+static int isLedControllerSetUp = FALSE;
 
 int setUpLedController(void)
 {
@@ -57,7 +58,7 @@ int setUpLedController(void)
 		leds[i].durationOn = 1000;
 		leds[i].durationOff = 1000;
 		leds[i].blinkingState = led_off;
-		leds[i].timer = setUpTimer(0);
+		leds[i].timer = NULL;
 	}
 	updateAllLeds();
 	isLedControllerSetUp = TRUE;
@@ -73,7 +74,8 @@ int tearDownLedController(void)
 		leds[i].durationOn = 0;
 		leds[i].durationOff = 0;
 		leds[i].blinkingState = led_off;
-		leds[i].timer = setUpTimer(0);
+		tearDownTimer(leds[i].timer);
+		leds[i].timer = NULL;
 	}
 	updateAllLeds();
 	isLedControllerSetUp = FALSE;
@@ -85,7 +87,7 @@ int updateBlinkingState(LedDescriptor *led) {
 		return FALSE;
 	}
 	// check if current timer is elapsed:
-	if (isTimerElapsed(led->timer)) {
+	if (led->timer == NULL || isTimerElapsed(led->timer)) {
 		// state was led on, set new timer for duration led off:
 		if (led->blinkingState == led_on) {
 			led->blinkingState = led_off;
@@ -103,7 +105,8 @@ int updateAllLeds() {
 	if (!isLedControllerSetUp) {
 		return FALSE;
 	}
-	int ret = TRUE, newStates = 0;
+	UINT8 newStates = 0;
+	int ret = TRUE;
 	LedDescriptor *led;
 
 	// update structure:
