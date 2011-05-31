@@ -13,7 +13,7 @@
 /**
  * Define the BOARD to use (CARME or ORCHID)
  */
-#define	ORCHID
+#define ORCHID
 #undef CARME
 
 /**
