@@ -35,10 +35,13 @@ TIMER setUpTimer(unsigned int time) {
 	return timerDescriptor;
 }
 
-void tearDownTimer(TIMER timer) {
-	if (timer != NULL) {
-		free(timer);
+int tearDownTimer(TIMER timer) {
+	if (timer == NULL) {
+		return FALSE;
 	}
+
+	free(timer);
+	return TRUE;
 }
 int isTimerElapsed(TIMER timer) {
 	struct timeval tv;

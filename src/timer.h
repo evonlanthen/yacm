@@ -22,7 +22,7 @@ typedef void* TIMER;
  */
 TIMER setUpTimer(unsigned int time);
 
-void tearDownTimer(TIMER timer);
+int tearDownTimer(TIMER timer);
 
 /**
  * Check if timer is elapsed.
