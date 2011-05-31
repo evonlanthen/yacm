@@ -16,7 +16,7 @@
 
 #define RUN_INTERVAL	800
 
-static TimerDescriptor initTimer;
+static TIMER initTimer;
 static int intervals = 0;
 
 static void run(void) {
