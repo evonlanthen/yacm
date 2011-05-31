@@ -48,10 +48,10 @@ extern int setUpDisplay(void);
 extern int tearDownDisplay(void);
 
 struct callViewActions {
+	callViewAction	run;
 	callViewAction	activate;
 	callViewAction	deactivate;
 	callViewAction	update;
-	callViewAction	run;
 };
 
 struct DisplayState {

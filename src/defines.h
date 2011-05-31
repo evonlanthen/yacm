@@ -17,6 +17,11 @@
 #undef CARME
 
 /**
+ * Debug mode?
+ */
+//#define DEBUG
+
+/**
  * Define symbols for the boolean values true and false
  */
 #define TRUE 1
