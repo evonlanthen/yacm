@@ -12,7 +12,7 @@
 #include "machineController.h"
 #include "timer.h"
 
-static TimerDescriptor timer;
+static TIMER timer;
 static int isMachineControllerSetUp = FALSE;
 
 int setUpMachineController(void)
@@ -57,7 +57,7 @@ int stopMachine(void)
 	if (!isMachineControllerSetUp) {
 		return FALSE;
 	}
-	timer = setUpTimer(0);
+	timer = NULL;
 	return TRUE;
 }
 

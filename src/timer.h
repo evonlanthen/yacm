@@ -10,10 +10,7 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-typedef struct {
-	unsigned long startTime;
-	unsigned long endTime;
-} TimerDescriptor;
+typedef void* TIMER;
 
 /**
  * Set up timer
@@ -23,7 +20,9 @@ typedef struct {
  * @param time Time in milliseconds
  * @return Returns timer description structure
  */
-TimerDescriptor setUpTimer(unsigned int time);
+TIMER setUpTimer(unsigned int time);
+
+TIMER tearDownTimer(TIMER timer);
 
 /**
  * Check if timer is elapsed.
@@ -31,14 +30,6 @@ TimerDescriptor setUpTimer(unsigned int time);
  * @param TimerDescriptor Timer descriptor structure
  * @return Returns TRUE if time is elapsed and FALSE if not
  */
-int isTimerElapsed(TimerDescriptor timerDescriptor);
-
-/**
- * Check if timer is elapsed.
- *
- * @param TimerDescriptor Timer descriptor structure
- * @return Returns TRUE if time is elapsed and FALSE if not
- */
-int isTimerElapsed(TimerDescriptor timerDescriptor);
+int isTimerElapsed(TIMER timer);
 
 #endif /* TIMER_H_ */
