@@ -13,13 +13,13 @@
 /**
  * Define the BOARD to use (CARME or ORCHID)
  */
-#define	ORCHID
+#define ORCHID
 #undef CARME
 
 /**
  * Debug mode?
  */
-#define DEBUG
+//#define DEBUG
 
 /**
  * Define symbols for the boolean values true and false
