@@ -21,9 +21,10 @@ TIMER setUpTimer(unsigned int time) {
 	TimerDescriptor *timerDescriptor = malloc(sizeof(TimerDescriptor));
 	struct timeval tv;
 
-	//if (timerDescriptor == NULL) {
-	//	return NULL;
-	//}
+	if (timerDescriptor == NULL) {
+		return NULL;
+	}
+
 	// get current time as timeval structure:
 	gettimeofday(&tv, NULL);
 
@@ -35,13 +36,13 @@ TIMER setUpTimer(unsigned int time) {
 	return timerDescriptor;
 }
 
-int tearDownTimer(TIMER timer) {
+TIMER tearDownTimer(TIMER timer) {
 	if (timer == NULL) {
-		return FALSE;
+		return NULL;
 	}
 
 	free(timer);
-	return TRUE;
+	return NULL;
 }
 int isTimerElapsed(TIMER timer) {
 	struct timeval tv;
