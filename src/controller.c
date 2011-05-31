@@ -22,7 +22,7 @@
 #include "timer.h"
 #include "mmap.h"
 
-#define ELMITESTS
+//#define ELMITESTS
 //#define TONITESTS
 
 static volatile int ctrlCPressed = FALSE;
