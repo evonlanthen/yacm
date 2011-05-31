@@ -23,6 +23,8 @@ static struct DisplayState displaystate;
 
 /* current CoffeMaker state */
 static struct CoffeeMakerViewModel coffeemaker;
+/* CoffeMaker state after a change */
+struct CoffeeMakerViewModel newCoffeeMaker;
 
 /**
  * Set correct Action pointers for active view in displaystate
@@ -50,7 +52,6 @@ void setCallViewActions(void) {
  * and gets triggered as a change occurs.
  */
 void updateView() {
-	struct CoffeeMakerViewModel newCoffeeMaker;
 	/* get the current state and update*/
 	newCoffeeMaker = getCoffeeMakerViewModel();
 	/*Did we change state?*/
@@ -67,6 +68,11 @@ void updateView() {
 			(*displaystate.actions.activate)();
 		}
 
+	}
+	else {
+		if (displaystate.actions.update) {
+			(*displaystate.actions.update)();
+		}
 	}
 
 	/* Finally clean old values with updated model*/

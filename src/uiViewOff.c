@@ -5,6 +5,7 @@
  * @brief  Defines the Off view for userInterface.c
  */
 
+#include <stdio.h>
 #include "defines.h"
 #include "userInterface.h"
 #include "inputController.h"
@@ -14,6 +15,9 @@
 static void run(void) {
 	/* Did someone turn the coffeemaker on? */
 	if (getSwitchState(POWER_SWITCH) == switch_on) {
+#ifdef DEBUG
+		printf("Detected power switch to on\n");
+#endif
 		switchOn();
 	}
 
@@ -30,10 +34,14 @@ static void activate(void) {
 	GrSetGCFont(displaystate->gContextID, displaystate->font);
 	GrText(displaystate->gWinID, displaystate->gContextID, 120, 30, "Power Off!", -1, GR_TFASCII | GR_TFTOP);
 	GrDestroyFont(displaystate->font);
+	/* turn of power led */
+	updateLed(POWER_LED,led_off);
 }
 
 static void deactivate(void) {
-
+	struct DisplayState *displaystate = getDisplayState();
+	/*Clear screen*/
+	GrClearWindow(displaystate->gWinID,GR_FALSE);
 }
 
 static void update(void) {

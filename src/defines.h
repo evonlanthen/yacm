@@ -19,7 +19,7 @@
 /**
  * Debug mode?
  */
-//#define DEBUG
+#define DEBUG
 
 /**
  * Define symbols for the boolean values true and false

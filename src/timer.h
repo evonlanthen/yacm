@@ -35,7 +35,7 @@ int isTimerElapsed(TimerDescriptor timerDescriptor);
 
 /**
  * Check if timer is elapsed.
- *
+ * TODO: is this not the same function as above?
  * @param TimerDescriptor Timer descriptor structure
  * @return Returns TRUE if time is elapsed and FALSE if not
  */

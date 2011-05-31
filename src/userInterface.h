@@ -11,9 +11,11 @@
 #ifdef CARME
  #define POWER_SWITCH		SWITCH_4
  #define POWER_SWITCH_TEXT	S4
+ #define POWER_LED			LED_4
 #elif defined(ORCHID)
  #define POWER_SWITCH		SWITCH_1
  #define POWER_SWITCH_TEXT	S1
+ #define POWER_LED			LED_1
 #endif
 
 /* Some window related constants */
