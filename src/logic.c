@@ -25,6 +25,57 @@
 
 static int isBusinessLogicSetUp = FALSE;
 
+// Business model
+/**
+ * Represents the coffee ingredient.
+ */
+struct Coffee {
+	int isAvailable;
+	int emptyTankSensorId;
+};
+
+/**
+ * Represents the milk ingredient.
+ */
+struct Milk {
+	int isAvailable;
+	int emptyTankSensorId;
+};
+
+/**
+ * Represents a product definition.
+ */
+struct Product {
+	char name[256];
+};
+
+struct ProductListElement {
+	struct Product *product;
+	struct ProductListElement *next;
+};
+
+/**
+ * Represents an ongoing coffee making process instance.
+ *
+ */
+struct MakeCoffeeProcessInstance {
+	struct Product *product;
+	int withMilk;
+	enum CoffeeMakingActivity currentActivity;
+};
+
+/**
+ * Represents the coffee maker.
+ */
+struct CoffeeMaker {
+	enum CoffeeMakerState state;
+	struct Coffee coffee;
+	struct Milk milk;
+	struct ProductListElement *products;
+	enum MilkPreselectionState milkPreselectionState;
+	struct MakeCoffeeProcessInstance *ongoingCoffeeMaking;
+};
+
 // Model observers
 static NotifyModelChanged observer;
 static void notifyObservers();

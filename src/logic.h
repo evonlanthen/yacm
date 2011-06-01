@@ -1,8 +1,12 @@
-/*
- * logic.h
+/**
+ * Business logic
  *
- *  Created on: May 25, 2011
- *      Author: Ronny Stauffer (staur3@bfh.ch)
+ * Contains the business logic.
+ *
+ * @file    logic.h
+ * @version 0.1
+ * @author  Ronny Stauffer (staur3@bfh.ch)
+ * @date    May 23, 2011
  */
 
 #ifndef LOGIC_H_
@@ -20,6 +24,10 @@ extern int setUpBusinessLogic();
  */
 extern int tearDownBusinessLogic();
 
+/**
+ * Heartbeat function for ongoing business logic tasks.
+ * Gets constantly called by controller.c
+ */
 extern void runBusinessLogic();
 
 /**
