@@ -74,7 +74,8 @@ int tearDownLedController(void)
 		leds[i].durationOn = 0;
 		leds[i].durationOff = 0;
 		leds[i].blinkingState = led_off;
-		leds[i].timer = tearDownTimer(leds[i].timer);
+		abortTimer(leds[i].timer);
+		leds[i].timer = NULL;
 	}
 	updateAllLeds();
 	isLedControllerSetUp = FALSE;
