@@ -31,6 +31,7 @@ enum MilkPreselectionState {
  */
 struct Coffee {
 	int isAvailable;
+	int emptyTankSensorId;
 };
 
 /**
@@ -38,6 +39,7 @@ struct Coffee {
  */
 struct Milk {
 	int isAvailable;
+	int emptyTankSensorId;
 };
 
 /**
@@ -53,11 +55,12 @@ struct ProductListElement {
 };
 
 enum CoffeeMakingActivity {
-	coffeeMakingActivity_undefined,
 	coffeeMakingActivity_warmingUp,
+	coffeeMakingActivity_withMilkGateway,
 	coffeeMakingActivity_deliveringMilk,
 	coffeeMakingActivity_deliveringCoffee,
-	coffeeMakingActivity_finished
+	coffeeMakingActivity_finished,
+	coffeeMakingActivity_undefined
 };
 
 /**
@@ -65,6 +68,8 @@ enum CoffeeMakingActivity {
  *
  */
 struct MakeCoffeeProcessInstance {
+	struct Product *product;
+	int withMilk;
 	enum CoffeeMakingActivity currentActivity;
 };
 
@@ -124,6 +129,8 @@ struct ProductViewModel {
  * Represents an ongoing coffee making process instance to a view.
  */
 struct MakeCoffeeProcessInstanceViewModel {
+	unsigned int productIndex;
+	int withMilk;
 	enum CoffeeMakingActivity currentActivity;
 };
 

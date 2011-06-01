@@ -64,13 +64,6 @@ extern void switchOn();
 extern void switchOff();
 
 /**
- * Sets the coffee maker's state.
- * @param state The coffee maker's state.
- */
-// TODO Remove this method.
-extern void setCoffeeMakerState(enum CoffeeMakerState state);
-
-/**
  * Sets the milk preselection state.
  * @param @state The milk preselection state.
  */
