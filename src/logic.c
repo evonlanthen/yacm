@@ -566,11 +566,13 @@ static State idleState = {
 // Producing state
 static int producingStatePrecondition() {
 	// Only start production if...
+	// - no coffee making process is already running
 	// - coffee is available (coffee tank is not empty)
 	// - milk preselection is off or
 	//   milk is available (milk tank is not emtpy)
 	// - selected product is defined
-	return coffeeMaker.coffee.isAvailable
+	return !coffeeMaker.ongoingCoffeeMaking
+		&& coffeeMaker.coffee.isAvailable
 		&& (coffeeMaker.milkPreselectionState != milkPreselection_on || coffeeMaker.milk.isAvailable)
 		&& selectedProductIndex < getNumberOfProducts();
 }
