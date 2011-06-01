@@ -17,12 +17,11 @@
 #include "sensorController.h"
 #include "machineController.h"
 
+// Durations
 #define INITIALIZING_DURATION 2000
 #define WARMING_UP_DURATION 1000
 #define DELIVERING_MILK_DURATION 2000
 #define DELIVERING_COFFEE_DURATION 5000
-
-#define DATA_STRUCTURE_IMPLEMENTATION
 
 // Model observers
 static NotifyModelChanged observer;
@@ -71,7 +70,7 @@ static void checkIngredientTankSensors();
 // Timers
 static TIMER initTimer;
 static TIMER warmingUpTimer;
-static TIMER deliveringMilkTimer;
+//static TIMER deliveringMilkTimer;
 
 /**
  * Notify the model observers of a model change.
@@ -324,26 +323,10 @@ struct MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewMode
 
 
 void switchOn() {
-	//if (!(coffeeMaker.state = coffeeMaker_off)) {
-	//	return;
-	//}
-
-	//coffeeMaker.state = coffeeMaker_initializing;
-
-	//notifyObservers();
-
-	//initTimer = setUpTimer(INITIALIZING_DURATION);
 	processEvent(event_switchedOn);
 }
 
 void switchOff() {
-	//if (!(coffeeMaker.state = coffeeMaker_idle || coffeeMaker.state == coffeeMaker_producing)) {
-	//	return;
-	//}
-
-	//coffeeMaker.state = coffeeMaker_off;
-
-	//notifyObservers();
 	processEvent(event_switchedOff);
 }
 
@@ -366,64 +349,7 @@ void abortMakingCoffee() {
 
 
 
-#ifdef SWITCH_IMPLEMENTATION
-void runBusinessLogic() {
-	// Check empty ingredient tank sensors
 
-	// Check timers
-	if (coffeeMaker.state == coffeeMaker_initializing) {
-		if (isTimerElapsed(initTimer)) {
-			//coffeeMaker.state = coffeeMaker_idle;
-
-			//notifyObservers();
-			processEvent(event_isInitialized);
-		}
-	}
-
-	// Run possibly ongoing coffee making process instance
-}
-
-static void processEvent(Event event) {
-	switch (coffeeMaker.state) {
-	case coffeeMaker_off:
-		switch (event) {
-		case event_switchedOn:
-			coffeeMaker.state = coffeeMaker_initializing;
-			initTimer = setUpTimer(2000);
-			notifyObservers();
-			break;
-		}
-		break;
-	case coffeeMaker_initializing:
-		switch (event) {
-		case event_isInitialized:
-			coffeeMaker.state = coffeeMaker_idle;
-			notifyObservers();
-			break;
-		}
-		break;
-	case coffeeMaker_idle:
-		switch (event) {
-		case event_switchedOff:
-			coffeeMaker.state = coffeeMaker_off;
-			notifyObservers();
-			break;
-		}
-		break;
-	case coffeeMaker_producing:
-		switch (event) {
-		case event_switchedOff:
-			coffeeMaker.state = coffeeMaker_off;
-			notifyObservers();
-			break;
-		}
-		break;
-	}
-}
-#endif
-
-
-#ifdef DATA_STRUCTURE_IMPLEMENTATION
 // State machine runtime
 typedef int (*StatePrecondition)();
 typedef void (*StateAction)();
@@ -534,7 +460,6 @@ static void activateState(StateMachine *stateMachine, State *nextState) {
 		stateMachine->activeState->entryAction();
 	}
 }
-#endif
 
 
 
@@ -545,7 +470,6 @@ static void activateState(StateMachine *stateMachine, State *nextState) {
 
 
 
-#ifdef DATA_STRUCTURE_IMPLEMENTATION
 // State machines
 
 // Main state machine
@@ -600,8 +524,14 @@ static State idleState = {
 
 // Producing state
 static int producingStatePrecondition() {
+	// Only start production if...
+	// - coffee is available (coffee tank is not empty)
+	// - milk preselection is off or
+	//   milk is available (milk tank is not emtpy)
+	// - selected product is defined
 	return coffeeMaker.coffee.isAvailable
-		&& (coffeeMaker.milkPreselectionState != milkPreselection_on || coffeeMaker.milk.isAvailable);
+		&& (coffeeMaker.milkPreselectionState != milkPreselection_on || coffeeMaker.milk.isAvailable)
+		&& selectedProductIndex < getNumberOfProducts();
 }
 
 static void startMakeCoffeeProcess(unsigned int productIndex) {
@@ -848,7 +778,7 @@ void runBusinessLogic() {
 static void processEvent(Event event) {
 	processEventInt(&stateMachine, event);
 }
-#endif
+
 
 
 
