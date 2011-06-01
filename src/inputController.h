@@ -13,11 +13,12 @@
 #define INPUTCONTROLLER_H_
 
 #ifdef CARME
- /* Define swiches */
+ /* Define switches */
  #define SWITCH_1		(1 << 0)
  #define SWITCH_2		(1 << 1)
  #define SWITCH_3		(1 << 2)
  #define SWITCH_4		(1 << 3)
+ #define SWITCH_5		(1 << 4)
  /* Define buttons */
  #define BUTTON_1		(1 << 0)
  #define BUTTON_2		(1 << 1)
