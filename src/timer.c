@@ -17,6 +17,9 @@ typedef struct {
 	unsigned long endTime;
 } TimerDescriptor;
 
+/**
+ * @copydoc timer.h
+ */
 TIMER setUpTimer(unsigned int time) {
 	TimerDescriptor *timerDescriptor = malloc(sizeof(TimerDescriptor));
 	struct timeval tv;
@@ -36,14 +39,20 @@ TIMER setUpTimer(unsigned int time) {
 	return timerDescriptor;
 }
 
-TIMER tearDownTimer(TIMER timer) {
+/**
+ * @copydoc timer.h
+ */
+void abortTimer(TIMER timer) {
 	if (timer == NULL) {
-		return NULL;
+		return;
 	}
 
 	free(timer);
-	return NULL;
 }
+
+/**
+ * @copydoc timer.h
+ */
 int isTimerElapsed(TIMER timer) {
 	struct timeval tv;
 	unsigned long curTime;

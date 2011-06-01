@@ -18,18 +18,24 @@ typedef void* TIMER;
  * Starts the timer and returns timer description structure
  *
  * @param time Time in milliseconds
- * @return Returns timer description structure
+ * @return Returns pointer to timer description structure
  */
-TIMER setUpTimer(unsigned int time);
+extern TIMER setUpTimer(unsigned int time);
 
-TIMER tearDownTimer(TIMER timer);
+/**
+ * Free timer descriptor structure
+ *
+ * @param timer Pointer to timer descriptor structure
+ * @return Returns TRUE if freeing was successful
+ */
+extern void abortTimer(TIMER timer);
 
 /**
  * Check if timer is elapsed.
  *
- * @param TimerDescriptor Timer descriptor structure
+ * @param timer Pointer Timer descriptor structure
  * @return Returns TRUE if time is elapsed and FALSE if not
  */
-int isTimerElapsed(TIMER timer);
+extern int isTimerElapsed(TIMER timer);
 
 #endif /* TIMER_H_ */

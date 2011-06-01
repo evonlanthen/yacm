@@ -19,6 +19,9 @@
  #define SWITCH_3		(1 << 2)
  #define SWITCH_4		(1 << 3)
  #define SWITCH_5		(1 << 4)
+ #define SWITCH_6		(1 << 5)
+ #define SWITCH_7		(1 << 6)
+ #define SWITCH_8		(1 << 7)
  /* Define buttons */
  #define BUTTON_1		(1 << 0)
  #define BUTTON_2		(1 << 1)

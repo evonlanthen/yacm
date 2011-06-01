@@ -1,7 +1,5 @@
 /**
- * <short description>
- *
- * <long description>
+ * Initialize memory mapping
  *
  * @file    mmap.h
  * @version 0.1
