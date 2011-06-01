@@ -186,6 +186,45 @@ static struct Product * getProduct(unsigned int productIndex) {
 	return NULL;
 }
 
+
+
+
+
+
+
+
+int setUpBusinessLogic() {
+	// Check if business logic is already set up
+	if (isBusinessLogicSetUp) {
+		return FALSE;
+	}
+
+	// Load product definitions
+	setUpProducts();
+
+	isBusinessLogicSetUp = TRUE;
+
+	return TRUE;
+}
+
+int tearDownBusinessLogic() {
+	// Delete product definitions
+	struct ProductListElement *productListElement = coffeeMaker.products;
+	coffeeMaker.products = NULL;
+	while (productListElement) {
+		struct ProductListElement *next = productListElement->next;
+
+		deleteObject(productListElement->product);
+		deleteObject(productListElement);
+
+		productListElement = next;
+	}
+
+	isBusinessLogicSetUp = FALSE;
+
+	return TRUE;
+}
+
 /**
  * Sets up product definitions.
  * Preliminary the setup is done hardcoded.
@@ -222,46 +261,13 @@ static void setUpProducts() {
 
 
 
-
-
-
-
-int setUpBusinessLogic() {
-	// Check if business logic is already set up:
-	if (isBusinessLogicSetUp) {
-		return FALSE;
-	}
-
-	setUpProducts();
-
-	isBusinessLogicSetUp = TRUE;
-
-	return TRUE;
-}
-
-int tearDownBusinessLogic() {
-	// Delete product definitions
-	struct ProductListElement *productListElement = coffeeMaker.products;
-	coffeeMaker.products = NULL;
-	while (productListElement) {
-		struct ProductListElement *next = productListElement->next;
-
-		deleteObject(productListElement->product);
-		deleteObject(productListElement);
-
-		productListElement = next;
-	}
-
-	isBusinessLogicSetUp = FALSE;
-
-	return TRUE;
-}
-
 void registerModelObserver(NotifyModelChanged pObserver) {
 	observer = pObserver;
 }
 
 
+
+// View Model
 
 struct CoffeeMakerViewModel getCoffeeMakerViewModel() {
 	// Map to view model
@@ -308,7 +314,7 @@ struct MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewMode
 
 
 
-
+// Presentation interface
 
 void switchOn() {
 	processEvent(event_switchedOn);
@@ -338,7 +344,8 @@ void abortMakingCoffee() {
 
 
 
-// State machine runtime
+// State machine engine
+
 typedef int (*StatePrecondition)();
 typedef void (*StateAction)();
 typedef Event (*DoStateAction)();
@@ -749,7 +756,7 @@ static StateMachine coffeeMakingProcessMachine = {
 };
 
 
-
+// Logic
 
 void runBusinessLogic() {
 	if (!stateMachine.isInitialized) {
@@ -766,10 +773,6 @@ void runBusinessLogic() {
 static void processEvent(Event event) {
 	processEventInt(&stateMachine, event);
 }
-
-
-
-
 
 static void checkIngredientTankSensors() {
 	// Coffee sensor
