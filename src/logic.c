@@ -23,6 +23,8 @@
 #define DELIVERING_MILK_DURATION 2000
 #define DELIVERING_COFFEE_DURATION 5000
 
+static int isBusinessLogicSetUp = FALSE;
+
 // Model observers
 static NotifyModelChanged observer;
 static void notifyObservers();
@@ -33,7 +35,6 @@ static void deleteObject(void *object);
 
 // Product list helpers
 static unsigned int getNumberOfProducts();
-//static struct ProductListElement * getProductListElement(unsigned int productIndex);
 static struct Product * getProduct(unsigned int productIndex);
 
 // Model initialization
@@ -70,7 +71,6 @@ static void checkIngredientTankSensors();
 // Timers
 static TIMER initTimer;
 static TIMER warmingUpTimer;
-//static TIMER deliveringMilkTimer;
 
 /**
  * Notify the model observers of a model change.
@@ -192,35 +192,15 @@ static struct Product * getProduct(unsigned int productIndex) {
  * In the future definitions could possibly read from a file?
  */
 static void setUpProducts() {
-	//struct Product coffeeProduct = {
-	//		.name = "Coffee"
-	//};
 	struct Product *coffeeProduct = newObject(&(struct Product) {
 		.name = "Coffee"
 	}, sizeof(struct Product));
-	//struct Product espressoProduct = {
-	//		.name = "Espresso"
-	//};
 	struct Product *espressoProduct = newObject(&(struct Product) {
 		.name = "Espresso"
 	}, sizeof(struct Product));
-	//struct Product ristrettoProduct = {
-	//		.name = "Ristretto"
-	//};
 	struct Product *ristrettoProduct = newObject(&(struct Product) {
 		.name = "Ristretto"
 	}, sizeof(struct Product));
-	//struct ProductListElement ristrettoProductListElement = {
-	//		.product = &ristrettoProduct
-	//};
-	//struct ProductListElement espressoProductListElement = {
-	//		.product = &espressoProduct,
-	//		.next = &ristrettoProductListElement
-	//};
-	//struct ProductListElement coffeeProductListElement = {
-	//		.product = &coffeeProduct,
-	//		.next = &espressoProductListElement
-	//};
 	struct Product *products[] = {
 			coffeeProduct,
 			espressoProduct,
@@ -247,7 +227,14 @@ static void setUpProducts() {
 
 
 int setUpBusinessLogic() {
+	// Check if business logic is already set up:
+	if (isBusinessLogicSetUp) {
+		return FALSE;
+	}
+
 	setUpProducts();
+
+	isBusinessLogicSetUp = TRUE;
 
 	return TRUE;
 }
@@ -264,6 +251,8 @@ int tearDownBusinessLogic() {
 
 		productListElement = next;
 	}
+
+	isBusinessLogicSetUp = FALSE;
 
 	return TRUE;
 }
@@ -289,7 +278,6 @@ struct CoffeeMakerViewModel getCoffeeMakerViewModel() {
 }
 
 struct ProductViewModel getProductViewModel(unsigned int productIndex) {
-	//struct ProductListElement *productListElement = getProductListElement(productIndex);
 	struct Product *product = getProduct(productIndex);
 	if (product) {
 		// Map to view model
@@ -362,11 +350,6 @@ typedef struct {
 	DoStateAction doAction;
 	StateAction exitAction;
 } State;
-
-//typedef struct {
-//   enum  CoffeeMakerState  nextState;
-//   State *state;
-//} Transition;
 
 typedef struct {
 	int isInitialized;
@@ -669,14 +652,12 @@ static State withMilkGateway = {
 static void deliveringMilkActivityEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_deliveringMilk;
 
-	//deliveringMilkTimer = setUpTimer(2000);
 	startMachine(ingredient_milk, DELIVERING_MILK_DURATION);
 
 	notifyObservers();
 }
 
 static Event deliveringMilkActivityDoAction() {
-	//if (isTimerElapsed(deliveringMilkTimer)) {
 	if (!machineRunning()) {
 		return coffeeMakingEvent_milkDelivered;
 	}
