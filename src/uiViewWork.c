@@ -4,10 +4,23 @@
  * @date   May 23, 2011
  * @brief  Defines the Work view for userInterface.c
  */
+#include <stdio.h>
+#include <string.h>
 #include "defines.h"
 #include "userInterface.h"
+#include "inputController.h"
+#include "ledController.h"
+#include "logic.h"
+#include "timer.h"
 
 static void run(void) {
+	/* Did someone turn the coffeemaker off? */
+	if (getSwitchState(POWER_SWITCH) == switch_off) {
+#ifdef DEBUG
+		printf("Detected power switch to off\n");
+	#endif
+		switchOff();
+	}
 
 }
 
@@ -26,7 +39,9 @@ static void activate(void) {
 }
 
 static void deactivate(void) {
-
+	struct DisplayState *displaystate = getDisplayState();
+	/*Clear screen*/
+	GrClearWindow(displaystate->gWinID,GR_FALSE);
 }
 
 static void update(void) {
