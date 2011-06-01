@@ -43,12 +43,19 @@ int tearDownMachineController(void) {
 	return TRUE;
 }
 
-int startMachine(void)
+int startMachine(enum Ingredient ing, unsigned int time)
 {
 	if (!isMachineControllerSetUp) {
 		return FALSE;
 	}
-	timer = setUpTimer(COFFEE_MAKING_TIME);
+	if (ing == ingredient_coffee) {
+		printf("Output coffee...\n");
+	} else if (ing == ingredient_milk) {
+		printf("Output milk...\n");
+	} else {
+		printf("Unknown ingredient selected!\n");
+	}
+	timer = setUpTimer(time);
 	return TRUE;
 }
 
@@ -57,6 +64,7 @@ int stopMachine(void)
 	if (!isMachineControllerSetUp) {
 		return FALSE;
 	}
+	abortTimer(timer);
 	timer = NULL;
 	return TRUE;
 }

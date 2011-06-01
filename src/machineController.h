@@ -12,13 +12,15 @@
 #ifndef MACHINECONTROLLER_H_
 #define MACHINECONTROLLER_H_
 
+enum Ingredient {
+	ingredient_coffee = 0,
+	ingredient_milk
+};
+
 extern int setUpMachineController(void);
 extern int tearDownMachineController(void);
-extern int startMachine(void);
+extern int startMachine(enum Ingredient ing, unsigned int time);
 extern int stopMachine(void);
 extern int machineRunning(void);
-
-// Set coffee making time to 5 seconds:
-#define COFFEE_MAKING_TIME 5000
 
 #endif /* MACHINECONTROLLER_H_ */
