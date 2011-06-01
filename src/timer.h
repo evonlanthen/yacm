@@ -28,7 +28,7 @@ extern TIMER setUpTimer(unsigned int time);
  * @param timer Pointer to timer descriptor structure
  * @return Returns TRUE if freeing was successful
  */
-extern void abbortTimer(TIMER timer);
+extern void abortTimer(TIMER timer);
 
 /**
  * Check if timer is elapsed.
