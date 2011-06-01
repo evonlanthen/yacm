@@ -9,9 +9,9 @@
 #define USERINTERFACE_H_
 
 #ifdef CARME
- #define POWER_SWITCH		SWITCH_4
+ #define POWER_SWITCH		SWITCH_5
  #define POWER_SWITCH_TEXT	S4
- #define POWER_LED			LED_4
+ #define POWER_LED			LED_5
 #elif defined(ORCHID)
  #define POWER_SWITCH		SWITCH_1
  #define POWER_SWITCH_TEXT	S1

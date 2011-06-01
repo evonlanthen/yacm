@@ -14,7 +14,7 @@
 #include "logic.h"
 #include "timer.h"
 
-#define RUN_INTERVAL	800
+#define RUN_INTERVAL	200
 
 static TIMER initTimer;
 static int intervals = 0;

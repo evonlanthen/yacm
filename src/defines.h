@@ -13,8 +13,8 @@
 /**
  * Define the BOARD to use (CARME or ORCHID)
  */
-#define ORCHID
-#undef CARME
+#undef ORCHID
+#define CARME
 
 /**
  * Debug mode?
