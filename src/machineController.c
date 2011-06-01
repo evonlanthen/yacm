@@ -49,9 +49,9 @@ int startMachine(enum Ingredient ing, unsigned int time)
 		return FALSE;
 	}
 	if (ing == ingredient_coffee) {
-		printf("Output coffee...\n");
+		printf("Delivering coffee...\n");
 	} else if (ing == ingredient_milk) {
-		printf("Output milk...\n");
+		printf("Delivering milk...\n");
 	} else {
 		printf("Unknown ingredient selected!\n");
 	}
@@ -64,8 +64,10 @@ int stopMachine(void)
 	if (!isMachineControllerSetUp) {
 		return FALSE;
 	}
-	abortTimer(timer);
-	timer = NULL;
+	if (timer) {
+		abortTimer(timer);
+		timer = NULL;
+	}
 	return TRUE;
 }
 
@@ -74,9 +76,12 @@ int machineRunning(void)
 	if (!isMachineControllerSetUp) {
 		return FALSE;
 	}
-	if (isTimerElapsed(timer)) {
-		return FALSE;
-	} else {
-		return TRUE;
+	if (timer) {
+		if (!isTimerElapsed(timer)) {
+			return TRUE;
+		} else {
+			timer = NULL;
+		}
 	}
+	return FALSE;
 }

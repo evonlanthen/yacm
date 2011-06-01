@@ -572,6 +572,8 @@ static void abortMakeCoffeeProcessInstance() {
 
 static void producingStateExitAction() {
 	abortMakeCoffeeProcessInstance();
+
+	notifyObservers();
 }
 
 static State producingState = {
@@ -710,10 +712,15 @@ static Event deliveringCoffeeActivityDoAction() {
 	return coffeeMakingEvent_none;
 }
 
+static void deliveringCoffeeActivityExitAction() {
+	stopMachine();
+}
+
 static State deliveringCoffeeActivity = {
 	.stateIndex = coffeeMakingActivity_deliveringCoffee,
 	.entryAction = deliveringCoffeeActivityEntryAction,
-	.doAction = deliveringCoffeeActivityDoAction
+	.doAction = deliveringCoffeeActivityDoAction,
+	.exitAction = deliveringCoffeeActivityExitAction
 };
 
 // Finishing activity
