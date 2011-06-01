@@ -17,6 +17,11 @@
 #include "sensorController.h"
 #include "machineController.h"
 
+#define INITIALIZING_DURATION 2000
+#define WARMING_UP_DURATION 1000
+#define DELIVERING_MILK_DURATION 2000
+#define DELIVERING_COFFEE_DURATION 5000
+
 #define DATA_STRUCTURE_IMPLEMENTATION
 
 // Model observers
@@ -327,7 +332,7 @@ void switchOn() {
 
 	//notifyObservers();
 
-	//initTimer = setUpTimer(2000);
+	//initTimer = setUpTimer(INITIALIZING_DURATION);
 	processEvent(event_switchedOn);
 }
 
@@ -562,7 +567,7 @@ static State offState = {
 static void initializingStateEntryAction() {
 	coffeeMaker.state = coffeeMaker_initializing;
 
-	initTimer = setUpTimer(2000);
+	initTimer = setUpTimer(INITIALIZING_DURATION);
 
 	notifyObservers();
 }
@@ -693,7 +698,7 @@ static StateMachine stateMachine = {
 static void warmingUpActivityEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_warmingUp;
 
-	warmingUpTimer = setUpTimer(1000);
+	warmingUpTimer = setUpTimer(WARMING_UP_DURATION);
 
 	notifyObservers();
 }
@@ -732,15 +737,15 @@ static State withMilkGateway = {
 static void deliveringMilkActivityEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_deliveringMilk;
 
-	startMachine();
-
-	deliveringMilkTimer = setUpTimer(2000);
+	//deliveringMilkTimer = setUpTimer(2000);
+	startMachine(ingredient_milk, DELIVERING_MILK_DURATION);
 
 	notifyObservers();
 }
 
 static Event deliveringMilkActivityDoAction() {
-	if (isTimerElapsed(deliveringMilkTimer)) {
+	//if (isTimerElapsed(deliveringMilkTimer)) {
+	if (!machineRunning()) {
 		return coffeeMakingEvent_milkDelivered;
 	}
 
@@ -762,7 +767,7 @@ static State deliveringMilkActivity = {
 static void deliveringCoffeeActivityEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_deliveringCoffee;
 
-	startMachine();
+	startMachine(ingredient_coffee, DELIVERING_COFFEE_DURATION);
 
 	notifyObservers();
 }
