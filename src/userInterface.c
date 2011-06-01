@@ -120,7 +120,10 @@ int tearDownDisplay(void) {
 	/* Cleanup */
 	GrDestroyFont(displaystate.font);
 	GrDestroyGC(displaystate.gContextID);
-	GrClose();
+	/*Clear screen*/
+	GrClearWindow(displaystate.gWinID,GR_FALSE);
+	/*this function terminates the application, reason unknown*/
+	//GrClose();
 	return TRUE;
 
 }

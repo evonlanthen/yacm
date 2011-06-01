@@ -137,7 +137,9 @@ int main(int argc, char* argv[]) {
 
 	printf("\nShutting down system...\n");
 	tearDownSubsystems();
-
+#ifdef DEBUG
+	printf("Shutdown succesful, terminating!\n");
+#endif
 	exit(0);
 }
 

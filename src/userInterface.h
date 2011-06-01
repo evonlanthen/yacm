@@ -12,10 +12,18 @@
  #define POWER_SWITCH		SWITCH_5
  #define POWER_SWITCH_TEXT	S4
  #define POWER_LED			LED_5
+ #define PRODUCT_1_BUTTON	BUTTON_4
+ #define PRODUCT_2_BUTTON	BUTTON_3
+ #define PRODUCT_3_BUTTON	BUTTON_2
+ #define PRODUCT_4_BUTTON	BUTTON_1
 #elif defined(ORCHID)
  #define POWER_SWITCH		SWITCH_1
  #define POWER_SWITCH_TEXT	S1
  #define POWER_LED			LED_1
+ #define PRODUCT_1_BUTTON	BUTTON_4
+ #define PRODUCT_2_BUTTON	BUTTON_3
+ #define PRODUCT_3_BUTTON	BUTTON_2
+ #define PRODUCT_4_BUTTON	BUTTON_1
 #endif
 
 /* Some window related constants */
