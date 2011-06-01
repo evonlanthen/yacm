@@ -439,7 +439,7 @@ typedef struct {
 
 typedef struct {
 	int isInitialized;
-	unsigned int numberOfStates;
+	unsigned int numberOfEvents;
 	State *initialState;
 	State *activeState;
 	State *transitions[];
@@ -501,7 +501,7 @@ static void processEventInt(StateMachine *stateMachine, Event event) {
 	}
 
 	// Processing an event means looking up the state machine's next state in the transition table
-	State *nextState = stateMachine->transitions[stateMachine->activeState->stateIndex * stateMachine->numberOfStates + event];
+	State *nextState = stateMachine->transitions[stateMachine->activeState->stateIndex * stateMachine->numberOfEvents + event];
 	if (nextState) {
 		// If next state either has no precondition
 		// or the precondition is true...
@@ -648,7 +648,7 @@ static State producingState = {
 };
 
 static StateMachine stateMachine = {
-	.numberOfStates = 4,
+	.numberOfEvents = 7,
 	.initialState = &offState,
 //static State * stateTransitions[][event_none] = {
 	.transitions = {
@@ -794,7 +794,7 @@ static State finishingActivity = {
 };
 
 static StateMachine coffeeMakingProcessMachine = {
-	.numberOfStates = 4,
+	.numberOfEvents = 5,
 	.initialState = &warmingUpActivity,
 //static State * coffeeMakingActivityTransitions[][coffeeMakingEvent_none] = {
 	.transitions = {
