@@ -94,8 +94,11 @@ enum ButtonState getButtonState(int id)
 	 * (usleep for some microseconds would work as well) */
 	GPIO_read_button();
 	buttons = GPIO_read_button();
-	printf("Button value = 0x%02x\n", buttons);
-
+#ifdef DEBUG
+	if (buttons != 0) {
+		printf("Button value = 0x%02x\n", buttons);
+	}
+#endif
     if (buttons & id) {
     	return button_on;
     } else {

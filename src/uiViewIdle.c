@@ -38,19 +38,25 @@ static void run(void) {
 	if (getSwitchState(MILK_SWITCH) == switch_off) {
 		if (coffeemaker->milkPreselectionState == milkPreselection_on) {
 			setMilkPreselection(milkPreselection_off);
+#ifdef DEBUG
+			printf("uiViewIdle.c: Setting milkPreselection to off\n");
+#endif
 		}
 	}
-	else {
+	if (getSwitchState(MILK_SWITCH) == switch_on) {
 		if (coffeemaker->milkPreselectionState == milkPreselection_off) {
 			setMilkPreselection(milkPreselection_on);
+#ifdef DEBUG
+			printf("uiViewIdle.c: Setting milkPreselection to on\n");
+#endif
 		}
 	}
 }
 
-static void activate(void) {
-	CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
+static void update(void) {
 	DisplayState *displaystate = getDisplayState();
-	displaystate->gContextID = GrNewGC();
+	/*Clear screen*/
+	GrClearWindow(displaystate->gWinID,GR_FALSE);
 	/* Back- Foreground color related stuff */
 	GrSetGCForeground(displaystate->gContextID, YELLOW);
 	GrSetGCUseBackground(displaystate->gContextID, GR_FALSE);
@@ -59,21 +65,30 @@ static void activate(void) {
 	GrSetGCFont(displaystate->gContextID, displaystate->font);
 	GrText(displaystate->gWinID, displaystate->gContextID, 120, 30, "Product Selection:", -1, GR_TFASCII | GR_TFTOP);
 	GrDestroyFont(displaystate->font);
+	CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
+	int productNumber = coffeemaker->numberOfProducts;
+	if (productNumber > MAX_PRODUCTS) productNumber = MAX_PRODUCTS;
+	for (int i = 1; i < productNumber + 1;i++) {
+		showProduct(i);
+	}
 	if (coffeemaker->milkPreselectionState == milkPreselection_on) {
 		/* indicate milk selection on display*/
 		showMilkSelection(TRUE);
 	}
+	else {
+		showMilkSelection(FALSE);
+	}
+
+}
+
+static void activate(void) {
+	update();
 }
 
 static void deactivate(void) {
 	DisplayState *displaystate = getDisplayState();
 	/*Clear screen*/
 	GrClearWindow(displaystate->gWinID,GR_FALSE);
-}
-
-static void update(void) {
-	//TODO React on milk selection change
-
 }
 
 CallViewActions getViewIdleActions(void) {

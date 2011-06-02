@@ -30,6 +30,12 @@ static CoffeeMakerViewModel coffeemaker;
 /* CoffeMaker state after a change */
 static CoffeeMakerViewModel newCoffeeMaker;
 
+static char *buttonLabels[4] = {
+		PRODUCT_1_BUTTON_TEXT,
+		PRODUCT_2_BUTTON_TEXT,
+		PRODUCT_3_BUTTON_TEXT,
+		PRODUCT_4_BUTTON_TEXT
+};
 /**
  * Set correct Action pointers for active view in displaystate
  */
@@ -107,6 +113,10 @@ int setUpDisplay(void) {
 	/* Get a window handle */
 	displaystate.gWinID = GrNewWindow(GR_ROOT_WINDOW_ID, WIN_BORDER, WIN_BORDER, displaystate.winSizeX, displaystate.winSizeY, WIN_BORDER, BLACK, YELLOW);
 
+	/* Init graphic contexts*/
+	displaystate.gMilkSelID = GrNewGC();
+	displaystate.gContextID = GrNewGC();
+
 	/* Show the window */
 	GrMapWindow(displaystate.gWinID);
 	/* Show our initial state */
@@ -168,9 +178,8 @@ DisplayState * getDisplayState(void) {
 /**
  * Display milk selection state
  */
-extern void showMilkSelection(int state) {
+void showMilkSelection(int state) {
 	char milkStateText[30] = "no Milk";
-	displaystate.gMilkSelID = GrNewGC();
 	if (state) {
 		strcpy(milkStateText,"Milk");
 	}
@@ -188,5 +197,32 @@ extern void showMilkSelection(int state) {
 	else {
 		updateLed(MILK_LED, led_off);
 	}
+}
+
+/**
+ * Show Product X in view
+ * @param int productIndex (1-4)
+ */
+void showProduct(int productIndex) {
+	char productUseText[20] = "Press ";
+	int xPos = 40;
+	/*TODO Check with Ronny if ProductViewModel has an index starting with 1*/
+	if ((productIndex > 3) || (productIndex < 0)) return;
+	productIndex--;
+	strcat(productUseText, buttonLabels[productIndex]);
+	ProductViewModel product = getProductViewModel(productIndex);
+	xPos = xPos + (productIndex * 70);
+	displaystate.gProdID[productIndex] = GrNewGC();
+	/* Back- Foreground color related stuff */
+	GrSetGCForeground(displaystate.gProdID[productIndex], YELLOW);
+	GrSetGCUseBackground(displaystate.gProdID[productIndex], GR_FALSE);
+	/* Select fonts */
+	displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 12, NULL);
+	GrSetGCFont(displaystate.gProdID[productIndex], displaystate.font);
+	GrText(displaystate.gWinID, displaystate.gProdID[productIndex], xPos, 100, product.name, -1, GR_TFASCII | GR_TFTOP);
+	displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 10, NULL);
+	GrSetGCFont(displaystate.gProdID[productIndex], displaystate.font);
+	GrText(displaystate.gWinID, displaystate.gProdID[productIndex], xPos, 120, productUseText, -1, GR_TFASCII | GR_TFTOP);
+	GrDestroyFont(displaystate.font);
 }
 
