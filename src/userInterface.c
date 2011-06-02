@@ -8,6 +8,7 @@
 #define MWINCLUDECOLORS
 
 #include <string.h>
+#include <stdio.h>
 #include "defines.h"
 #include "nano-X.h"
 #include "model.h"
@@ -59,6 +60,9 @@ void updateView() {
 	newCoffeeMaker = getCoffeeMakerViewModel();
 	/*Did we change state?*/
 	if (newCoffeeMaker.state != coffeemaker.state) {
+#ifdef DEBUG
+		printf("Got new state: %d\n", newCoffeeMaker.state);
+#endif
 		/*Deactivate old view*/
 		if (displaystate.actions.deactivate) {
 			(*displaystate.actions.deactivate)();
