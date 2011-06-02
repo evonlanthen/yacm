@@ -58,9 +58,8 @@ int setUpMmap(void)
 		return(FALSE);
 	}
 
-	#ifdef ORCHID
-		GPIO_init();
-	#endif
+	/* Initialize GPIO: */
+	GPIO_init();
 
 	isMmapSetUp = TRUE;
 	return TRUE;
