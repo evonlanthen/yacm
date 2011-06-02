@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "defines.h"
 #include "types.h"
-#include "mmap.h"
+#include "hardwareController.h"
 #include "inputController.h"
 
 #ifdef CARME
@@ -20,8 +20,6 @@
 #endif
 
 static int isInputControllerSetUp = FALSE;
-extern void *mmap_base;
-extern void *mmap_base2;
 
 int setUpInputController(void)
 {
@@ -30,9 +28,9 @@ int setUpInputController(void)
 		return FALSE;
 	}
 
-	// check if memory mapping is already set up, if not try to set it up:
-	if (!getMmapSetUpState()) {
-		if (!setUpMmap()) {
+	// check if hardware is already initialized:
+	if (!getHardwareSetUpState()) {
+		if (!setUpHardwareController()) {
 			return FALSE;
 		}
 	}
@@ -81,6 +79,15 @@ enum ButtonState getButtonState(int id)
 	if (!isInputControllerSetUp) {
 		return button_unknown;
 	}
+
+	/* Button test on CARME board (Shell):
+	 * for i in 99 100 101 102; do
+	 *   echo $i > /sys/class/gpio/export
+	 *   echo in > /sys/class/gpio/gpio$i/direction
+	 *   cat /sys/class/gpio/gpio$i/value
+	 *   echo $i > /sys/class/gpio/unexport
+	 * done
+	 */
 
 	/* We use the GPIO functions for Orchid and CARME board.
 	 * It is important to read twice, else the result would not be reliable

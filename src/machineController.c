@@ -8,9 +8,9 @@
 #include <stdio.h>
 
 #include "defines.h"
-#include "mmap.h"
-#include "machineController.h"
 #include "timer.h"
+#include "hardwareController.h"
+#include "machineController.h"
 
 static TIMER timer;
 static int isMachineControllerSetUp = FALSE;
@@ -22,9 +22,9 @@ int setUpMachineController(void)
 		return FALSE;
 	}
 
-	// check if memory mapping is already set up, if not try to set it up:
-	if (!getMmapSetUpState()) {
-		if (!setUpMmap()) {
+	// check if hardware is already initialized:
+	if (!getHardwareSetUpState()) {
+		if (!setUpHardwareController()) {
 			return FALSE;
 		}
 	}

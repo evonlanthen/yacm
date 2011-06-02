@@ -15,7 +15,7 @@
 
 #include "defines.h"
 #include "types.h"
-#include "mmap.h"
+#include "hardwareController.h"
 
 #ifdef CARME
  #include "carme.h"
@@ -28,15 +28,15 @@
 #define MEM_DEV "/dev/mem"
 
 // needs to be global for gpio.c:
-char *mmap_base = NULL;
+void *mmap_base = NULL;
 
 static int fd_mem;
 static off_t io_base = IO_BASE;
-static int isMmapSetUp = FALSE;
+static int isHardwareSetUp = FALSE;
 
-int setUpMmap(void)
+int setUpHardwareController(void)
 {
-	if (isMmapSetUp) {
+	if (isHardwareSetUp) {
 		return FALSE;
 	}
 	/* Try to open the mem device special file */
@@ -59,24 +59,28 @@ int setUpMmap(void)
 	}
 
 	/* Initialize GPIO: */
+#ifdef CARME
+	initGPIO();
+#elif defined(ORCHID)
 	GPIO_init();
+#endif
 
-	isMmapSetUp = TRUE;
+	isHardwareSetUp = TRUE;
 	return TRUE;
 }
 
-int tearDownMmap(void)
+int tearDownHardwareController(void)
 {
-	if (!isMmapSetUp) {
+	if (!isHardwareSetUp) {
 		return FALSE;
 	}
 	munmap(mmap_base, MAP_SIZE);
 	close(fd_mem);
-	isMmapSetUp = FALSE;
+	isHardwareSetUp = FALSE;
 	return TRUE;
 }
 
-int getMmapSetUpState(void)
+int getHardwareSetUpState(void)
 {
-	return isMmapSetUp;
+	return isHardwareSetUp;
 }
