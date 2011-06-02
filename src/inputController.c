@@ -74,31 +74,29 @@ enum SwitchState getSwitchState(int id)
 
 enum ButtonState getButtonState(int id)
 {
-	UINT8 buttons;
+	UINT8 button;
 
 	if (!isInputControllerSetUp) {
 		return button_unknown;
 	}
 
-	/* Button test on CARME board (Shell):
-	 * for i in 99 100 101 102; do
-	 *   echo $i > /sys/class/gpio/export
-	 *   echo in > /sys/class/gpio/gpio$i/direction
-	 *   cat /sys/class/gpio/gpio$i/value
-	 *   echo $i > /sys/class/gpio/unexport
-	 * done
-	 */
-
-	/* We use the GPIO functions for Orchid and CARME board.
-	 * It is important to read twice, else the result would not be reliable
+#ifdef CARME
+	button = (UINT8) readGPIOButton(id);
+	if (button == 1) {
+		return button_on;
+	} else {
+		return button_off;
+	}
+#elif defined(ORCHID)
+	/* It is important to read twice, else the result would not be reliable
 	 * (usleep for some microseconds would work as well) */
 	GPIO_read_button();
-	buttons = GPIO_read_button();
-	printf("Button value = 0x%02x\n", buttons);
+	button = GPIO_read_button();
 
-    if (buttons & id) {
+    if (button & id) {
     	return button_on;
     } else {
     	return button_off;
     }
+#endif
 }

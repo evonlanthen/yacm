@@ -60,7 +60,7 @@ int setUpHardwareController(void)
 
 	/* Initialize GPIO: */
 #ifdef CARME
-	initGPIO();
+	setUpCarmeGPIO();
 #elif defined(ORCHID)
 	GPIO_init();
 #endif
@@ -76,6 +76,9 @@ int tearDownHardwareController(void)
 	}
 	munmap(mmap_base, MAP_SIZE);
 	close(fd_mem);
+#ifdef CARME
+	tearDownCarmeGPIO();
+#endif
 	isHardwareSetUp = FALSE;
 	return TRUE;
 }
