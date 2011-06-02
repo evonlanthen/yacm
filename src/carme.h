@@ -27,7 +27,8 @@
  *******************************************************************************
  */
 
-extern int initGPIO();
+extern int setUpCarmeGPIO();
+extern int tearDownCarmeGPIO();
 extern int readGPIOButton(int id);
 
 #endif /* CARME_H_ */

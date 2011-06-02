@@ -3,29 +3,44 @@
  *
  * <long description>
  *
- * @file    gpioCarme.c
+ * @file    carme.c
  * @version 0.1
  * @author  Elmar Vonlanthen (vonle1@bfh.ch)
  * @date    Jun 2, 2011
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
 
 #include "defines.h"
 #include "inputController.h"
 #include "carme.h"
 
-static int exportGPIO(int id) {
-	int exportFD;
+enum GPIOExportValue {
+	gpio_unexport = 0,
+	gpio_export
+};
 
-	exportFD = open("/sys/class/gpio/export", O_WRONLY);
+static int exportGPIO(int id, enum GPIOExportValue val) {
+	int exportFD;
+	char exportFileName[50];
+	char idStr[4];
+
+	if (val == gpio_export) {
+		strcpy(exportFileName, "/sys/class/gpio/export");
+	} else {
+		strcpy(exportFileName, "/sys/class/gpio/unexport");
+	}
+	exportFD = open(exportFileName, O_WRONLY);
 	if (exportFD < 0) {
-		printf("Cannot open GPIO to export %d\n", id);
+		printf("Cannot open file %s\n", exportFileName);
 		return FALSE;
 	}
-	write(exportFD, id, 4);
+	sprintf(idStr, "%d", id);
+	write(exportFD, idStr, 4);
 	close(exportFD);
 	return TRUE;
 }
@@ -33,10 +48,10 @@ static int exportGPIO(int id) {
 static int setGPIODirection(int id)
 {
 	int directionFD;
-	char *directionFileName;
+	char directionFileName[50];
 
 	/* Set direction to 'in' for reading its values */
-	directionFileName = sprintf("/sys/class/gpio/gpio%d/direction", id);
+	sprintf(directionFileName, "/sys/class/gpio/gpio%d/direction", id);
 	directionFD = open(directionFileName, O_WRONLY);
 	if (directionFD < 0) {
 		printf("Cannot open GPIO direction for %d\n", id);
@@ -47,9 +62,9 @@ static int setGPIODirection(int id)
 	return TRUE;
 }
 
-static int initButton(int id) {
+static int setUpButton(int id) {
 	/* Export button GPIO */
-	if (!exportGPIO(id)) {
+	if (!exportGPIO(id, gpio_export)) {
 		return FALSE;
 	}
 	/* Set button GPIO directions to in */
@@ -59,37 +74,59 @@ static int initButton(int id) {
 	return TRUE;
 }
 
-int initGPIO(void) {
+static int readGPIOValue(int id) {
+	int valueFD;
+	char valueFileName[50];
+	char value[3];
+
+	sprintf(valueFileName, "/sys/class/gpio/gpio%d/value", id);
+	valueFD = open(valueFileName, O_RDONLY);
+	if (valueFD < 0) {
+		printf("Cannot open GPIO value for %d\n", id);
+		return -1;
+	}
+	read(valueFD, value, 2);
+	close(valueFD);
+
+	return atoi(value);
+}
+
+int setUpCarmeGPIO(void) {
 	int ret = TRUE;
 
-	if (!initButton(BUTTON_1)) {
+	if (!setUpButton(BUTTON_1)) {
 		ret = FALSE;
 	}
-	if (!initButton(BUTTON_2)) {
+	if (!setUpButton(BUTTON_2)) {
 		ret = FALSE;
 	}
-	if (!initButton(BUTTON_3)) {
+	if (!setUpButton(BUTTON_3)) {
 		ret = FALSE;
 	}
-	if (!initButton(BUTTON_4)) {
+	if (!setUpButton(BUTTON_4)) {
 		ret = FALSE;
 	}
 	return ret;
 }
 
-int readGPIOValue(int id) {
-	int valueFD;
-	char *valueFileName;
-	volatile int value;
+int tearDownCarmeGPIO(void) {
+	int ret = TRUE;
 
-	valueFileName = sprintf("/sys/class/gpio/gpio%d/value", id);
-	valueFD = open(valueFileName, O_RDONLY);
-	if (valueFD < 0) {
-		printf("Cannot open GPIO value for %d\n", id);
-		return FALSE;
+	if (!exportGPIO(BUTTON_1, gpio_unexport)) {
+		ret = FALSE;
 	}
-	read(valueFD, &value, 2);
-	close(valueFD);
+	if (!exportGPIO(BUTTON_2, gpio_unexport)) {
+		ret = FALSE;
+	}
+	if (!exportGPIO(BUTTON_3, gpio_unexport)) {
+		ret = FALSE;
+	}
+	if (!exportGPIO(BUTTON_4, gpio_unexport)) {
+		ret = FALSE;
+	}
+	return ret;
+}
 
-	return value;
+int readGPIOButton(int id) {
+	return readGPIOValue(id);
 }

@@ -18,7 +18,7 @@ typedef struct {
 } TimerDescriptor;
 
 /**
- * @copydoc timer.h
+ * @copydoc setUpTimer
  */
 TIMER setUpTimer(unsigned int time) {
 	TimerDescriptor *timerDescriptor = malloc(sizeof(TimerDescriptor));
@@ -40,7 +40,7 @@ TIMER setUpTimer(unsigned int time) {
 }
 
 /**
- * @copydoc timer.h
+ * @copydoc abortTimer
  */
 void abortTimer(TIMER timer) {
 	if (timer == NULL) {
@@ -51,7 +51,7 @@ void abortTimer(TIMER timer) {
 }
 
 /**
- * @copydoc timer.h
+ * @copydoc isTimerElapsed
  */
 int isTimerElapsed(TIMER timer) {
 	struct timeval tv;
