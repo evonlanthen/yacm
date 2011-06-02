@@ -18,6 +18,10 @@
  #define PRODUCT_2_BUTTON	BUTTON_3
  #define PRODUCT_3_BUTTON	BUTTON_2
  #define PRODUCT_4_BUTTON	BUTTON_1
+ #define PRODUCT_1_BUTTON_TEXT	"T3"
+ #define PRODUCT_2_BUTTON_TEXT	"T2"
+ #define PRODUCT_3_BUTTON_TEXT	"T1"
+ #define PRODUCT_4_BUTTON_TEXT	"T0"
 #elif defined(ORCHID)
  #define POWER_SWITCH		SWITCH_1
  #define POWER_SWITCH_TEXT	S1
@@ -28,12 +32,19 @@
  #define PRODUCT_2_BUTTON	BUTTON_3
  #define PRODUCT_3_BUTTON	BUTTON_2
  #define PRODUCT_4_BUTTON	BUTTON_1
+ #define PRODUCT_1_BUTTON_TEXT	"S8"
+ #define PRODUCT_2_BUTTON_TEXT	"S7"
+ #define PRODUCT_3_BUTTON_TEXT	"S6"
+ #define PRODUCT_4_BUTTON_TEXT	"S5"
 #endif
 
 /* Some window related constants */
 #define WIN_BORDER	5
 /* Define font name and location */
 #define FONTNAME	"/usr/fonts/truetype/arial.ttf"
+
+/*maximum numbers of products able to display*/
+#define MAX_PRODUCTS 4
 
 #define MWINCLUDECOLORS
 #include "nano-X.h"
@@ -73,7 +84,7 @@ typedef struct {
 	GR_WINDOW_ID			gWinID;
 	GR_IMAGE_ID 			imageID;
 	GR_IMAGE_INFO 			imageInfo;
-	GR_GC_ID				gContextID, gMilkSelID, gRectID, gElliID, gElli2ID;
+	GR_GC_ID				gContextID, gMilkSelID, gProdID[4];
 	GR_EVENT	   			event;
 	GR_SCREEN_INFO  		screenInfo;
 	GR_FONT_ID				font;
@@ -97,6 +108,12 @@ extern CoffeeMakerViewModel * getCoffeeMakerState(void);
  * Display milk selection state
  */
 extern void showMilkSelection(int state);
+
+/**
+ * Show Product X in view
+ * @param int productIndex (1-4)
+ */
+extern void showProduct(int productIndex);
 
 /**
  * Get displaystate
