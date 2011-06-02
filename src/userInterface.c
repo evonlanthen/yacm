@@ -150,6 +150,7 @@ int runUserInterface(void) {
  */
 DisplayState * getDisplayState(void) {
 	return &displaystate;
+<<<<<<< HEAD
 }
 
 /**
@@ -183,5 +184,7 @@ extern void showMilkSelection(int state) {
 	else {
 		updateLed(MILK_LED, led_off);
 	}
+=======
+>>>>>>> branch 'master' of git@github.com:elmux/yacm.git
 }
 

@@ -84,6 +84,7 @@ typedef struct {
 /**
  * get displaystate pointer, gets called by uiView modules
  */
+<<<<<<< HEAD
 extern DisplayState* getDisplayState(void);
 
 /**
@@ -96,6 +97,9 @@ extern struct CoffeeMakerViewModel* getCoffeeMakerState(void);
  * Display milk selection state
  */
 extern void showMilkSelection(int state);
+=======
+extern DisplayState * getDisplayState(void);
+>>>>>>> branch 'master' of git@github.com:elmux/yacm.git
 
 /**
  * Heartbeat function for ongoing view tasks.

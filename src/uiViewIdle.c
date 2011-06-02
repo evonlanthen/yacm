@@ -49,7 +49,10 @@ static void run(void) {
 }
 
 static void activate(void) {
+<<<<<<< HEAD
 	struct CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
+=======
+>>>>>>> branch 'master' of git@github.com:elmux/yacm.git
 	DisplayState *displaystate = getDisplayState();
 	displaystate->gContextID = GrNewGC();
 	/* Back- Foreground color related stuff */
