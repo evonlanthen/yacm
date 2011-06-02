@@ -29,52 +29,52 @@ static int isBusinessLogicSetUp = FALSE;
 /**
  * Represents the coffee ingredient.
  */
-struct Coffee {
+typedef struct {
 	int isAvailable;
 	int emptyTankSensorId;
-};
+} Coffee;
 
 /**
  * Represents the milk ingredient.
  */
-struct Milk {
+typedef struct {
 	int isAvailable;
 	int emptyTankSensorId;
-};
+} Milk;
 
 /**
  * Represents a product definition.
  */
-struct Product {
+typedef struct {
 	char name[256];
-};
+} Product;
 
-struct ProductListElement {
-	struct Product *product;
+typedef struct ProductListElement {
+	Product *product;
 	struct ProductListElement *next;
-};
+} ProductListElement;
 
 /**
  * Represents an ongoing coffee making process instance.
  *
  */
-struct MakeCoffeeProcessInstance {
-	struct Product *product;
+typedef struct {
+	Product *product;
 	int withMilk;
-	enum CoffeeMakingActivity currentActivity;
-};
+	CoffeeMakingActivity currentActivity;
+} MakeCoffeeProcessInstance;
 
 /**
  * Represents the coffee maker.
  */
-struct CoffeeMaker {
-	enum CoffeeMakerState state;
-	struct Coffee coffee;
-	struct Milk milk;
-	struct ProductListElement *products;
-	enum MilkPreselectionState milkPreselectionState;
-	struct MakeCoffeeProcessInstance *ongoingCoffeeMaking;
-};
+typedef struct {
+	CoffeeMakerState state;
+	Coffee coffee;
+	Milk milk;
+	ProductListElement *products;
+	MilkPreselectionState milkPreselectionState;
+	MakeCoffeeProcessInstance *ongoingCoffeeMaking;
+} CoffeeMaker;
 
 // Model observers
 static NotifyModelChanged observer;
@@ -86,7 +86,7 @@ static void deleteObject(void *object);
 
 // Product list helpers
 static unsigned int getNumberOfProducts();
-static struct Product * getProduct(unsigned int productIndex);
+static Product * getProduct(unsigned int productIndex);
 
 // Model initialization
 static void setUpProducts();
@@ -136,7 +136,7 @@ static void notifyObservers() {
 /**
  * The coffee maker model instance.
  */
-static struct CoffeeMaker coffeeMaker = {
+static CoffeeMaker coffeeMaker = {
 		.state = coffeeMaker_off,
 		.coffee.isAvailable = TRUE,
 		.coffee.emptyTankSensorId = SENSOR_1,
@@ -156,17 +156,16 @@ static enum SensorState lastEmptyMilkTankSensorState = sensor_unknown;
 /**
  * Special case value for an undefined product definition.
  */
-//static struct ProductViewModel undefinedProduct = {
-#define UNDEFINED_PRODUCT (struct ProductViewModel){ \
+#define UNDEFINED_PRODUCT (ProductViewModel){ \
 		.name = "<undefined>" \
 }
 
 /**
  * Special case value for an inexistent coffee making process instance.
  */
-static struct MakeCoffeeProcessInstanceViewModel inexistentCoffeeMakingProcessInstance = {
-		.currentActivity = coffeeMakingActivity_undefined
-};
+#define INEXISTENT_COFFEE_MAKING_PROCESS_INSTANCE (MakeCoffeeProcessInstanceViewModel){ \
+		.currentActivity = coffeeMakingActivity_undefined \
+}
 
 
 
@@ -193,7 +192,7 @@ static void deleteObject(void *object) {
 static unsigned int getNumberOfProducts() {
 	unsigned int numberOfProducts = 0;
 
-	struct ProductListElement *productListElement = coffeeMaker.products;
+	ProductListElement *productListElement = coffeeMaker.products;
 	while (productListElement) {
 		numberOfProducts++;
 
@@ -203,10 +202,10 @@ static unsigned int getNumberOfProducts() {
 	return numberOfProducts;
 }
 
-static unsigned int getProductIndex(struct Product *product) {
+static unsigned int getProductIndex(Product *product) {
 	unsigned int productIndex = 0;
 
-	struct ProductListElement *productListElement = coffeeMaker.products;
+	ProductListElement *productListElement = coffeeMaker.products;
 	while (productListElement) {
 		if (productListElement->product == product) {
 			return productIndex;
@@ -220,10 +219,10 @@ static unsigned int getProductIndex(struct Product *product) {
 	return UNDEFINED_PRODUCT_INDEX;
 }
 
-static struct Product * getProduct(unsigned int productIndex) {
+static Product * getProduct(unsigned int productIndex) {
 	unsigned int i = 0;
 
-	struct ProductListElement *productListElement = coffeeMaker.products;
+	ProductListElement *productListElement = coffeeMaker.products;
 	while (productListElement) {
 		if (i == productIndex) {
 			return productListElement->product;
@@ -260,10 +259,10 @@ int setUpBusinessLogic() {
 
 int tearDownBusinessLogic() {
 	// Delete product definitions
-	struct ProductListElement *productListElement = coffeeMaker.products;
+	ProductListElement *productListElement = coffeeMaker.products;
 	coffeeMaker.products = NULL;
 	while (productListElement) {
-		struct ProductListElement *next = productListElement->next;
+		ProductListElement *next = productListElement->next;
 
 		deleteObject(productListElement->product);
 		deleteObject(productListElement);
@@ -282,27 +281,27 @@ int tearDownBusinessLogic() {
  * In the future definitions could possibly read from a file?
  */
 static void setUpProducts() {
-	struct Product *coffeeProduct = newObject(&(struct Product) {
+	Product *coffeeProduct = newObject(&(Product) {
 		.name = "Coffee"
-	}, sizeof(struct Product));
-	struct Product *espressoProduct = newObject(&(struct Product) {
+	}, sizeof(Product));
+	Product *espressoProduct = newObject(&(Product) {
 		.name = "Espresso"
-	}, sizeof(struct Product));
-	struct Product *ristrettoProduct = newObject(&(struct Product) {
+	}, sizeof(Product));
+	Product *ristrettoProduct = newObject(&(Product) {
 		.name = "Ristretto"
-	}, sizeof(struct Product));
-	struct Product *products[] = {
+	}, sizeof(Product));
+	Product *products[] = {
 			coffeeProduct,
 			espressoProduct,
 			ristrettoProduct
 	};
-	struct ProductListElement *nextProductListElement = NULL;
+	ProductListElement *nextProductListElement = NULL;
 	int i;
 	for (i = 2; i >= 0; i--) {
-		struct ProductListElement *productListElement = newObject(&(struct ProductListElement) {
+		ProductListElement *productListElement = newObject(&(ProductListElement) {
 			.product = products[i],
 			.next = nextProductListElement
-		}, sizeof(struct ProductListElement));
+		}, sizeof(ProductListElement));
 		nextProductListElement = productListElement;
 	}
 	coffeeMaker.products = nextProductListElement;
@@ -320,25 +319,25 @@ void registerModelObserver(NotifyModelChanged pObserver) {
 
 // View Model
 
-struct CoffeeMakerViewModel getCoffeeMakerViewModel() {
+CoffeeMakerViewModel getCoffeeMakerViewModel() {
 	// Map to view model
-	struct CoffeeMakerViewModel coffeeMakerViewModel = {
-			.state = coffeeMaker.state,
-			.isCoffeeAvailable = coffeeMaker.coffee.isAvailable,
-			.isMilkAvailable = coffeeMaker.milk.isAvailable,
-			.numberOfProducts = getNumberOfProducts(),
-			.milkPreselectionState = coffeeMaker.milkPreselectionState,
-			.isMakingCoffee = coffeeMaker.ongoingCoffeeMaking ? TRUE : FALSE
+	CoffeeMakerViewModel coffeeMakerViewModel = {
+		.state = coffeeMaker.state,
+		.isCoffeeAvailable = coffeeMaker.coffee.isAvailable,
+		.isMilkAvailable = coffeeMaker.milk.isAvailable,
+		.numberOfProducts = getNumberOfProducts(),
+		.milkPreselectionState = coffeeMaker.milkPreselectionState,
+		.isMakingCoffee = coffeeMaker.ongoingCoffeeMaking ? TRUE : FALSE
 	};
 
 	return coffeeMakerViewModel;
 }
 
-struct ProductViewModel getProductViewModel(unsigned int productIndex) {
-	struct Product *product = getProduct(productIndex);
+ProductViewModel getProductViewModel(unsigned int productIndex) {
+	 Product *product = getProduct(productIndex);
 	if (product) {
 		// Map to view model
-		struct ProductViewModel productViewModel = {
+		ProductViewModel productViewModel = {
 			//.name = product->name
 		};
 		strcpy(productViewModel.name, product->name);
@@ -349,18 +348,18 @@ struct ProductViewModel getProductViewModel(unsigned int productIndex) {
 	return UNDEFINED_PRODUCT;
 }
 
-struct MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewModel() {
+MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewModel() {
 	if (coffeeMaker.ongoingCoffeeMaking) {
-		struct MakeCoffeeProcessInstanceViewModel coffeeMakingViewModel = {
-				.productIndex =  getProductIndex(coffeeMaker.ongoingCoffeeMaking->product),
-				.withMilk = coffeeMaker.ongoingCoffeeMaking->withMilk,
-				.currentActivity = coffeeMaker.ongoingCoffeeMaking->currentActivity
+		MakeCoffeeProcessInstanceViewModel coffeeMakingViewModel = {
+			.productIndex =  getProductIndex(coffeeMaker.ongoingCoffeeMaking->product),
+			.withMilk = coffeeMaker.ongoingCoffeeMaking->withMilk,
+			.currentActivity = coffeeMaker.ongoingCoffeeMaking->currentActivity
 		};
 
 		return coffeeMakingViewModel;
 	}
 
-	return inexistentCoffeeMakingProcessInstance;
+	return INEXISTENT_COFFEE_MAKING_PROCESS_INSTANCE;
 }
 
 
@@ -375,7 +374,7 @@ void switchOff() {
 	processEvent(event_switchedOff);
 }
 
-void setMilkPreselection(enum MilkPreselectionState state) {
+void setMilkPreselection(MilkPreselectionState state) {
 	coffeeMaker.milkPreselectionState = state;
 
 	notifyObservers();
@@ -578,10 +577,10 @@ static int producingStatePrecondition() {
 }
 
 static void startMakeCoffeeProcess(unsigned int productIndex) {
-	coffeeMaker.ongoingCoffeeMaking = newObject(&(struct MakeCoffeeProcessInstance) {
+	coffeeMaker.ongoingCoffeeMaking = newObject(&(MakeCoffeeProcessInstance) {
 		.product = getProduct(productIndex),
 		.withMilk = coffeeMaker.milkPreselectionState = milkPreselection_on ? TRUE : FALSE
-	}, sizeof(struct MakeCoffeeProcessInstance));
+	}, sizeof(MakeCoffeeProcessInstance));
 
 	coffeeMaker.state = coffeeMaker_producing;
 

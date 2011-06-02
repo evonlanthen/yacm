@@ -22,9 +22,9 @@
 static struct DisplayState displaystate;
 
 /* current CoffeMaker state */
-static struct CoffeeMakerViewModel coffeemaker;
+static CoffeeMakerViewModel coffeemaker;
 /* CoffeMaker state after a change */
-struct CoffeeMakerViewModel newCoffeeMaker;
+CoffeeMakerViewModel newCoffeeMaker;
 
 /**
  * Set correct Action pointers for active view in displaystate
