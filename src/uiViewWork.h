@@ -8,6 +8,6 @@
 #ifndef UIVIEWWORK_H_
 #define UIVIEWWORK_H_
 
-extern struct callViewActions getViewWorkActions(void);
+extern CallViewActions getViewWorkActions(void);
 
 #endif /* UIVIEWWORK_H_ */

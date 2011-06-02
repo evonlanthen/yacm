@@ -11,7 +11,9 @@
 #ifdef CARME
  #define POWER_SWITCH		SWITCH_5
  #define POWER_SWITCH_TEXT	S4
+ #define MILK_SWITCH		SWITCH_6
  #define POWER_LED			LED_5
+ #define MILK_LED			LED_6
  #define PRODUCT_1_BUTTON	BUTTON_4
  #define PRODUCT_2_BUTTON	BUTTON_3
  #define PRODUCT_3_BUTTON	BUTTON_2
@@ -19,7 +21,9 @@
 #elif defined(ORCHID)
  #define POWER_SWITCH		SWITCH_1
  #define POWER_SWITCH_TEXT	S1
+ #define MILK_SWITCH		SWITCH_2
  #define POWER_LED			LED_1
+ #define MILK_LED			LED_2
  #define PRODUCT_1_BUTTON	BUTTON_4
  #define PRODUCT_2_BUTTON	BUTTON_3
  #define PRODUCT_3_BUTTON	BUTTON_2
@@ -33,11 +37,12 @@
 
 #define MWINCLUDECOLORS
 #include "nano-X.h"
+#include "model.h"
 
 /**
  * data type for a void function
  */
-typedef void (*callViewAction)();
+typedef void (*CallViewAction)();
 
 
 
@@ -57,38 +62,52 @@ extern int setUpDisplay(void);
  */
 extern int tearDownDisplay(void);
 
-struct callViewActions {
-	callViewAction	run;
-	callViewAction	activate;
-	callViewAction	deactivate;
-	callViewAction	update;
-};
+typedef struct {
+	CallViewAction	run;
+	CallViewAction	activate;
+	CallViewAction	deactivate;
+	CallViewAction	update;
+} CallViewActions;
 
-struct DisplayState {
+typedef struct {
 	GR_WINDOW_ID			gWinID;
 	GR_IMAGE_ID 			imageID;
 	GR_IMAGE_INFO 			imageInfo;
-	GR_GC_ID				gContextID, gTestID, gRectID, gElliID, gElli2ID;
+	GR_GC_ID				gContextID, gMilkSelID, gRectID, gElliID, gElli2ID;
 	GR_EVENT	   			event;
 	GR_SCREEN_INFO  		screenInfo;
 	GR_FONT_ID				font;
 	int						winSizeX, winSizeY;
-	struct callViewActions	actions;
-
-};
+	CallViewActions			actions;
+} DisplayState;
 
 
 /**
  * get displaystate pointer, gets called by uiView modules
  */
-extern struct DisplayState* getDisplayState(void);
+extern DisplayState* getDisplayState(void);
+
+/**
+ * get coffeemaker state reference
+ * called by uiView modules
+ */
+extern CoffeeMakerViewModel * getCoffeeMakerState(void);
+
+/**
+ * Display milk selection state
+ */
+extern void showMilkSelection(int state);
+
+/**
+ * Get displaystate
+ */
+extern DisplayState * getDisplayState(void);
 
 /**
  * Heartbeat function for ongoing view tasks.
  * Gets constantly called by controller.c
  */
 extern int runUserInterface(void);
-
 
 #endif /* USERINTERFACE_H_ */
 

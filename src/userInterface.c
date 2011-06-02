@@ -7,6 +7,7 @@
 
 #define MWINCLUDECOLORS
 
+#include <string.h>
 #include "defines.h"
 #include "nano-X.h"
 #include "model.h"
@@ -16,15 +17,17 @@
 #include "uiViewOff.h"
 #include "uiViewWork.h"
 #include "logic.h"
+#include "ledController.h"
 
 
 /* Current state of display with handles and elements */
-static struct DisplayState displaystate;
+static DisplayState displaystate;
 
 /* current CoffeMaker state */
 static CoffeeMakerViewModel coffeemaker;
+
 /* CoffeMaker state after a change */
-CoffeeMakerViewModel newCoffeeMaker;
+static CoffeeMakerViewModel newCoffeeMaker;
 
 /**
  * Set correct Action pointers for active view in displaystate
@@ -146,8 +149,40 @@ int runUserInterface(void) {
  * get displaystate reference
  * called by uiView modules
  */
-struct DisplayState* getDisplayState(void) {
+DisplayState * getDisplayState(void) {
 	return &displaystate;
+}
 
+/**
+ * get coffeemaker state reference
+ * called by uiView modules
+ */
+	CoffeeMakerViewModel* getCoffeeMakerState(void) {
+	return &coffeemaker;
+}
+
+/**
+ * Display milk selection state
+ */
+extern void showMilkSelection(int state) {
+	char milkStateText[30] = "no Milk";
+	displaystate.gMilkSelID = GrNewGC();
+	if (state) {
+		strcpy(milkStateText,"Milk");
+	}
+	/* Back- Foreground color related stuff */
+	GrSetGCForeground(displaystate.gMilkSelID, YELLOW);
+	GrSetGCUseBackground(displaystate.gMilkSelID, GR_FALSE);
+	/* Select fonts */
+	displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 12, NULL);
+	GrSetGCFont(displaystate.gMilkSelID, displaystate.font);
+	GrText(displaystate.gWinID, displaystate.gMilkSelID, 20, 60, milkStateText, -1, GR_TFASCII | GR_TFTOP);
+	GrDestroyFont(displaystate.font);
+	if (state) {
+		updateLed(MILK_LED, led_on);
+	}
+	else {
+		updateLed(MILK_LED, led_off);
+	}
 }
 

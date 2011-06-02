@@ -8,7 +8,6 @@
 #ifndef UIVIEWINIT_H_
 #define UIVIEWINIT_H_
 
-extern struct callViewActions getViewInitActions(void);
-
+extern CallViewActions getViewInitActions(void);
 
 #endif /* UIVIEWINIT_H_ */

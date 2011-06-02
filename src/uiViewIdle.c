@@ -14,6 +14,7 @@
 #include "timer.h"
 
 static void run(void) {
+	CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
 	/* Did someone turn the coffeemaker off? */
 	if (getSwitchState(POWER_SWITCH) == switch_off) {
 #ifdef DEBUG
@@ -33,10 +34,23 @@ static void run(void) {
 	if (getButtonState(PRODUCT_4_BUTTON) == button_on) {
 		startMakingCoffee(3);
 	}
+	/* Did someone use the milk selector? */
+	if (getSwitchState(MILK_SWITCH) == switch_off) {
+		if (coffeemaker->milkPreselectionState == milkPreselection_on) {
+			setMilkPreselection(milkPreselection_off);
+		}
+		switchOff();
+	}
+	else {
+		if (coffeemaker->milkPreselectionState == milkPreselection_off) {
+			setMilkPreselection(milkPreselection_on);
+		}
+	}
 }
 
 static void activate(void) {
-	struct DisplayState *displaystate = getDisplayState();
+	CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
+	DisplayState *displaystate = getDisplayState();
 	displaystate->gContextID = GrNewGC();
 	/* Back- Foreground color related stuff */
 	GrSetGCForeground(displaystate->gContextID, YELLOW);
@@ -46,20 +60,24 @@ static void activate(void) {
 	GrSetGCFont(displaystate->gContextID, displaystate->font);
 	GrText(displaystate->gWinID, displaystate->gContextID, 120, 30, "Product Selection:", -1, GR_TFASCII | GR_TFTOP);
 	GrDestroyFont(displaystate->font);
-
+	if (coffeemaker->milkPreselectionState == milkPreselection_on) {
+		/* indicate milk selection on display*/
+		showMilkSelection(TRUE);
+	}
 }
 
 static void deactivate(void) {
-	struct DisplayState *displaystate = getDisplayState();
+	DisplayState *displaystate = getDisplayState();
 	/*Clear screen*/
 	GrClearWindow(displaystate->gWinID,GR_FALSE);
 }
 
 static void update(void) {
+	//TODO React on milk selection change
 
 }
 
-struct callViewActions getViewIdleActions(void) {
-	struct callViewActions retval = { &run, &activate, &deactivate, &update };
+CallViewActions getViewIdleActions(void) {
+	CallViewActions retval = { &run, &activate, &deactivate, &update };
 	return retval;
 }

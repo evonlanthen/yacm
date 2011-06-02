@@ -8,6 +8,6 @@
 #ifndef UIVIEWIDLE_H_
 #define UIVIEWIDLE_H_
 
-extern struct callViewActions getViewIdleActions(void);
+extern CallViewActions getViewIdleActions(void);
 
 #endif /* UIVIEWIDLE_H_ */

@@ -10,6 +10,6 @@
 
 #include "userInterface.h"
 
-extern struct callViewActions getViewOffActions(void);
+extern CallViewActions getViewOffActions(void);
 
 #endif /* UIVIEWOFF_H_ */
