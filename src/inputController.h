@@ -28,6 +28,7 @@
  #define BUTTON_3		(1 << 2)
  #define BUTTON_4		(1 << 3)
 #elif defined(ORCHID)
+ /* Define switches */
  #define SWITCH_1		(1 << 0)
  #define SWITCH_2		(1 << 1)
  #define SWITCH_3		(1 << 2)

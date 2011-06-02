@@ -50,6 +50,15 @@ int main(int argc, char* argv[]) {
 		printf("Initializing for board ORCHID\n");
 	#endif
 
+	/* button test: */
+	printf("Checking button 1...\n");
+	enum ButtonState buttonState = getButtonState(BUTTON_1);
+	if (buttonState0 == button_on) {
+		printf("Button 1 is on\n");
+	} else {
+		printf("Button 1 is off\n");
+	}
+
 	printf("Setting led1 on...\n");
 	updateLed(LED_1, led_on);
 	sleep(1);
@@ -72,12 +81,11 @@ int main(int argc, char* argv[]) {
 	}
 
 	// check buttons:
-	enum ButtonState buttonState = getButtonState(BUTTON_1);
+	buttonState = getButtonState(BUTTON_4);
 	if (buttonState == button_on) {
-		printf("Button 1 is on\n");
-		updateLed(LED_5, led_on);
+		printf("Button 4 is on\n");
 	} else if (buttonState == button_off) {
-		printf("Button 1 is off\n");
+		printf("Button 4 is off\n");
 	} else {
 		printf("Button 1 state is unknown\n");
 	}
