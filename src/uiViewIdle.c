@@ -39,7 +39,6 @@ static void run(void) {
 		if (coffeemaker->milkPreselectionState == milkPreselection_on) {
 			setMilkPreselection(milkPreselection_off);
 		}
-		switchOff();
 	}
 	else {
 		if (coffeemaker->milkPreselectionState == milkPreselection_off) {
