@@ -1,10 +1,16 @@
-/**
- * Definitions for board CARME
+/*
+ ***************************************************************************
+ * \brief   Header for the CARME Board
+ * \file    carme.h
+ * \version 1.0
+ * \date    28.09.2008
+ * \author  Martin Aebersold
  *
- * @file    carme.h
- * @version 0.1
- * @author  Elmar Vonlanthen (vonle1@bfh.ch)
- * @date    May 20, 2011
+ * \remark  Last Modifications:
+ * \remark  V1.0, AOM1, 28.08.07   Initial release
+ * \remark  V1.1, 02.06.2011       Add GPIO functions
+ * 
+ ****************************************************************************
  */
 
 #ifndef CARME_H_
@@ -27,8 +33,30 @@
  *******************************************************************************
  */
 
+/**
+ * Initializing GPIOs
+ *
+ * Exporting button GPIOs and setting direction to 'in'.
+ *
+ * @return Returns TRUE if initializing was successful
+ */
 extern int setUpCarmeGPIO();
+
+/**
+ * Tearing down GPIOs
+ *
+ * Unexporting button GPIOs
+ *
+ * @return Returns TRUE if tearing down was successful
+ */
 extern int tearDownCarmeGPIO();
+
+/**
+ * Read button state over GPIO
+ *
+ * @param id Button identifier
+ * @return Returns state of button (on or off)
+ */
 extern int readGPIOButton(int id);
 
 #endif /* CARME_H_ */

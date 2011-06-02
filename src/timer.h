@@ -10,6 +10,9 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
+/**
+ * Void pointer as handle to the TimerDescriptor structure.
+ */
 typedef void* TIMER;
 
 /**

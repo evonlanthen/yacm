@@ -1,13 +1,14 @@
 /*
  ***************************************************************************
  * \brief   GPIO dir/set/clear functions for the Orchid-IO Board
- * \file    gpio.c
+ * \file    orchid.c
  * \version 1.0
  * \date    28.09.2008
  * \author  Martin Aebersold
  *
  * \remark  Last Modifications:
  * \remark  V1.0, AOM1, 28.08.07   Initial release
+ * \remark  V1.1, 02.06.2011       File renamed from original name gpio.c
  *
  ***************************************************************************
  */

@@ -23,14 +23,10 @@
   #define SWITCH_7		(1 << 6)
   #define SWITCH_8		(1 << 7)
   /* Define buttons */
-  //#define BUTTON_1		 99
-  //#define BUTTON_2		100
-  //#define BUTTON_3		101
-  //#define BUTTON_4		102
-  #define BUTTON_1		 12
-  #define BUTTON_2		 11
-  #define BUTTON_3		 17
-  #define BUTTON_4		 16
+  #define BUTTON_1		 99
+  #define BUTTON_2		100
+  #define BUTTON_3		101
+  #define BUTTON_4		102
 #elif defined(ORCHID)
   /* Define switches */
   #define SWITCH_1		(1 << 0)
@@ -48,23 +44,48 @@
  * Predefined switch states
  */
 enum SwitchState {
-  switch_off = 0,
-  switch_on,
-  switch_unknown
+  switch_off = 0, /**< switch_off     */
+  switch_on,      /**< switch_on      */
+  switch_unknown  /**< switch_unknown */
 };
 
 /**
  * Predefined button states
  */
 enum ButtonState {
-  button_off = 0,
-  button_on,
-  button_unknown
+  button_off = 0, /**< button_off     */
+  button_on,      /**< button_on      */
+  button_unknown  /**< button_unknown */
 };
 
+/**
+ * Initializes the input controller
+ *
+ * @return Returns TRUE if initialization was successful
+ */
 extern int setUpInputController(void);
+
+/**
+ * Tears down input controller
+ *
+ * @return Returns TRUE if tearing down was successful
+ */
 extern int tearDownInputController(void);
+
+/**
+ * Checks a switch of its state
+ *
+ * @param id Id of switch to check
+ * @return State of switch (on, off or unknown)
+ */
 extern enum SwitchState getSwitchState(int id);
+
+/**
+ * Checks a button of its state
+ *
+ * @param id Id of button to check
+ * @return State of button (on, off or unknown)
+ */
 extern enum ButtonState getButtonState(int id);
 
 #endif /* INPUTCONTROLLER_H_ */

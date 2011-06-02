@@ -12,6 +12,9 @@
 #ifndef LEDCONTROLLER_H_
 #define LEDCONTROLLER_H_
 
+/**
+ * Define LED symbols
+ */
 #ifdef CARME
  #define	LED_1			(1 << 0)
  #define	LED_2			(1 << 1)
@@ -41,9 +44,9 @@
  * Predefined LED states
  */
 enum LedState {
-  led_off = 0,
-  led_on,
-  led_blinking
+  led_off = 0, /**< led_off      */
+  led_on,      /**< led_on       */
+  led_blinking /**< led_blinking */
 };
 
 /**
@@ -61,8 +64,6 @@ extern int setUpLedController(void);
 extern int tearDownLedController(void);
 
 /**
- * Update all LEDs
- *
  * Update all LEDs according to the state in the array 'leds'.
  *
  * @return Returns TRUE if LED updating was successful
@@ -72,7 +73,8 @@ extern int updateAllLeds();
 /**
  * Update LED state
  *
- * Update LED state for one LED in array 'leds' and update all leds with function updateAllLeds().
+ * Update LED state for one LED in array 'leds' and update all leds with
+ * function updateAllLeds().
  *
  * @param id LED identifier
  * @param state LED state (on, off or blinking)
