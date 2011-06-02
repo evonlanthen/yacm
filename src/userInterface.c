@@ -25,8 +25,9 @@ static DisplayState displaystate;
 
 /* current CoffeMaker state */
 static CoffeeMakerViewModel coffeemaker;
+
 /* CoffeMaker state after a change */
-CoffeeMakerViewModel newCoffeeMaker;
+static CoffeeMakerViewModel newCoffeeMaker;
 
 /**
  * Set correct Action pointers for active view in displaystate
@@ -150,14 +151,13 @@ int runUserInterface(void) {
  */
 DisplayState * getDisplayState(void) {
 	return &displaystate;
-<<<<<<< HEAD
 }
 
 /**
  * get coffeemaker state reference
  * called by uiView modules
  */
-struct CoffeeMakerViewModel* getCoffeeMakerState(void) {
+	CoffeeMakerViewModel* getCoffeeMakerState(void) {
 	return &coffeemaker;
 }
 
@@ -184,7 +184,5 @@ extern void showMilkSelection(int state) {
 	else {
 		updateLed(MILK_LED, led_off);
 	}
-=======
->>>>>>> branch 'master' of git@github.com:elmux/yacm.git
 }
 

@@ -14,7 +14,7 @@
 #include "timer.h"
 
 static void run(void) {
-	struct CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
+	CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
 	/* Did someone turn the coffeemaker off? */
 	if (getSwitchState(POWER_SWITCH) == switch_off) {
 #ifdef DEBUG
@@ -49,10 +49,7 @@ static void run(void) {
 }
 
 static void activate(void) {
-<<<<<<< HEAD
-	struct CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
-=======
->>>>>>> branch 'master' of git@github.com:elmux/yacm.git
+	CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
 	DisplayState *displaystate = getDisplayState();
 	displaystate->gContextID = GrNewGC();
 	/* Back- Foreground color related stuff */

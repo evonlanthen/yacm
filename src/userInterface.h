@@ -37,6 +37,7 @@
 
 #define MWINCLUDECOLORS
 #include "nano-X.h"
+#include "model.h"
 
 /**
  * data type for a void function
@@ -84,22 +85,23 @@ typedef struct {
 /**
  * get displaystate pointer, gets called by uiView modules
  */
-<<<<<<< HEAD
 extern DisplayState* getDisplayState(void);
 
 /**
  * get coffeemaker state reference
  * called by uiView modules
  */
-extern struct CoffeeMakerViewModel* getCoffeeMakerState(void);
+extern CoffeeMakerViewModel * getCoffeeMakerState(void);
 
 /**
  * Display milk selection state
  */
 extern void showMilkSelection(int state);
-=======
+
+/**
+ * Get displaystate
+ */
 extern DisplayState * getDisplayState(void);
->>>>>>> branch 'master' of git@github.com:elmux/yacm.git
 
 /**
  * Heartbeat function for ongoing view tasks.
