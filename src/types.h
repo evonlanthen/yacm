@@ -1,14 +1,26 @@
-/**
- * Type definitions
+/*
+ ***************************************************************************
+ * \brief   Header for the Orchid-IO Board
+ * \file    types.h
+ * \version 1.0
+ * \date    28.09.2008
+ * \author  Martin Aebersold
  *
- * @file    types.h
- * @version 0.1
- * @author  Elmar Vonlanthen (vonle1@bfh.ch)
- * @date    May 20, 2011
+ * \remark  Last Modifications:
+ * \remark  V1.0, AOM1, 28.08.07   Initial release
+ * \remark  V1.1, 02.06.2011       Defines moved to file defines.h
+*
+ ***************************************************************************
  */
 
 #ifndef TYPES_H_
 #define TYPES_H_
+
+/*
+ ****************************************************************************
+ *
+ ****************************************************************************
+ */
 
 typedef signed char			INT8;
 typedef unsigned char		UINT8;
