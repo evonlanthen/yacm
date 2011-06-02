@@ -16,6 +16,7 @@
 static void run(void) {
 	MakeCoffeeProcessInstanceViewModel makingCoffee = getCoffeeMakingProcessInstanceViewModel();
 	int activeButton = PRODUCT_1_BUTTON;
+	/* let's get the right button to query for stopping */
 	switch ( makingCoffee.productIndex ) {
 		case 1: activeButton = PRODUCT_1_BUTTON;
 		break;
