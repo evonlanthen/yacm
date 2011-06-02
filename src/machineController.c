@@ -53,8 +53,7 @@ static int playSound(void)
 	Uint16 audio_format = AUDIO_S16SYS; /* Format of the audio we're playing	*/
 	int audio_channels = 2; /* 2 channels = stereo			*/
 	int audio_buffers = 4096; /* Size of the audio buffers in memory	*/
-	//char *musicFile = "/usr/local/music/coffeeMachine.mp3";
-	char *musicFile = "/usr/local/music/test.wav";
+	char *musicFile = "/usr/local/music/coffeeMachine.mp3";
 
 	/* Initialize SDL audio	*/
 	if (SDL_Init(SDL_INIT_AUDIO) != 0) {
@@ -107,6 +106,7 @@ int startMachine(enum Ingredient ing, unsigned int time)
 		playSound();
 	} else if (ing == ingredient_milk) {
 		printf("Delivering milk...\n");
+		playSound();
 	} else {
 		printf("Unknown ingredient selected!\n");
 	}
