@@ -17,12 +17,64 @@
 #include "sensorController.h"
 #include "machineController.h"
 
+// Durations
 #define INITIALIZING_DURATION 2000
 #define WARMING_UP_DURATION 1000
 #define DELIVERING_MILK_DURATION 2000
 #define DELIVERING_COFFEE_DURATION 5000
 
-#define DATA_STRUCTURE_IMPLEMENTATION
+static int isBusinessLogicSetUp = FALSE;
+
+// Business model
+/**
+ * Represents the coffee ingredient.
+ */
+typedef struct {
+	int isAvailable;
+	int emptyTankSensorId;
+} Coffee;
+
+/**
+ * Represents the milk ingredient.
+ */
+typedef struct {
+	int isAvailable;
+	int emptyTankSensorId;
+} Milk;
+
+/**
+ * Represents a product definition.
+ */
+typedef struct {
+	char name[256];
+} Product;
+
+typedef struct ProductListElement {
+	Product *product;
+	struct ProductListElement *next;
+} ProductListElement;
+
+/**
+ * Represents an ongoing coffee making process instance.
+ *
+ */
+typedef struct {
+	Product *product;
+	int withMilk;
+	CoffeeMakingActivity currentActivity;
+} MakeCoffeeProcessInstance;
+
+/**
+ * Represents the coffee maker.
+ */
+typedef struct {
+	CoffeeMakerState state;
+	Coffee coffee;
+	Milk milk;
+	ProductListElement *products;
+	MilkPreselectionState milkPreselectionState;
+	MakeCoffeeProcessInstance *ongoingCoffeeMaking;
+} CoffeeMaker;
 
 // Model observers
 static NotifyModelChanged observer;
@@ -34,8 +86,7 @@ static void deleteObject(void *object);
 
 // Product list helpers
 static unsigned int getNumberOfProducts();
-//static struct ProductListElement * getProductListElement(unsigned int productIndex);
-static struct Product * getProduct(unsigned int productIndex);
+static Product * getProduct(unsigned int productIndex);
 
 // Model initialization
 static void setUpProducts();
@@ -71,7 +122,6 @@ static void checkIngredientTankSensors();
 // Timers
 static TIMER initTimer;
 static TIMER warmingUpTimer;
-static TIMER deliveringMilkTimer;
 
 /**
  * Notify the model observers of a model change.
@@ -86,7 +136,7 @@ static void notifyObservers() {
 /**
  * The coffee maker model instance.
  */
-static struct CoffeeMaker coffeeMaker = {
+static CoffeeMaker coffeeMaker = {
 		.state = coffeeMaker_off,
 		.coffee.isAvailable = TRUE,
 		.coffee.emptyTankSensorId = SENSOR_1,
@@ -106,17 +156,16 @@ static enum SensorState lastEmptyMilkTankSensorState = sensor_unknown;
 /**
  * Special case value for an undefined product definition.
  */
-//static struct ProductViewModel undefinedProduct = {
-#define UNDEFINED_PRODUCT (struct ProductViewModel){ \
+#define UNDEFINED_PRODUCT (ProductViewModel){ \
 		.name = "<undefined>" \
 }
 
 /**
  * Special case value for an inexistent coffee making process instance.
  */
-static struct MakeCoffeeProcessInstanceViewModel inexistentCoffeeMakingProcessInstance = {
-		.currentActivity = coffeeMakingActivity_undefined
-};
+#define INEXISTENT_COFFEE_MAKING_PROCESS_INSTANCE (MakeCoffeeProcessInstanceViewModel){ \
+		.currentActivity = coffeeMakingActivity_undefined \
+}
 
 
 
@@ -143,7 +192,7 @@ static void deleteObject(void *object) {
 static unsigned int getNumberOfProducts() {
 	unsigned int numberOfProducts = 0;
 
-	struct ProductListElement *productListElement = coffeeMaker.products;
+	ProductListElement *productListElement = coffeeMaker.products;
 	while (productListElement) {
 		numberOfProducts++;
 
@@ -153,10 +202,10 @@ static unsigned int getNumberOfProducts() {
 	return numberOfProducts;
 }
 
-static unsigned int getProductIndex(struct Product *product) {
+static unsigned int getProductIndex(Product *product) {
 	unsigned int productIndex = 0;
 
-	struct ProductListElement *productListElement = coffeeMaker.products;
+	ProductListElement *productListElement = coffeeMaker.products;
 	while (productListElement) {
 		if (productListElement->product == product) {
 			return productIndex;
@@ -170,10 +219,10 @@ static unsigned int getProductIndex(struct Product *product) {
 	return UNDEFINED_PRODUCT_INDEX;
 }
 
-static struct Product * getProduct(unsigned int productIndex) {
+static Product * getProduct(unsigned int productIndex) {
 	unsigned int i = 0;
 
-	struct ProductListElement *productListElement = coffeeMaker.products;
+	ProductListElement *productListElement = coffeeMaker.products;
 	while (productListElement) {
 		if (i == productIndex) {
 			return productListElement->product;
@@ -187,53 +236,72 @@ static struct Product * getProduct(unsigned int productIndex) {
 	return NULL;
 }
 
+
+
+
+
+
+
+
+int setUpBusinessLogic() {
+	// Check if business logic is already set up
+	if (isBusinessLogicSetUp) {
+		return FALSE;
+	}
+
+	// Load product definitions
+	setUpProducts();
+
+	isBusinessLogicSetUp = TRUE;
+
+	return TRUE;
+}
+
+int tearDownBusinessLogic() {
+	// Delete product definitions
+	ProductListElement *productListElement = coffeeMaker.products;
+	coffeeMaker.products = NULL;
+	while (productListElement) {
+		ProductListElement *next = productListElement->next;
+
+		deleteObject(productListElement->product);
+		deleteObject(productListElement);
+
+		productListElement = next;
+	}
+
+	isBusinessLogicSetUp = FALSE;
+
+	return TRUE;
+}
+
 /**
  * Sets up product definitions.
  * Preliminary the setup is done hardcoded.
  * In the future definitions could possibly read from a file?
  */
 static void setUpProducts() {
-	//struct Product coffeeProduct = {
-	//		.name = "Coffee"
-	//};
-	struct Product *coffeeProduct = newObject(&(struct Product) {
+	Product *coffeeProduct = newObject(&(Product) {
 		.name = "Coffee"
-	}, sizeof(struct Product));
-	//struct Product espressoProduct = {
-	//		.name = "Espresso"
-	//};
-	struct Product *espressoProduct = newObject(&(struct Product) {
+	}, sizeof(Product));
+	Product *espressoProduct = newObject(&(Product) {
 		.name = "Espresso"
-	}, sizeof(struct Product));
-	//struct Product ristrettoProduct = {
-	//		.name = "Ristretto"
-	//};
-	struct Product *ristrettoProduct = newObject(&(struct Product) {
+	}, sizeof(Product));
+	Product *ristrettoProduct = newObject(&(Product) {
 		.name = "Ristretto"
-	}, sizeof(struct Product));
-	//struct ProductListElement ristrettoProductListElement = {
-	//		.product = &ristrettoProduct
-	//};
-	//struct ProductListElement espressoProductListElement = {
-	//		.product = &espressoProduct,
-	//		.next = &ristrettoProductListElement
-	//};
-	//struct ProductListElement coffeeProductListElement = {
-	//		.product = &coffeeProduct,
-	//		.next = &espressoProductListElement
-	//};
-	struct Product *products[] = {
+	}, sizeof(Product));
+	Product *products[] = {
 			coffeeProduct,
 			espressoProduct,
 			ristrettoProduct
 	};
-	struct ProductListElement *nextProductListElement = NULL;
+	ProductListElement *nextProductListElement = NULL;
 	int i;
 	for (i = 2; i >= 0; i--) {
-		struct ProductListElement *productListElement = newObject(&(struct ProductListElement) {
+		ProductListElement *productListElement = newObject(&(ProductListElement) {
 			.product = products[i],
 			.next = nextProductListElement
-		}, sizeof(struct ProductListElement));
+		}, sizeof(ProductListElement));
 		nextProductListElement = productListElement;
 	}
 	coffeeMaker.products = nextProductListElement;
@@ -243,58 +311,33 @@ static void setUpProducts() {
 
 
 
-
-
-
-
-int setUpBusinessLogic() {
-	setUpProducts();
-
-	return TRUE;
-}
-
-int tearDownBusinessLogic() {
-	// Delete product definitions
-	struct ProductListElement *productListElement = coffeeMaker.products;
-	coffeeMaker.products = NULL;
-	while (productListElement) {
-		struct ProductListElement *next = productListElement->next;
-
-		deleteObject(productListElement->product);
-		deleteObject(productListElement);
-
-		productListElement = next;
-	}
-
-	return TRUE;
-}
-
 void registerModelObserver(NotifyModelChanged pObserver) {
 	observer = pObserver;
 }
 
 
 
-struct CoffeeMakerViewModel getCoffeeMakerViewModel() {
+// View Model
+
+CoffeeMakerViewModel getCoffeeMakerViewModel() {
 	// Map to view model
-	struct CoffeeMakerViewModel coffeeMakerViewModel = {
-			.state = coffeeMaker.state,
-			.isCoffeeAvailable = coffeeMaker.coffee.isAvailable,
-			.isMilkAvailable = coffeeMaker.milk.isAvailable,
-			.numberOfProducts = getNumberOfProducts(),
-			.milkPreselectionState = coffeeMaker.milkPreselectionState,
-			.isMakingCoffee = coffeeMaker.ongoingCoffeeMaking ? TRUE : FALSE
+	CoffeeMakerViewModel coffeeMakerViewModel = {
+		.state = coffeeMaker.state,
+		.isCoffeeAvailable = coffeeMaker.coffee.isAvailable,
+		.isMilkAvailable = coffeeMaker.milk.isAvailable,
+		.numberOfProducts = getNumberOfProducts(),
+		.milkPreselectionState = coffeeMaker.milkPreselectionState,
+		.isMakingCoffee = coffeeMaker.ongoingCoffeeMaking ? TRUE : FALSE
 	};
 
 	return coffeeMakerViewModel;
 }
 
-struct ProductViewModel getProductViewModel(unsigned int productIndex) {
-	//struct ProductListElement *productListElement = getProductListElement(productIndex);
-	struct Product *product = getProduct(productIndex);
+ProductViewModel getProductViewModel(unsigned int productIndex) {
+	 Product *product = getProduct(productIndex);
 	if (product) {
 		// Map to view model
-		struct ProductViewModel productViewModel = {
+		ProductViewModel productViewModel = {
 			//.name = product->name
 		};
 		strcpy(productViewModel.name, product->name);
@@ -305,49 +348,33 @@ struct ProductViewModel getProductViewModel(unsigned int productIndex) {
 	return UNDEFINED_PRODUCT;
 }
 
-struct MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewModel() {
+MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewModel() {
 	if (coffeeMaker.ongoingCoffeeMaking) {
-		struct MakeCoffeeProcessInstanceViewModel coffeeMakingViewModel = {
-				.productIndex =  getProductIndex(coffeeMaker.ongoingCoffeeMaking->product),
-				.withMilk = coffeeMaker.ongoingCoffeeMaking->withMilk,
-				.currentActivity = coffeeMaker.ongoingCoffeeMaking->currentActivity
+		MakeCoffeeProcessInstanceViewModel coffeeMakingViewModel = {
+			.productIndex =  getProductIndex(coffeeMaker.ongoingCoffeeMaking->product),
+			.withMilk = coffeeMaker.ongoingCoffeeMaking->withMilk,
+			.currentActivity = coffeeMaker.ongoingCoffeeMaking->currentActivity
 		};
 
 		return coffeeMakingViewModel;
 	}
 
-	return inexistentCoffeeMakingProcessInstance;
+	return INEXISTENT_COFFEE_MAKING_PROCESS_INSTANCE;
 }
 
 
 
-
+// Presentation interface
 
 void switchOn() {
-	//if (!(coffeeMaker.state = coffeeMaker_off)) {
-	//	return;
-	//}
-
-	//coffeeMaker.state = coffeeMaker_initializing;
-
-	//notifyObservers();
-
-	//initTimer = setUpTimer(INITIALIZING_DURATION);
 	processEvent(event_switchedOn);
 }
 
 void switchOff() {
-	//if (!(coffeeMaker.state = coffeeMaker_idle || coffeeMaker.state == coffeeMaker_producing)) {
-	//	return;
-	//}
-
-	//coffeeMaker.state = coffeeMaker_off;
-
-	//notifyObservers();
 	processEvent(event_switchedOff);
 }
 
-void setMilkPreselection(enum MilkPreselectionState state) {
+void setMilkPreselection(MilkPreselectionState state) {
 	coffeeMaker.milkPreselectionState = state;
 
 	notifyObservers();
@@ -366,65 +393,9 @@ void abortMakingCoffee() {
 
 
 
-#ifdef SWITCH_IMPLEMENTATION
-void runBusinessLogic() {
-	// Check empty ingredient tank sensors
 
-	// Check timers
-	if (coffeeMaker.state == coffeeMaker_initializing) {
-		if (isTimerElapsed(initTimer)) {
-			//coffeeMaker.state = coffeeMaker_idle;
+// State machine engine
 
-			//notifyObservers();
-			processEvent(event_isInitialized);
-		}
-	}
-
-	// Run possibly ongoing coffee making process instance
-}
-
-static void processEvent(Event event) {
-	switch (coffeeMaker.state) {
-	case coffeeMaker_off:
-		switch (event) {
-		case event_switchedOn:
-			coffeeMaker.state = coffeeMaker_initializing;
-			initTimer = setUpTimer(2000);
-			notifyObservers();
-			break;
-		}
-		break;
-	case coffeeMaker_initializing:
-		switch (event) {
-		case event_isInitialized:
-			coffeeMaker.state = coffeeMaker_idle;
-			notifyObservers();
-			break;
-		}
-		break;
-	case coffeeMaker_idle:
-		switch (event) {
-		case event_switchedOff:
-			coffeeMaker.state = coffeeMaker_off;
-			notifyObservers();
-			break;
-		}
-		break;
-	case coffeeMaker_producing:
-		switch (event) {
-		case event_switchedOff:
-			coffeeMaker.state = coffeeMaker_off;
-			notifyObservers();
-			break;
-		}
-		break;
-	}
-}
-#endif
-
-
-#ifdef DATA_STRUCTURE_IMPLEMENTATION
-// State machine runtime
 typedef int (*StatePrecondition)();
 typedef void (*StateAction)();
 typedef Event (*DoStateAction)();
@@ -436,11 +407,6 @@ typedef struct {
 	DoStateAction doAction;
 	StateAction exitAction;
 } State;
-
-//typedef struct {
-//   enum  CoffeeMakerState  nextState;
-//   State *state;
-//} Transition;
 
 typedef struct {
 	int isInitialized;
@@ -534,7 +500,6 @@ static void activateState(StateMachine *stateMachine, State *nextState) {
 		stateMachine->activeState->entryAction();
 	}
 }
-#endif
 
 
 
@@ -545,7 +510,6 @@ static void activateState(StateMachine *stateMachine, State *nextState) {
 
 
 
-#ifdef DATA_STRUCTURE_IMPLEMENTATION
 // State machines
 
 // Main state machine
@@ -600,15 +564,23 @@ static State idleState = {
 
 // Producing state
 static int producingStatePrecondition() {
-	return coffeeMaker.coffee.isAvailable
-		&& (coffeeMaker.milkPreselectionState != milkPreselection_on || coffeeMaker.milk.isAvailable);
+	// Only start production if...
+	// - no coffee making process is already running
+	// - coffee is available (coffee tank is not empty)
+	// - milk preselection is off or
+	//   milk is available (milk tank is not emtpy)
+	// - selected product is defined
+	return !coffeeMaker.ongoingCoffeeMaking
+		&& coffeeMaker.coffee.isAvailable
+		&& (coffeeMaker.milkPreselectionState != milkPreselection_on || coffeeMaker.milk.isAvailable)
+		&& selectedProductIndex < getNumberOfProducts();
 }
 
 static void startMakeCoffeeProcess(unsigned int productIndex) {
-	coffeeMaker.ongoingCoffeeMaking = newObject(&(struct MakeCoffeeProcessInstance) {
+	coffeeMaker.ongoingCoffeeMaking = newObject(&(MakeCoffeeProcessInstance) {
 		.product = getProduct(productIndex),
 		.withMilk = coffeeMaker.milkPreselectionState = milkPreselection_on ? TRUE : FALSE
-	}, sizeof(struct MakeCoffeeProcessInstance));
+	}, sizeof(MakeCoffeeProcessInstance));
 
 	coffeeMaker.state = coffeeMaker_producing;
 
@@ -642,6 +614,8 @@ static void abortMakeCoffeeProcessInstance() {
 
 static void producingStateExitAction() {
 	abortMakeCoffeeProcessInstance();
+
+	notifyObservers();
 }
 
 static State producingState = {
@@ -737,14 +711,12 @@ static State withMilkGateway = {
 static void deliveringMilkActivityEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_deliveringMilk;
 
-	//deliveringMilkTimer = setUpTimer(2000);
 	startMachine(ingredient_milk, DELIVERING_MILK_DURATION);
 
 	notifyObservers();
 }
 
 static Event deliveringMilkActivityDoAction() {
-	//if (isTimerElapsed(deliveringMilkTimer)) {
 	if (!machineRunning()) {
 		return coffeeMakingEvent_milkDelivered;
 	}
@@ -780,10 +752,15 @@ static Event deliveringCoffeeActivityDoAction() {
 	return coffeeMakingEvent_none;
 }
 
+static void deliveringCoffeeActivityExitAction() {
+	stopMachine();
+}
+
 static State deliveringCoffeeActivity = {
 	.stateIndex = coffeeMakingActivity_deliveringCoffee,
 	.entryAction = deliveringCoffeeActivityEntryAction,
-	.doAction = deliveringCoffeeActivityDoAction
+	.doAction = deliveringCoffeeActivityDoAction,
+	.exitAction = deliveringCoffeeActivityExitAction
 };
 
 // Finishing activity
@@ -831,7 +808,7 @@ static StateMachine coffeeMakingProcessMachine = {
 };
 
 
-
+// Logic
 
 void runBusinessLogic() {
 	if (!stateMachine.isInitialized) {
@@ -848,10 +825,6 @@ void runBusinessLogic() {
 static void processEvent(Event event) {
 	processEventInt(&stateMachine, event);
 }
-#endif
-
-
-
 
 static void checkIngredientTankSensors() {
 	// Coffee sensor

@@ -21,7 +21,18 @@ static void run(void) {
 	#endif
 		switchOff();
 	}
-
+	if (getButtonState(PRODUCT_1_BUTTON) == button_on) {
+		startMakingCoffee(0);
+	}
+	if (getButtonState(PRODUCT_2_BUTTON) == button_on) {
+		startMakingCoffee(1);
+	}
+	if (getButtonState(PRODUCT_3_BUTTON) == button_on) {
+		startMakingCoffee(2);
+	}
+	if (getButtonState(PRODUCT_4_BUTTON) == button_on) {
+		startMakingCoffee(3);
+	}
 }
 
 static void activate(void) {
@@ -39,7 +50,9 @@ static void activate(void) {
 }
 
 static void deactivate(void) {
-
+	struct DisplayState *displaystate = getDisplayState();
+	/*Clear screen*/
+	GrClearWindow(displaystate->gWinID,GR_FALSE);
 }
 
 static void update(void) {
