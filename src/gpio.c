@@ -45,7 +45,7 @@ void *regaddr;
 
 static void GPIO_putmem(UINT32 addr, UINT32 val)
  {
-   regaddr = (void*) ((UINT32) mmap_base2 + (addr & MAP_MASK));
+   regaddr = (void*) ((UINT32) mmap_base + (addr & MAP_MASK));
    *(UINT32*) regaddr = val;
  }
 
@@ -59,7 +59,7 @@ static UINT32 GPIO_getmem(UINT32 addr)
  {
     UINT32 val;
 
-    regaddr = (void*) ((UINT32) mmap_base2 + (addr & MAP_MASK));
+    regaddr = (void*) ((UINT32) mmap_base + (addr & MAP_MASK));
     val = *(UINT32*) regaddr;
     return val;
  }
