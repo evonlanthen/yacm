@@ -10,6 +10,7 @@
  */
 
 #include <stdio.h>
+#include <unistd.h>
 #include <fcntl.h>
 
 #include "defines.h"
@@ -45,18 +46,35 @@ static int setGPIODirection(int id)
 	close(directionFD);
 	return TRUE;
 }
-int initGPIO(void) {
-	/* Export button GPIOs */
-	exportGPIO(BUTTON_1);
-	exportGPIO(BUTTON_2);
-	exportGPIO(BUTTON_3);
-	exportGPIO(BUTTON_4);
 
+static int initButton(int id) {
+	/* Export button GPIO */
+	if (!exportGPIO(id)) {
+		return FALSE;
+	}
 	/* Set button GPIO directions to in */
-	setGPIODirection(BUTTON_1);
-	setGPIODirection(BUTTON_2);
-	setGPIODirection(BUTTON_3);
-	setGPIODirection(BUTTON_4);
+	if (!setGPIODirection(id)) {
+		return FALSE;
+	}
+	return TRUE;
+}
+
+int initGPIO(void) {
+	int ret = TRUE;
+
+	if (!initButton(BUTTON_1)) {
+		ret = FALSE;
+	}
+	if (!initButton(BUTTON_2)) {
+		ret = FALSE;
+	}
+	if (!initButton(BUTTON_3)) {
+		ret = FALSE;
+	}
+	if (!initButton(BUTTON_4)) {
+		ret = FALSE;
+	}
+	return ret;
 }
 
 int readGPIOValue(int id) {
