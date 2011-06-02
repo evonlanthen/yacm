@@ -20,6 +20,7 @@
 
 static int isInputControllerSetUp = FALSE;
 extern void *mmap_base;
+extern void *mmap_base2;
 
 int setUpInputController(void)
 {
@@ -80,14 +81,12 @@ enum ButtonState getButtonState(int id)
 		return button_unknown;
 	}
 
-#ifdef CARME
-	buttons = *(volatile unsigned char *) (mmap_base + SWITCH_OFFSET);
-#elif defined(ORCHID)
-	// it is important to read twice, else the result would not be reliable
-	// (usleep for some microseconds would work as well):
+	/* We use the GPIO functions for Orchid and CARME board.
+	 * It is important to read twice, else the result would not be reliable
+	 * (usleep for some microseconds would work as well) */
 	GPIO_read_button();
 	buttons = GPIO_read_button();
-#endif
+	printf("Button value = 0x%02x\n", buttons);
 
     if (buttons & id) {
     	return button_on;
