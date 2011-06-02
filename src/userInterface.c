@@ -19,7 +19,7 @@
 
 
 /* Current state of display with handles and elements */
-static struct DisplayState displaystate;
+static DisplayState displaystate;
 
 /* current CoffeMaker state */
 static CoffeeMakerViewModel coffeemaker;
@@ -146,8 +146,7 @@ int runUserInterface(void) {
  * get displaystate reference
  * called by uiView modules
  */
-struct DisplayState* getDisplayState(void) {
+DisplayState * getDisplayState(void) {
 	return &displaystate;
-
 }
 
