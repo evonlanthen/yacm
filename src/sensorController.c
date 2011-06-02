@@ -9,7 +9,7 @@
 
 #include "defines.h"
 #include "types.h"
-#include "mmap.h"
+#include "hardwareController.h"
 #include "sensorController.h"
 
 #ifdef CARME
@@ -21,7 +21,6 @@
 #endif
 
 static int isSensorControllerSetUp = FALSE;
-extern void *mmap_base;
 
 int setUpSensorController(void)
 {
@@ -30,12 +29,13 @@ int setUpSensorController(void)
 		return FALSE;
 	}
 
-	// check if memory mapping is already set up, if not try to set it up:
-	if (!getMmapSetUpState()) {
-		if (!setUpMmap()) {
+	// check if hardware is already initialized:
+	if (!getHardwareSetUpState()) {
+		if (!setUpHardwareController()) {
 			return FALSE;
 		}
 	}
+
 	isSensorControllerSetUp = TRUE;
 	return TRUE;
 }

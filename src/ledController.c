@@ -11,9 +11,9 @@
 
 #include "defines.h"
 #include "types.h"
-#include "ledController.h"
 #include "timer.h"
-#include "mmap.h"
+#include "hardwareController.h"
+#include "ledController.h"
 
 #ifdef CARME
  #include "carme.h"
@@ -32,7 +32,6 @@ typedef struct {
 	TIMER timer;
 } LedDescriptor;
 
-extern void *mmap_base;
 static LedDescriptor leds[NUM_OF_LEDS];
 static int isLedControllerSetUp = FALSE;
 
@@ -43,9 +42,9 @@ int setUpLedController(void)
 		return FALSE;
 	}
 
-	// check if memory mapping is already set up, if not try to set it up:
-	if (!getMmapSetUpState()) {
-		if (!setUpMmap()) {
+	// check if hardware is already initialized:
+	if (!getHardwareSetUpState()) {
+		if (!setUpHardwareController()) {
 			return FALSE;
 		}
 	}

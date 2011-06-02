@@ -15,12 +15,12 @@
 #include "defines.h"
 #include "logic.h"
 #include "userInterface.h"
+#include "hardwareController.h"
 #include "machineController.h"
 #include "inputController.h"
 #include "ledController.h"
 #include "sensorController.h"
 #include "timer.h"
-#include "mmap.h"
 
 //#define ELMITESTS
 //#define TONITESTS
@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
 	/* button test: */
 	printf("Checking button 1...\n");
 	enum ButtonState buttonState = getButtonState(BUTTON_1);
-	if (buttonState0 == button_on) {
+	if (buttonState == button_on) {
 		printf("Button 1 is on\n");
 	} else {
 		printf("Button 1 is off\n");
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
 
 	// start coffee maker:
 	printf("Starting coffee machine...\n");
-	startMachine();
+	startMachine(ingredient_coffee, 5000);
 	setBlinkingFreq(LED_1, 500, 500);
 	updateLed(LED_1, led_blinking);
 	while (machineRunning()) {
@@ -152,7 +152,7 @@ int main(int argc, char* argv[]) {
 }
 
 void setUpSubsystems() {
-	setUpMmap();
+	setUpHardwareController();
 	setUpMachineController();
 	setUpInputController();
 	setUpLedController();
@@ -168,7 +168,7 @@ void tearDownSubsystems() {
 	tearDownLedController();
 	tearDownInputController();
 	tearDownMachineController();
-	tearDownMmap();
+	tearDownHardwareController();
 }
 
 #endif

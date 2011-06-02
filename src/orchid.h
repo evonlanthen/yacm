@@ -1,10 +1,15 @@
-/**
- * Definitions for ORCHID board
+/*
+ ***************************************************************************
+ * \brief   Header for the Orchid-IO Board
+ * \file    orchid.h
+ * \version 1.0
+ * \date    28.09.2008
+ * \author  Martin Aebersold
  *
- * @file    orchid.h
- * @version 0.1
- * @author  Elmar Vonlanthen (vonle1@bfh.ch)
- * @date    May 20, 2011
+ * \remark  Last Modifications:
+ * \remark  V1.0, AOM1, 28.08.07   Initial release
+ * \remark  V1.1, AOM1, 08.06.09   Added some more registers
+ ***************************************************************************
  */
 
 #ifndef ORCHID_H_
@@ -98,10 +103,10 @@
  * Public Function Prototypes
  ****************************************************************************/
 
-
 void  GPIO_init(void);
 void  GPIO_write_led(UINT8 pattern);
 UINT8 GPIO_read_switch(void);
 UINT8 GPIO_read_button(void);
 
 #endif /* ORCHID_H_ */
+
