@@ -1,8 +1,12 @@
-/*
- * logic.h
+/**
+ * Business logic
  *
- *  Created on: May 25, 2011
- *      Author: Ronny Stauffer (staur3@bfh.ch)
+ * Contains the business logic.
+ *
+ * @file    logic.h
+ * @version 0.1
+ * @author  Ronny Stauffer (staur3@bfh.ch)
+ * @date    May 23, 2011
  */
 
 #ifndef LOGIC_H_
@@ -20,6 +24,10 @@ extern int setUpBusinessLogic();
  */
 extern int tearDownBusinessLogic();
 
+/**
+ * Heartbeat function for ongoing business logic tasks.
+ * Gets constantly called by controller.c
+ */
 extern void runBusinessLogic();
 
 /**
@@ -38,20 +46,20 @@ extern void registerModelObserver(NotifyModelChanged observer);
  * Gets the view model of the coffee maker.
  * @return The view model.
  */
-extern struct CoffeeMakerViewModel getCoffeeMakerViewModel();
+extern CoffeeMakerViewModel getCoffeeMakerViewModel();
 
 /**
  * Gets the view model of the specified product definition.
  * @param productIndex The index of the product definition.
  * @return The view model.
  */
-extern struct ProductViewModel getProductViewModel(unsigned int productIndex);
+extern ProductViewModel getProductViewModel(unsigned int productIndex);
 
 /**
  * Gets the view model of an ongoing coffee making process instance.
  * @return The view model.
  */
-extern struct MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewModel();
+extern MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewModel();
 
 /**
  * Switches the coffee maker on.
@@ -67,7 +75,7 @@ extern void switchOff();
  * Sets the milk preselection state.
  * @param @state The milk preselection state.
  */
-extern void setMilkPreselection(enum MilkPreselectionState state);
+extern void setMilkPreselection(MilkPreselectionState state);
 
 /**
  * Requests the coffee maker to start making coffee.

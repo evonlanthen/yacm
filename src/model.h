@@ -1,8 +1,12 @@
-/*
- * model.h
+/**
+ * Domain model
  *
- *  Created on: May 23, 2011
- *      Author: Ronny Stauffer (staur3@bfh.ch)
+ * Defines the domain model types.
+ *
+ * @file    model.h
+ * @version 0.1
+ * @author  Ronny Stauffer (staur3@bfh.ch)
+ * @date    May 23, 2011
  */
 
 #ifndef MODEL_H_
@@ -11,88 +15,29 @@
 /**
  * Represents the coffee maker state.
  */
-enum CoffeeMakerState {
+typedef enum {
 	coffeeMaker_off,
 	coffeeMaker_initializing,
 	coffeeMaker_idle,
 	coffeeMaker_producing
-};
+} CoffeeMakerState;
 
 /**
  * Represents the milk preselection state.
  */
-enum MilkPreselectionState {
+typedef enum {
   milkPreselection_off,
   milkPreselection_on
-};
-
-/**
- * Represents the coffee ingredient.
- */
-struct Coffee {
-	int isAvailable;
-	int emptyTankSensorId;
-};
-
-/**
- * Represents the milk ingredient.
- */
-struct Milk {
-	int isAvailable;
-	int emptyTankSensorId;
-};
-
-/**
- * Represents a product definition.
- */
-struct Product {
-	char name[256];
-};
-
-struct ProductListElement {
-	struct Product *product;
-	struct ProductListElement *next;
-};
-
-enum CoffeeMakingActivity {
-	coffeeMakingActivity_warmingUp,
-	coffeeMakingActivity_withMilkGateway,
-	coffeeMakingActivity_deliveringMilk,
-	coffeeMakingActivity_deliveringCoffee,
-	coffeeMakingActivity_finished,
-	coffeeMakingActivity_undefined
-};
-
-/**
- * Represents an ongoing coffee making process instance.
- *
- */
-struct MakeCoffeeProcessInstance {
-	struct Product *product;
-	int withMilk;
-	enum CoffeeMakingActivity currentActivity;
-};
-
-/**
- * Represents the coffee maker.
- */
-struct CoffeeMaker {
-	enum CoffeeMakerState state;
-	struct Coffee coffee;
-	struct Milk milk;
-	struct ProductListElement *products;
-	enum MilkPreselectionState milkPreselectionState;
-	struct MakeCoffeeProcessInstance *ongoingCoffeeMaking;
-};
+} MilkPreselectionState;
 
 /*
  * Represents the coffee maker to a view.
  */
-struct CoffeeMakerViewModel {
+typedef struct {
 	/**
 	 * The coffee maker's state.
 	 */
-	enum CoffeeMakerState state;
+	CoffeeMakerState state;
 	/*
 	 * Is the coffee ingredient available?
 	 */
@@ -113,25 +58,37 @@ struct CoffeeMakerViewModel {
 	 * Is the coffee maker currently making coffee?
 	 */
 	int isMakingCoffee;
-};
+} CoffeeMakerViewModel;
 
 /*
  * Represents a product definition to a view.
  */
-struct ProductViewModel {
+typedef struct {
 	/*
 	 * The product's name.
 	 */
 	char name[256];
-};
+} ProductViewModel;
+
+/**
+ * Represents an activity within the coffee making process.
+ */
+typedef enum {
+	coffeeMakingActivity_warmingUp,
+	coffeeMakingActivity_withMilkGateway,
+	coffeeMakingActivity_deliveringMilk,
+	coffeeMakingActivity_deliveringCoffee,
+	coffeeMakingActivity_finished,
+	coffeeMakingActivity_undefined
+} CoffeeMakingActivity;
 
 /*
  * Represents an ongoing coffee making process instance to a view.
  */
-struct MakeCoffeeProcessInstanceViewModel {
+typedef struct {
 	unsigned int productIndex;
 	int withMilk;
-	enum CoffeeMakingActivity currentActivity;
-};
+	CoffeeMakingActivity currentActivity;
+} MakeCoffeeProcessInstanceViewModel;
 
 #endif /* MODEL_H_ */

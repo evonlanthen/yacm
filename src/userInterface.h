@@ -41,7 +41,7 @@
 /**
  * data type for a void function
  */
-typedef void (*callViewAction)();
+typedef void (*CallViewAction)();
 
 
 
@@ -61,14 +61,14 @@ extern int setUpDisplay(void);
  */
 extern int tearDownDisplay(void);
 
-struct callViewActions {
-	callViewAction	run;
-	callViewAction	activate;
-	callViewAction	deactivate;
-	callViewAction	update;
-};
+typedef struct {
+	CallViewAction	run;
+	CallViewAction	activate;
+	CallViewAction	deactivate;
+	CallViewAction	update;
+} CallViewActions;
 
-struct DisplayState {
+typedef struct {
 	GR_WINDOW_ID			gWinID;
 	GR_IMAGE_ID 			imageID;
 	GR_IMAGE_INFO 			imageInfo;
@@ -77,15 +77,15 @@ struct DisplayState {
 	GR_SCREEN_INFO  		screenInfo;
 	GR_FONT_ID				font;
 	int						winSizeX, winSizeY;
-	struct callViewActions	actions;
-
-};
+	CallViewActions			actions;
+} DisplayState;
 
 
 /**
  * get displaystate pointer, gets called by uiView modules
  */
-extern struct DisplayState* getDisplayState(void);
+extern DisplayState* getDisplayState(void);
+
 /**
  * get coffeemaker state reference
  * called by uiView modules
@@ -102,7 +102,6 @@ extern void showMilkSelection(int state);
  * Gets constantly called by controller.c
  */
 extern int runUserInterface(void);
-
 
 #endif /* USERINTERFACE_H_ */
 

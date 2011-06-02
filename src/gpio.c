@@ -8,12 +8,18 @@
  *
  * \remark  Last Modifications:
  * \remark  V1.0, AOM1, 28.08.07   Initial release
+ * \remark  02.06.2011             Support for buttons of CARME Board added
  *
  ***************************************************************************
  */
 
+#include "defines.h"
 #include "types.h"
-#include "orchid.h"
+#ifdef CARME
+ #include "carme.h"
+#elif defined(ORCHID)
+ #include "orchid.h"
+#endif
 
 /*
  ***************************************************************************
@@ -177,6 +183,17 @@ static void GPIO_function(UINT32 gpio, UINT32 fun)
 
 void GPIO_init(void)
  {
+#ifdef CARME
+  /* Initialize buttons */
+  GPIO_function(99, GPIO);
+  GPIO_function(100, GPIO);
+  GPIO_function(101, GPIO);
+  GPIO_function(102, GPIO);
+  GPIO_direction(99, IN);
+  GPIO_direction(100, IN);
+  GPIO_direction(101, IN);
+  GPIO_direction(102, IN);
+#elif defined(ORCHID)
   /* Set GPIO functions of the LED and 7-Segment port first */
   GPIO_function(35, GPIO);
   GPIO_function(37, GPIO);
@@ -244,7 +261,7 @@ void GPIO_init(void)
 
   /* Select LED */
   GPIO_set(118);
-
+#endif
  }
 
 /*
@@ -324,10 +341,18 @@ UINT8 GPIO_read_button(void)
  {
   UINT8 bt1, bt2, bt3, bt4;
 
+#ifdef CARME
+  bt1 = GPIO_status(99);
+  bt2 = GPIO_status(100);
+  bt3 = GPIO_status(101);
+  bt4 = GPIO_status(102);
+#elif defined(ORCHID)
   GPIO_clear(117);
   bt1 = GPIO_status(12);
   bt2 = GPIO_status(11);
   bt3 = GPIO_status(17);
   bt4 = GPIO_status(16);
+#endif
+
   return ((bt4 << 3) | (bt3 << 2) | (bt2 << 1) | (bt1));
  }

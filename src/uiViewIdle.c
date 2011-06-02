@@ -50,7 +50,7 @@ static void run(void) {
 
 static void activate(void) {
 	struct CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
-	struct DisplayState *displaystate = getDisplayState();
+	DisplayState *displaystate = getDisplayState();
 	displaystate->gContextID = GrNewGC();
 	/* Back- Foreground color related stuff */
 	GrSetGCForeground(displaystate->gContextID, YELLOW);
@@ -67,7 +67,7 @@ static void activate(void) {
 }
 
 static void deactivate(void) {
-	struct DisplayState *displaystate = getDisplayState();
+	DisplayState *displaystate = getDisplayState();
 	/*Clear screen*/
 	GrClearWindow(displaystate->gWinID,GR_FALSE);
 }
@@ -77,7 +77,7 @@ static void update(void) {
 
 }
 
-struct callViewActions getViewIdleActions(void) {
-	struct callViewActions retval = { &run, &activate, &deactivate, &update };
+CallViewActions getViewIdleActions(void) {
+	CallViewActions retval = { &run, &activate, &deactivate, &update };
 	return retval;
 }

@@ -21,12 +21,12 @@
 
 
 /* Current state of display with handles and elements */
-static struct DisplayState displaystate;
+static DisplayState displaystate;
 
 /* current CoffeMaker state */
-static struct CoffeeMakerViewModel coffeemaker;
+static CoffeeMakerViewModel coffeemaker;
 /* CoffeMaker state after a change */
-struct CoffeeMakerViewModel newCoffeeMaker;
+CoffeeMakerViewModel newCoffeeMaker;
 
 /**
  * Set correct Action pointers for active view in displaystate
@@ -148,9 +148,8 @@ int runUserInterface(void) {
  * get displaystate reference
  * called by uiView modules
  */
-struct DisplayState* getDisplayState(void) {
+DisplayState * getDisplayState(void) {
 	return &displaystate;
-
 }
 
 /**
