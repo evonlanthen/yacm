@@ -5,6 +5,7 @@
  *      Author: elmar
  */
 
+#include <stdio.h>
 #include "defines.h"
 #include "types.h"
 #include "mmap.h"
