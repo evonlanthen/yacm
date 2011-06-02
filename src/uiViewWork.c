@@ -14,6 +14,20 @@
 #include "timer.h"
 
 static void run(void) {
+	MakeCoffeeProcessInstanceViewModel makingCoffee = getCoffeeMakingProcessInstanceViewModel();
+	int activeButton = PRODUCT_1_BUTTON;
+	switch ( makingCoffee.productIndex ) {
+		case 1: activeButton = PRODUCT_1_BUTTON;
+		break;
+		case 2: activeButton = PRODUCT_2_BUTTON;
+		break;
+		case 3: activeButton = PRODUCT_3_BUTTON;
+		break;
+		case 4: activeButton = PRODUCT_4_BUTTON;
+		break;
+		default: activeButton = PRODUCT_1_BUTTON;
+		break;
+	}
 	/* Did someone turn the coffeemaker off? */
 	if (getSwitchState(POWER_SWITCH) == switch_off) {
 #ifdef DEBUG
@@ -22,6 +36,13 @@ static void run(void) {
 		switchOff();
 	}
 
+	/* user tries to stop making coffee? */
+	/* TODO do we have to wait some time to avoid same
+	 * button press on/off problems?
+	 */
+	if (getButtonState(activeButton) == button_on) {
+		abortMakingCoffee();
+	}
 }
 
 static void activate(void) {
