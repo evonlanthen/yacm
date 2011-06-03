@@ -13,21 +13,33 @@
 #include "logic.h"
 #include "timer.h"
 
+#define BUTTON_DELAY	800
+
+static TIMER delayTimer;
+
 static void run(void) {
 	MakeCoffeeProcessInstanceViewModel makingCoffee = getCoffeeMakingProcessInstanceViewModel();
 	int activeButton = PRODUCT_1_BUTTON;
-	/* let's get the right button to query for stopping */
-	switch ( makingCoffee.productIndex ) {
-		case 1: activeButton = PRODUCT_1_BUTTON;
-		break;
-		case 2: activeButton = PRODUCT_2_BUTTON;
-		break;
-		case 3: activeButton = PRODUCT_3_BUTTON;
-		break;
-		case 4: activeButton = PRODUCT_4_BUTTON;
-		break;
-		default: activeButton = PRODUCT_1_BUTTON;
-		break;
+	if ((delayTimer == NULL) || (isTimerElapsed(delayTimer))) {
+		/*make sure we don't use timer again */
+		delayTimer = NULL;
+		/* let's get the right button to query for stopping */
+		switch ( makingCoffee.productIndex ) {
+			case 1: activeButton = PRODUCT_1_BUTTON;
+			break;
+			case 2: activeButton = PRODUCT_2_BUTTON;
+			break;
+			case 3: activeButton = PRODUCT_3_BUTTON;
+			break;
+			case 4: activeButton = PRODUCT_4_BUTTON;
+			break;
+			default: activeButton = PRODUCT_1_BUTTON;
+			break;
+		}
+		/* user tries to stop making coffee? */
+		if (getButtonState(activeButton) == button_on) {
+			abortMakingCoffee();
+		}
 	}
 	/* Did someone turn the coffeemaker off? */
 	if (getSwitchState(POWER_SWITCH) == switch_off) {
@@ -36,19 +48,14 @@ static void run(void) {
 	#endif
 		switchOff();
 	}
-
-	/* user tries to stop making coffee? */
-	/* TODO do we have to wait some time to avoid same
-	 * button press on/off problems?
-	 */
-	if (getButtonState(activeButton) == button_on) {
-		abortMakingCoffee();
-	}
 }
 
 static void activate(void) {
 	DisplayState *displaystate = getDisplayState();
 	displaystate->gContextID = GrNewGC();
+
+	/*start Timer for button release delay*/
+	delayTimer = setUpTimer(BUTTON_DELAY);
 	/* Back- Foreground color related stuff */
 	GrSetGCForeground(displaystate->gContextID, YELLOW);
 	GrSetGCUseBackground(displaystate->gContextID, GR_FALSE);
