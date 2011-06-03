@@ -27,13 +27,13 @@ static void run(void) {
 		delayTimer = NULL;
 		/* let's get the right button to query for stopping */
 		switch ( makingCoffee.productIndex ) {
-			case 1: activeButton = PRODUCT_1_BUTTON;
+			case 0: activeButton = PRODUCT_1_BUTTON;
 			break;
-			case 2: activeButton = PRODUCT_2_BUTTON;
+			case 1: activeButton = PRODUCT_2_BUTTON;
 			break;
-			case 3: activeButton = PRODUCT_3_BUTTON;
+			case 2: activeButton = PRODUCT_3_BUTTON;
 			break;
-			case 4: activeButton = PRODUCT_4_BUTTON;
+			case 3: activeButton = PRODUCT_4_BUTTON;
 			break;
 			default: activeButton = PRODUCT_1_BUTTON;
 			break;
