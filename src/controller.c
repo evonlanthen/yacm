@@ -23,7 +23,6 @@
 #include "timer.h"
 
 //#define ELMITESTS
-//#define TONITESTS
 
 static volatile int ctrlCPressed = FALSE;
 
@@ -131,10 +130,6 @@ int main(int argc, char* argv[]) {
 	updateLed(LED_1, led_off);
 #endif
 
-#ifdef TONITESTS
-
-#endif
-
 	(void) signal(SIGINT, sigCtrlC);
 
 	while (!ctrlCPressed) {
@@ -146,7 +141,7 @@ int main(int argc, char* argv[]) {
 	printf("\nShutting down system...\n");
 	tearDownSubsystems();
 #ifdef DEBUG
-	printf("Shutdown succesful, terminating!\n");
+	printf("Shutdown successful, terminating!\n");
 #endif
 	exit(0);
 }
