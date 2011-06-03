@@ -13,8 +13,11 @@
 /**
  * Define the BOARD to use (CARME or ORCHID)
  */
-#undef ORCHID
-#define CARME
+//#define CARME
+#ifndef CARME
+	#define ORCHID
+#endif
+
 
 /**
  * Define symbols for the boolean values true and false
