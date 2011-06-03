@@ -257,6 +257,10 @@ int setUpBusinessLogic() {
 		return FALSE;
 	}
 
+#ifdef DEBUG
+
+#endif
+
 	// Load product definitions
 	setUpProducts();
 

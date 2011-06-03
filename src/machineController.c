@@ -33,7 +33,6 @@ int soundsCount = 2;
 
 int setUpMachineController(void)
 {
-
 	// check if machine controller is already set up:
 	if (isMachineControllerSetUp) {
 		return FALSE;
@@ -46,34 +45,10 @@ int setUpMachineController(void)
 		}
 	}
 
-	isMachineControllerSetUp = TRUE;
-	return TRUE;
-}
-
-int tearDownMachineController(void) {
-	// check if machine controller was already torn down:
-	if (!isMachineControllerSetUp) {
-		return FALSE;
-	}
-
-	isMachineControllerSetUp = FALSE;
-	return TRUE;
-}
-
-static int playSound(enum Ingredient ing)
-{
 	int audio_rate = 44100; /* Frequency of audio playback in [Hz]	*/
 	Uint16 audio_format = AUDIO_S16SYS; /* Format of the audio we're playing	*/
 	int audio_channels = 2; /* 2 channels = stereo			*/
 	int audio_buffers = 4096; /* Size of the audio buffers in memory	*/
-	char musicFile[50];
-
-	/* Get path of ingredient specify sound file */
-	for (int i = 0; i < soundsCount; i++) {
-		if (ingredientSounds[i].ing == ing) {
-			strcpy(musicFile, ingredientSounds[i].file);
-		}
-	}
 
 	/* Initialize SDL audio	*/
 	if (SDL_Init(SDL_INIT_AUDIO) != 0) {
@@ -86,6 +61,35 @@ static int playSound(enum Ingredient ing)
 			!= 0) {
 		printf("Unable to initialize audio: %s\n", Mix_GetError());
 		return FALSE;
+	}
+
+	isMachineControllerSetUp = TRUE;
+	return TRUE;
+}
+
+int tearDownMachineController(void) {
+	// check if machine controller was already torn down:
+	if (!isMachineControllerSetUp) {
+		return FALSE;
+	}
+
+	/* Clean up SDL_mixer and SDL */
+	Mix_CloseAudio();
+	SDL_Quit();
+
+	isMachineControllerSetUp = FALSE;
+	return TRUE;
+}
+
+static int playSound(enum Ingredient ing)
+{
+	char musicFile[50];
+
+	/* Get path of ingredient specify sound file */
+	for (int i = 0; i < soundsCount; i++) {
+		if (ingredientSounds[i].ing == ing) {
+			strcpy(musicFile, ingredientSounds[i].file);
+		}
 	}
 
 	/* Get the sound file */
@@ -107,10 +111,6 @@ static int stopSound() {
 	/* Release the memory allocated to our music	*/
 	Mix_HaltMusic();
 	Mix_FreeMusic(music);
-
-	/* Clean up SDL_mixer and SDL */
-	Mix_CloseAudio();
-	SDL_Quit();
 
 	/* Return success!	*/
 	return TRUE;
@@ -140,10 +140,11 @@ int stopMachine(void)
 		return FALSE;
 	}
 	if (timer) {
+		stopSound();
+
 		abortTimer(timer);
 		timer = NULL;
 	}
-	stopSound();
 	return TRUE;
 }
 
@@ -157,6 +158,7 @@ int machineRunning(void)
 			return TRUE;
 		} else {
 			stopSound();
+
 			timer = NULL;
 		}
 	}
