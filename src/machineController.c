@@ -16,16 +16,16 @@
 #include "machineController.h"
 
 static TIMER timer;
-static Mix_Music *music; /* Pointer to our music, in memory	*/
+static Mix_Music *sound; /* Pointer to our sound, in memory	*/
 static int isMachineControllerSetUp = FALSE;
 
 typedef struct {
 	enum Ingredient ing;
 	char file[50];
-} Sounds;
+} SoundFile;
 
 /* Define soundfiles */
-Sounds ingredientSounds[] = {
+SoundFile ingredientSounds[] = {
 	{ .ing = ingredient_coffee, .file = "/usr/local/share/yacm/coffeeDelivery.mp3" },
 	{ .ing = ingredient_milk, .file = "/usr/local/share/yacm/milkDelivery.mp3" }
 };
@@ -45,10 +45,10 @@ int setUpMachineController(void)
 		}
 	}
 
-	int audio_rate = 44100; /* Frequency of audio playback in [Hz]	*/
-	Uint16 audio_format = AUDIO_S16SYS; /* Format of the audio we're playing	*/
-	int audio_channels = 2; /* 2 channels = stereo			*/
-	int audio_buffers = 4096; /* Size of the audio buffers in memory	*/
+	int audioRate = 44100; /* Frequency of audio playback in [Hz]	*/
+	Uint16 audioFormat = AUDIO_S16SYS; /* Format of the audio we're playing	*/
+	int audioChannels = 2; /* 2 channels = stereo			*/
+	int audioBuffers = 4096; /* Size of the audio buffers in memory	*/
 
 	/* Initialize SDL audio	*/
 	if (SDL_Init(SDL_INIT_AUDIO) != 0) {
@@ -57,7 +57,7 @@ int setUpMachineController(void)
 	}
 
 	/* Initialize SDL_mixer with our chosen audio settings */
-	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)
+	if (Mix_OpenAudio(audioRate, audioFormat, audioChannels, audioBuffers)
 			!= 0) {
 		printf("Unable to initialize audio: %s\n", Mix_GetError());
 		return FALSE;
@@ -83,25 +83,25 @@ int tearDownMachineController(void) {
 
 static int playSound(enum Ingredient ing)
 {
-	char musicFile[50];
+	char soundFile[50];
 
 	/* Get path of ingredient specify sound file */
 	for (int i = 0; i < soundsCount; i++) {
 		if (ingredientSounds[i].ing == ing) {
-			strcpy(musicFile, ingredientSounds[i].file);
+			strcpy(soundFile, ingredientSounds[i].file);
 		}
 	}
 
 	/* Get the sound file */
-	music = Mix_LoadMUS(musicFile);
-	if (music == NULL) {
-		printf("Unable to load music file: %s\n", Mix_GetError());
+	sound = Mix_LoadMUS(soundFile);
+	if (sound == NULL) {
+		printf("Unable to load sound file: %s\n", Mix_GetError());
 		return FALSE;
 	}
 
-	/* Play the music!	*/
-	if (Mix_PlayMusic(music, 0) == -1) {
-		printf("Unable to play music file: %s\n", Mix_GetError());
+	/* Play the sound!	*/
+	if (Mix_PlayMusic(sound, 0) == -1) {
+		printf("Unable to play sound file: %s\n", Mix_GetError());
 		return FALSE;
 	}
 	return TRUE;
@@ -110,7 +110,7 @@ static int playSound(enum Ingredient ing)
 static int stopSound() {
 	/* Release the memory allocated to our music	*/
 	Mix_HaltMusic();
-	Mix_FreeMusic(music);
+	Mix_FreeMusic(sound);
 
 	/* Return success!	*/
 	return TRUE;
