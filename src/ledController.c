@@ -35,6 +35,9 @@ typedef struct {
 static LedDescriptor leds[NUM_OF_LEDS];
 static int isLedControllerSetUp = FALSE;
 
+/**
+ * @copydoc setUpLedController
+ */
 int setUpLedController(void)
 {
 	// check if led controller is already set up:
@@ -64,6 +67,9 @@ int setUpLedController(void)
 	return TRUE;
 }
 
+/**
+ * @copydoc tearDownLedController
+ */
 int tearDownLedController(void)
 {
 	int id;
@@ -81,6 +87,9 @@ int tearDownLedController(void)
 	return TRUE;
 }
 
+/**
+ * @copydoc updateBlinkingState
+ */
 int updateBlinkingState(LedDescriptor *led) {
 	if (!isLedControllerSetUp) {
 		return FALSE;
@@ -100,6 +109,9 @@ int updateBlinkingState(LedDescriptor *led) {
 	return TRUE;
 }
 
+/**
+ * @copydoc updateAllLeds
+ */
 int updateAllLeds() {
 	if (!isLedControllerSetUp) {
 		return FALSE;

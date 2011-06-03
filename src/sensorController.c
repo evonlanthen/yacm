@@ -22,6 +22,9 @@
 
 static int isSensorControllerSetUp = FALSE;
 
+/**
+ * @copydoc setUpSensorController
+ */
 int setUpSensorController(void)
 {
 	// check if sensor controller is already set up:
@@ -40,6 +43,9 @@ int setUpSensorController(void)
 	return TRUE;
 }
 
+/**
+ * @copydoc tearDownSensorController
+ */
 int tearDownSensorController(void)
 {
 	// check if sensor controller was already torn down:
@@ -50,6 +56,9 @@ int tearDownSensorController(void)
 	return TRUE;
 }
 
+/**
+ * @copydoc getSensorState
+ */
 enum SensorState getSensorState(int id)
 {
 	UINT8 sensors;

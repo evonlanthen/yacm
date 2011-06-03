@@ -21,6 +21,9 @@
 
 static int isInputControllerSetUp = FALSE;
 
+/**
+ * @copydoc setUpInputController
+ */
 int setUpInputController(void)
 {
 	// check if input controller is already set up:
@@ -38,6 +41,9 @@ int setUpInputController(void)
 	return TRUE;
 }
 
+/**
+ * @copydoc tearDownInputController
+ */
 int tearDownInputController(void)
 {
 	// check if input controller was already torn down:
@@ -48,6 +54,9 @@ int tearDownInputController(void)
 	return TRUE;
 }
 
+/**
+ * @copydoc getSwitchState
+ */
 enum SwitchState getSwitchState(int id)
 {
 	UINT8 switches;
@@ -72,6 +81,9 @@ enum SwitchState getSwitchState(int id)
     }
 }
 
+/**
+ * @copydoc getButtonState
+ */
 enum ButtonState getButtonState(int id)
 {
 	UINT8 button;
