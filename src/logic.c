@@ -110,6 +110,7 @@ typedef enum {
 	coffeeMakingEvent_milkDelivered,
 	coffeeMakingEvent_deliverCoffee,
 	coffeeMakingEvent_coffeeDelivered,
+	coffeeMakingEvent_ingredientTankIsEmpty,
 	coffeeMakingEvent_none
 } CoffeeMakingEvent;
 
@@ -559,7 +560,8 @@ static Event producingStateDoAction() {
 	runStateMachine(&coffeeMakingProcessMachine);
 
 	// Check coffee making process instance progress
-	if (coffeeMaker.ongoingCoffeeMaking->currentActivity == coffeeMakingActivity_finished) {
+	if (coffeeMaker.ongoingCoffeeMaking->currentActivity == coffeeMakingActivity_finished
+		|| coffeeMaker.ongoingCoffeeMaking->currentActivity == coffeeMakingActivity_error) {
 		return event_productionProcessIsFinished;
 	}
 
@@ -684,6 +686,10 @@ static Event deliveringMilkActivityDoAction() {
 		return coffeeMakingEvent_milkDelivered;
 	}
 
+	if (!coffeeMaker.milk.isAvailable) {
+		return coffeeMakingEvent_ingredientTankIsEmpty;
+	}
+
 	return coffeeMakingEvent_none;
 }
 
@@ -712,6 +718,10 @@ static Event deliveringCoffeeActivityDoAction() {
 		return coffeeMakingEvent_coffeeDelivered;
 	}
 
+	if (!coffeeMaker.coffee.isAvailable) {
+		return coffeeMakingEvent_ingredientTankIsEmpty;
+	}
+
 	return coffeeMakingEvent_none;
 }
 
@@ -726,20 +736,32 @@ static State deliveringCoffeeActivity = {
 	.exitAction = deliveringCoffeeActivityExitAction
 };
 
-// Finishing activity
-static void finishingActivityEntryAction() {
+// Finished state
+static void finishedStateEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_finished;
 
 	notifyObservers();
 }
 
-static State finishingActivity = {
+static State finishedState = {
 	.stateIndex = coffeeMakingActivity_finished,
-	.entryAction = finishingActivityEntryAction
+	.entryAction = finishedStateEntryAction
+};
+
+// Error activity
+static void errorStateEntryAction() {
+	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_error;
+
+	notifyObservers();
+}
+
+static State errorState = {
+	.stateIndex = coffeeMakingActivity_error,
+	.entryAction = errorStateEntryAction
 };
 
 static StateMachine coffeeMakingProcessMachine = {
-	.numberOfEvents = 5,
+	.numberOfEvents = 6,
 	.initialState = &warmingUpActivity,
 //static State * coffeeMakingActivityTransitions[][coffeeMakingEvent_none] = {
 	.transitions = {
@@ -749,30 +771,35 @@ static StateMachine coffeeMakingProcessMachine = {
 			/* coffeeMakingEvent_milkDelivered: */ NULL,
 			/* coffeeMakingEvent_deliverCoffee: */ NULL,
 			/* coffeeMakingEvent_coffeeDelivered: */ NULL,
+			/* coffeeMakingEvent_ingredientTankIsEmpty: */ NULL,
 		/* coffeeMakingActivity_withMilkGateway: */
 			/* coffeeMakingEvent_isWarmedUp: */ NULL,
 			/* coffeeMakingEvent_deliverMilk: */ &deliveringMilkActivity,
 			/* coffeeMakingEvent_milkDelivered: */ NULL,
 			/* coffeeMakingEvent_deliverCoffee: */ &deliveringCoffeeActivity,
 			/* coffeeMakingEvent_coffeeDelivered: */ NULL,
+			/* coffeeMakingEvent_ingredientTankIsEmpty: */ NULL,
 		/* coffeeMakingActivity_deliveringMilk: */
 			/* coffeeMakingEvent_isWarmedUp: */ NULL,
 			/* coffeeMakingEvent_deliverMilk: */ NULL,
 			/* coffeeMakingEvent_milkDelivered: */ &deliveringCoffeeActivity,
 			/* coffeeMakingEvent_deliverCoffee: */ NULL,
 			/* coffeeMakingEvent_coffeeDelivered: */ NULL,
+			/* coffeeMakingEvent_ingredientTankIsEmpty: */ &errorState,
 		/* coffeeMakingActivity_deliveringCoffee: */
 			/* coffeeMakingEvent_isWarmedUp: */ NULL,
 			/* coffeeMakingEvent_deliverMilk: */ NULL,
 			/* coffeeMakingEvent_milkDelivered: */ NULL,
 			/* coffeeMakingEvent_deliverCoffee: */ NULL,
-			/* coffeeMakingEvent_coffeeDelivered: */ &finishingActivity
+			/* coffeeMakingEvent_coffeeDelivered: */ &finishedState,
+			/* coffeeMakingEvent_ingredientTankIsEmpty: */ &errorState
 		}
 };
 
 
-// Logic
 
+
+// Logic
 
 int setUpBusinessLogic() {
 	// Check if business logic is already set up
@@ -877,9 +904,9 @@ static void checkIngredientTankSensors() {
 		notifyObservers();
 
 		// Fire event
-		if (emptyCoffeeTankSensorState == sensor_alert) {
-			processEvent(event_ingredientTankIsEmpty);
-		}
+		//if (emptyCoffeeTankSensorState == sensor_alert) {
+		//	processEvent(event_ingredientTankIsEmpty);
+		//}
 
 		lastEmptyCoffeeTankSensorState = emptyCoffeeTankSensorState;
 	}
@@ -894,9 +921,9 @@ static void checkIngredientTankSensors() {
 		notifyObservers();
 
 		// Fire event
-		if (emptyMilkTankSensorState == sensor_alert) {
-			processEvent(event_ingredientTankIsEmpty);
-		}
+		//if (emptyMilkTankSensorState == sensor_alert) {
+		//	processEvent(event_ingredientTankIsEmpty);
+		//}
 
 		lastEmptyMilkTankSensorState = emptyMilkTankSensorState;
 	}
