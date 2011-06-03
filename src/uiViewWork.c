@@ -89,8 +89,11 @@ static void activate(void) {
 static void deactivate(void) {
 	DisplayState *displaystate = getDisplayState();
 
-	/* Turn off active product Led */
-	updateLed(getActiveProductLedId(), led_off);
+	/* Turn off all product Leds */
+	updateLed(PRODUCT_1_LED, led_off);
+	updateLed(PRODUCT_2_LED, led_off);
+	updateLed(PRODUCT_3_LED, led_off);
+	updateLed(PRODUCT_4_LED, led_off);
 
 	/*Clear screen*/
 	GrClearWindow(displaystate->gWinID,GR_FALSE);
