@@ -140,6 +140,11 @@ extern DisplayState * getDisplayState(void);
  */
 extern int runUserInterface(void);
 
+/**
+ * return led ID for active product
+ */
+extern int getActiveProductLedId(void);
+
 #endif /* USERINTERFACE_H_ */
 
 
