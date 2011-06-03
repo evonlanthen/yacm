@@ -579,7 +579,7 @@ static int producingStatePrecondition() {
 static void startMakeCoffeeProcess(unsigned int productIndex) {
 	coffeeMaker.ongoingCoffeeMaking = newObject(&(MakeCoffeeProcessInstance) {
 		.product = getProduct(productIndex),
-		.withMilk = coffeeMaker.milkPreselectionState = milkPreselection_on ? TRUE : FALSE
+		.withMilk = coffeeMaker.milkPreselectionState == milkPreselection_on ? TRUE : FALSE
 	}, sizeof(MakeCoffeeProcessInstance));
 
 	coffeeMaker.state = coffeeMaker_producing;
@@ -609,6 +609,7 @@ static void abortMakeCoffeeProcessInstance() {
 		abortStateMachine(&coffeeMakingProcessMachine);
 
 		deleteObject(coffeeMaker.ongoingCoffeeMaking);
+		coffeeMaker.ongoingCoffeeMaking = NULL;
 	}
 }
 
