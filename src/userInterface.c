@@ -176,6 +176,14 @@ DisplayState * getDisplayState(void) {
 }
 
 /**
+ * get updated coffeemaker state reference
+ * called by uiView modules
+ */
+	CoffeeMakerViewModel* getNewCoffeeMakerState(void) {
+	return &newCoffeeMaker;
+}
+
+/**
  * Display milk selection state
  */
 void showMilkSelection(int state) {
@@ -206,7 +214,7 @@ void showMilkSelection(int state) {
 void showProduct(int productIndex) {
 	char productUseText[20] = "Press ";
 	int xPos = 40;
-	/*TODO Check with Ronny if ProductViewModel has an index starting with 1*/
+	/*productIndex starts with 0 for product 1*/
 	if ((productIndex > 3) || (productIndex < 0)) return;
 	productIndex--;
 	strcat(productUseText, buttonLabels[productIndex]);

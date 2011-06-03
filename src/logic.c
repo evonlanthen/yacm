@@ -127,9 +127,17 @@ static TIMER warmingUpTimer;
  * Notify the model observers of a model change.
  */
 static void notifyObservers() {
+#ifdef DEBUG
+	printf("Notifying model observers...\n");
+#endif
+
 	if (observer) {
 		(*observer)();
 	}
+
+#ifdef DEBUG
+	printf("Model observers notified.\n");
+#endif
 }
 
 
@@ -141,8 +149,8 @@ static CoffeeMaker coffeeMaker = {
 		.coffee.isAvailable = TRUE,
 		.coffee.emptyTankSensorId = SENSOR_1,
 		.milk.isAvailable = TRUE,
-		.milk.emptyTankSensorId = SENSOR_2//,
-		//.products = &coffeeProductListElement
+		.milk.emptyTankSensorId = SENSOR_2,
+		.milkPreselectionState = milkPreselection_off
 };
 
 static enum SensorState lastEmptyCoffeeTankSensorState = sensor_unknown;

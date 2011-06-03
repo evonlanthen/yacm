@@ -105,6 +105,12 @@ extern DisplayState* getDisplayState(void);
 extern CoffeeMakerViewModel * getCoffeeMakerState(void);
 
 /**
+ * get updated coffeemaker state reference
+ * called by uiView modules
+ */
+extern CoffeeMakerViewModel * getNewCoffeeMakerState(void);
+
+/**
  * Display milk selection state
  */
 extern void showMilkSelection(int state);

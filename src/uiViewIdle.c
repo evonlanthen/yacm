@@ -54,6 +54,9 @@ static void run(void) {
 }
 
 static void update(void) {
+#ifdef DEBUG
+	printf("uiViewIdle.c: got an update\n");
+#endif
 	DisplayState *displaystate = getDisplayState();
 	/*Clear screen*/
 	GrClearWindow(displaystate->gWinID,GR_FALSE);
@@ -65,7 +68,7 @@ static void update(void) {
 	GrSetGCFont(displaystate->gContextID, displaystate->font);
 	GrText(displaystate->gWinID, displaystate->gContextID, 120, 30, "Product Selection:", -1, GR_TFASCII | GR_TFTOP);
 	GrDestroyFont(displaystate->font);
-	CoffeeMakerViewModel *coffeemaker = getCoffeeMakerState();
+	CoffeeMakerViewModel *coffeemaker = getNewCoffeeMakerState();
 	int productNumber = coffeemaker->numberOfProducts;
 	if (productNumber > MAX_PRODUCTS) productNumber = MAX_PRODUCTS;
 	for (int i = 1; i < productNumber + 1;i++) {
