@@ -79,6 +79,7 @@ typedef enum {
 	coffeeMakingActivity_deliveringMilk,
 	coffeeMakingActivity_deliveringCoffee,
 	coffeeMakingActivity_finished,
+	coffeeMakingActivity_error,
 	coffeeMakingActivity_undefined
 } CoffeeMakingActivity;
 
