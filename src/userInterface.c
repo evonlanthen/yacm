@@ -234,3 +234,24 @@ void showProduct(int productIndex) {
 	GrDestroyFont(displaystate.font);
 }
 
+/**
+ * return led ID for active product
+ */
+int getActiveProductLedId(void) {
+	MakeCoffeeProcessInstanceViewModel activeProduct = getCoffeeMakingProcessInstanceViewModel();
+	int activeLed = PRODUCT_1_LED;
+	/* let's get the right button to query for stopping */
+	switch ( activeProduct.productIndex ) {
+		case 0: activeLed = PRODUCT_1_LED;
+		break;
+		case 1: activeLed = PRODUCT_2_LED;
+		break;
+		case 2: activeLed = PRODUCT_3_LED;
+		break;
+		case 3: activeLed = PRODUCT_4_LED;
+		break;
+		default: activeLed = PRODUCT_1_LED;
+		break;
+	}
+	return activeLed;
+}

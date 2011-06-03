@@ -14,6 +14,8 @@
 #include "timer.h"
 
 #define BUTTON_DELAY	800
+#define PRODUCT_BLINK_TIME_ON	250
+#define PRODUCT_BLINK_TIME_OFF	250
 
 static TIMER delayTimer;
 
@@ -48,12 +50,15 @@ static void run(void) {
 	#endif
 		switchOff();
 	}
+
+	/* update blinking Leds */
+	updateAllLeds();
 }
 
 static void activate(void) {
 	DisplayState *displaystate = getDisplayState();
 	displaystate->gContextID = GrNewGC();
-
+	MakeCoffeeProcessInstanceViewModel activeProduct = getCoffeeMakingProcessInstanceViewModel();
 	/*start Timer for button release delay*/
 	delayTimer = setUpTimer(BUTTON_DELAY);
 	/* Back- Foreground color related stuff */
@@ -64,11 +69,29 @@ static void activate(void) {
 	GrSetGCFont(displaystate->gContextID, displaystate->font);
 	GrText(displaystate->gWinID, displaystate->gContextID, 120, 30, "Making coffee...", -1, GR_TFASCII | GR_TFTOP);
 	GrDestroyFont(displaystate->font);
+	/* display active product */
+#ifdef DEBUG
+	printf("uiViewWork.c: Calling showProduct(%d)\n",activeProduct.productIndex);
+#endif
+	showProduct(activeProduct.productIndex + 1);
 
+	/* display chosen milk selection for active Product*/
+#ifdef DEBUG
+	printf("uiViewWork.c: Calling showMilkSelection(%d)\n",activeProduct.withMilk);
+#endif
+	showMilkSelection(activeProduct.withMilk);
+
+	/* start blinking led for product */
+	setBlinkingFreq(getActiveProductLedId(), PRODUCT_BLINK_TIME_ON, PRODUCT_BLINK_TIME_OFF);
+	updateLed(getActiveProductLedId(), led_blinking);
 }
 
 static void deactivate(void) {
 	DisplayState *displaystate = getDisplayState();
+
+	/* Turn off active product Led */
+	updateLed(getActiveProductLedId(), led_off);
+
 	/*Clear screen*/
 	GrClearWindow(displaystate->gWinID,GR_FALSE);
 }

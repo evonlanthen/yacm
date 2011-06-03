@@ -22,6 +22,10 @@
  #define PRODUCT_2_BUTTON_TEXT	"T2"
  #define PRODUCT_3_BUTTON_TEXT	"T1"
  #define PRODUCT_4_BUTTON_TEXT	"T0"
+ #define PRODUCT_1_LED		LED_4
+ #define PRODUCT_2_LED		LED_3
+ #define PRODUCT_3_LED		LED_2
+ #define PRODUCT_4_LED		LED_1
 #elif defined(ORCHID)
  #define POWER_SWITCH		SWITCH_1
  #define POWER_SWITCH_TEXT	S1
@@ -36,6 +40,10 @@
  #define PRODUCT_2_BUTTON_TEXT	"S7"
  #define PRODUCT_3_BUTTON_TEXT	"S6"
  #define PRODUCT_4_BUTTON_TEXT	"S5"
+ #define PRODUCT_1_LED		LED_8
+ #define PRODUCT_2_LED		LED_7
+ #define PRODUCT_3_LED		LED_6
+ #define PRODUCT_4_LED		LED_5
 #endif
 
 /* Some window related constants */
