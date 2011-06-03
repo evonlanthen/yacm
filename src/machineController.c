@@ -19,8 +19,21 @@ static TIMER timer;
 static Mix_Music *music; /* Pointer to our music, in memory	*/
 static int isMachineControllerSetUp = FALSE;
 
+typedef struct {
+	enum Ingredient ing;
+	char file[50];
+} Sounds;
+
+/* Define soundfiles */
+Sounds ingredientSounds[] = {
+	{ .ing = ingredient_coffee, .file = "/usr/local/share/yacm/coffeeDelivery.mp3" },
+	{ .ing = ingredient_milk, .file = "/usr/local/share/yacm/milkDelivery.mp3" }
+};
+int soundsCount = 2;
+
 int setUpMachineController(void)
 {
+
 	// check if machine controller is already set up:
 	if (isMachineControllerSetUp) {
 		return FALSE;
@@ -47,13 +60,20 @@ int tearDownMachineController(void) {
 	return TRUE;
 }
 
-static int playSound(void)
+static int playSound(enum Ingredient ing)
 {
 	int audio_rate = 44100; /* Frequency of audio playback in [Hz]	*/
 	Uint16 audio_format = AUDIO_S16SYS; /* Format of the audio we're playing	*/
 	int audio_channels = 2; /* 2 channels = stereo			*/
 	int audio_buffers = 4096; /* Size of the audio buffers in memory	*/
-	char *musicFile = "/usr/local/music/coffeeMachine.mp3";
+	char musicFile[50];
+
+	/* Get path of ingredient specify sound file */
+	for (int i = 0; i < soundsCount; i++) {
+		if (ingredientSounds[i].ing == ing) {
+			strcpy(musicFile, ingredientSounds[i].file);
+		}
+	}
 
 	/* Initialize SDL audio	*/
 	if (SDL_Init(SDL_INIT_AUDIO) != 0) {
@@ -103,10 +123,10 @@ int startMachine(enum Ingredient ing, unsigned int time)
 	}
 	if (ing == ingredient_coffee) {
 		printf("Delivering coffee...\n");
-		playSound();
+		playSound(ing);
 	} else if (ing == ingredient_milk) {
 		printf("Delivering milk...\n");
-		playSound();
+		playSound(ing);
 	} else {
 		printf("Unknown ingredient selected!\n");
 	}
