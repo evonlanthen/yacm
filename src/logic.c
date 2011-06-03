@@ -251,73 +251,129 @@ static Product * getProduct(unsigned int productIndex) {
 
 
 
-int setUpBusinessLogic() {
-	// Check if business logic is already set up
-	if (isBusinessLogicSetUp) {
-		return FALSE;
+
+// State machine engine
+
+typedef int (*StatePrecondition)();
+typedef void (*StateAction)();
+typedef Event (*DoStateAction)();
+
+typedef struct {
+	int stateIndex;
+	StatePrecondition precondition;
+	StateAction entryAction;
+	DoStateAction doAction;
+	StateAction exitAction;
+} State;
+
+typedef struct {
+	int isInitialized;
+	unsigned int numberOfEvents;
+	State *initialState;
+	State *activeState;
+	State *transitions[];
+} StateMachine;
+
+static void setUpStateMachine(StateMachine *stateMachine);
+static void runStateMachine(StateMachine *stateMachine);
+static void abortStateMachine(StateMachine *stateMachine);
+static Event runState(State *state);
+static void processEventInt(StateMachine *stateMachine, Event event);
+static void activateState(StateMachine *stateMachine, State *nextState);
+
+static void setUpStateMachine(StateMachine *stateMachine) {
+	if (stateMachine->isInitialized) {
+		return;
 	}
 
-#ifdef DEBUG
+	activateState(stateMachine, stateMachine->initialState);
 
-#endif
-
-	// Load product definitions
-	setUpProducts();
-
-	isBusinessLogicSetUp = TRUE;
-
-	return TRUE;
+	stateMachine->isInitialized = TRUE;
 }
 
-int tearDownBusinessLogic() {
-	// Delete product definitions
-	ProductListElement *productListElement = coffeeMaker.products;
-	coffeeMaker.products = NULL;
-	while (productListElement) {
-		ProductListElement *next = productListElement->next;
-
-		deleteObject(productListElement->product);
-		deleteObject(productListElement);
-
-		productListElement = next;
+static void runStateMachine(StateMachine *stateMachine) {
+	if (!stateMachine->isInitialized) {
+		return;
 	}
 
-	isBusinessLogicSetUp = FALSE;
-
-	return TRUE;
-}
-
-/**
- * Sets up product definitions.
- * Preliminary the setup is done hardcoded.
- * In the future definitions could possibly read from a file?
- */
-static void setUpProducts() {
-	Product *coffeeProduct = newObject(&(Product) {
-		.name = "Coffee"
-	}, sizeof(Product));
-	Product *espressoProduct = newObject(&(Product) {
-		.name = "Espresso"
-	}, sizeof(Product));
-	Product *ristrettoProduct = newObject(&(Product) {
-		.name = "Ristretto"
-	}, sizeof(Product));
-	Product *products[] = {
-			coffeeProduct,
-			espressoProduct,
-			ristrettoProduct
-	};
-	ProductListElement *nextProductListElement = NULL;
-	int i;
-	for (i = 2; i >= 0; i--) {
-		ProductListElement *productListElement = newObject(&(ProductListElement) {
-			.product = products[i],
-			.next = nextProductListElement
-		}, sizeof(ProductListElement));
-		nextProductListElement = productListElement;
+	// Run active state and process events
+	Event event = runState(stateMachine->activeState);
+	if (event != event_none) {
+		processEventInt(stateMachine, event);
 	}
-	coffeeMaker.products = nextProductListElement;
 }
+
+static void abortStateMachine(StateMachine *stateMachine) {
+	if (!stateMachine->isInitialized) {
+		return;
+	}
+
+	if (stateMachine->activeState->exitAction) {
+		stateMachine->activeState->exitAction();
+	}
+
+	stateMachine->isInitialized = FALSE;
+}
+
+static Event runState(State *state) {
+	Event event = event_none;
+
+	// If the state has a 'do' action, then run it
+	if (state->doAction) {
+		event = state->doAction();
+	}
+
+	return event;
+}
+
+static void processEventInt(StateMachine *stateMachine, Event event) {
+	if (!stateMachine->isInitialized) {
+		return;
+	}
+
+	// Processing an event means looking up the state machine's next state in the transition table
+	State *nextState = stateMachine->transitions[stateMachine->activeState->stateIndex * stateMachine->numberOfEvents + event];
+	if (nextState) {
+		// If next state either has no precondition
+		// or the precondition is true...
+		if (!nextState->precondition
+			|| nextState->precondition()) {
+			// Activate next state
+			activateState(stateMachine, nextState);
+		}
+	}
+}
+
+static void activateState(StateMachine *stateMachine, State *nextState) {
+	// If a state is currently active and the state has an exit action,
+	// then run the state's exit action
+	if (stateMachine->activeState) {
+		if (stateMachine->activeState->exitAction) {
+			stateMachine->activeState->exitAction();
+		}
+	}
+	// Make the next state the currently active state
+	stateMachine->activeState = nextState;
+	// If the (now currently active) state has an entry action,
+	// run the state's entry action
+	if (stateMachine->activeState->entryAction) {
+		stateMachine->activeState->entryAction();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -406,112 +462,6 @@ void abortMakingCoffee() {
 
 
 
-// State machine engine
-
-typedef int (*StatePrecondition)();
-typedef void (*StateAction)();
-typedef Event (*DoStateAction)();
-
-typedef struct {
-	int stateIndex;
-	StatePrecondition precondition;
-	StateAction entryAction;
-	DoStateAction doAction;
-	StateAction exitAction;
-} State;
-
-typedef struct {
-	int isInitialized;
-	unsigned int numberOfEvents;
-	State *initialState;
-	State *activeState;
-	State *transitions[];
-} StateMachine;
-
-static void setUpStateMachine(StateMachine *stateMachine);
-static void runStateMachine(StateMachine *stateMachine);
-static void abortStateMachine(StateMachine *stateMachine);
-static Event runState(State *state);
-static void processEventInt(StateMachine *stateMachine, Event event);
-static void activateState(StateMachine *stateMachine, State *nextState);
-
-static void setUpStateMachine(StateMachine *stateMachine) {
-	if (stateMachine->isInitialized) {
-		return;
-	}
-
-	activateState(stateMachine, stateMachine->initialState);
-
-	stateMachine->isInitialized = TRUE;
-}
-
-static void runStateMachine(StateMachine *stateMachine) {
-	if (!stateMachine->isInitialized) {
-		return;
-	}
-
-	// Run active state and process events
-	Event event = runState(stateMachine->activeState);
-	if (event != event_none) {
-		processEventInt(stateMachine, event);
-	}
-}
-
-static void abortStateMachine(StateMachine *stateMachine) {
-	if (!stateMachine->isInitialized) {
-		return;
-	}
-
-	if (stateMachine->activeState->exitAction) {
-		stateMachine->activeState->exitAction();
-	}
-}
-
-static Event runState(State *state) {
-	Event event = event_none;
-
-	// If the state has a 'do' action, then run it
-	if (state->doAction) {
-		event = state->doAction();
-	}
-
-	return event;
-}
-
-static void processEventInt(StateMachine *stateMachine, Event event) {
-	if (!stateMachine->isInitialized) {
-		return;
-	}
-
-	// Processing an event means looking up the state machine's next state in the transition table
-	State *nextState = stateMachine->transitions[stateMachine->activeState->stateIndex * stateMachine->numberOfEvents + event];
-	if (nextState) {
-		// If next state either has no precondition
-		// or the precondition is true...
-		if (!nextState->precondition
-			|| nextState->precondition()) {
-			// Activate next state
-			activateState(stateMachine, nextState);
-		}
-	}
-}
-
-static void activateState(StateMachine *stateMachine, State *nextState) {
-	// If a state is currently active and the state has an exit action,
-	// then run the state's exit action
-	if (stateMachine->activeState) {
-		if (stateMachine->activeState->exitAction) {
-			stateMachine->activeState->exitAction();
-		}
-	}
-	// Make the next state the currently active state
-	stateMachine->activeState = nextState;
-	// If the (now currently active) state has an entry action,
-	// run the state's entry action
-	if (stateMachine->activeState->entryAction) {
-		stateMachine->activeState->entryAction();
-	}
-}
 
 
 
@@ -823,10 +773,87 @@ static StateMachine coffeeMakingProcessMachine = {
 
 // Logic
 
-void runBusinessLogic() {
-	if (!stateMachine.isInitialized) {
-		setUpStateMachine(&stateMachine);
+
+int setUpBusinessLogic() {
+	// Check if business logic is already set up
+	if (isBusinessLogicSetUp) {
+		return FALSE;
 	}
+
+#ifdef DEBUG
+
+#endif
+
+	// Load product definitions
+	setUpProducts();
+
+	setUpStateMachine(&stateMachine);
+
+	isBusinessLogicSetUp = TRUE;
+
+	return TRUE;
+}
+
+int tearDownBusinessLogic() {
+	if (!isBusinessLogicSetUp) {
+		return FALSE;
+	}
+
+	abortStateMachine(&stateMachine);
+
+	// Delete product definitions
+	ProductListElement *productListElement = coffeeMaker.products;
+	coffeeMaker.products = NULL;
+	while (productListElement) {
+		ProductListElement *next = productListElement->next;
+
+		deleteObject(productListElement->product);
+		deleteObject(productListElement);
+
+		productListElement = next;
+	}
+
+	isBusinessLogicSetUp = FALSE;
+
+	return TRUE;
+}
+
+/**
+ * Sets up product definitions.
+ * Preliminary the setup is done hardcoded.
+ * In the future definitions could possibly read from a file?
+ */
+static void setUpProducts() {
+	Product *coffeeProduct = newObject(&(Product) {
+		.name = "Coffee"
+	}, sizeof(Product));
+	Product *espressoProduct = newObject(&(Product) {
+		.name = "Espresso"
+	}, sizeof(Product));
+	Product *ristrettoProduct = newObject(&(Product) {
+		.name = "Ristretto"
+	}, sizeof(Product));
+	Product *products[] = {
+			coffeeProduct,
+			espressoProduct,
+			ristrettoProduct
+	};
+	ProductListElement *nextProductListElement = NULL;
+	int i;
+	for (i = 2; i >= 0; i--) {
+		ProductListElement *productListElement = newObject(&(ProductListElement) {
+			.product = products[i],
+			.next = nextProductListElement
+		}, sizeof(ProductListElement));
+		nextProductListElement = productListElement;
+	}
+	coffeeMaker.products = nextProductListElement;
+}
+
+void runBusinessLogic() {
+	//if (!stateMachine.isInitialized) {
+	//	setUpStateMachine(&stateMachine);
+	//}
 
 	// Check ingredient tank sensors
 	checkIngredientTankSensors();
