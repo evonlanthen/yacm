@@ -14,6 +14,8 @@
  #define MILK_SWITCH		SWITCH_6
  #define POWER_LED			LED_5
  #define MILK_LED			LED_6
+ #define COFFEE_SENSOR_LED	LED_7
+ #define MILK_SENSOR_LED	LED_8
  #define PRODUCT_1_BUTTON	BUTTON_4
  #define PRODUCT_2_BUTTON	BUTTON_3
  #define PRODUCT_3_BUTTON	BUTTON_2
@@ -32,6 +34,8 @@
  #define MILK_SWITCH		SWITCH_2
  #define POWER_LED			LED_1
  #define MILK_LED			LED_2
+ #define COFFEE_SENSOR_LED	LED_3
+ #define MILK_SENSOR_LED	LED_4
  #define PRODUCT_1_BUTTON	BUTTON_4
  #define PRODUCT_2_BUTTON	BUTTON_3
  #define PRODUCT_3_BUTTON	BUTTON_2
@@ -53,6 +57,10 @@
 
 /*maximum numbers of products able to display*/
 #define MAX_PRODUCTS 4
+
+/*define warning blink interval */
+#define WARNING_BLINK_TIME_ON	1000
+#define WARNING_BLINK_TIME_OFF	2000
 
 #define MWINCLUDECOLORS
 #include "nano-X.h"
@@ -92,7 +100,7 @@ typedef struct {
 	GR_WINDOW_ID			gWinID;
 	GR_IMAGE_ID 			imageID;
 	GR_IMAGE_INFO 			imageInfo;
-	GR_GC_ID				gContextID, gMilkSelID, gProdID[4];
+	GR_GC_ID				gContextID, gMilkSelID, gProdID[4], gMilkSensorID, gCoffeeSensorID;
 	GR_EVENT	   			event;
 	GR_SCREEN_INFO  		screenInfo;
 	GR_FONT_ID				font;
@@ -144,6 +152,16 @@ extern int runUserInterface(void);
  * return led ID for active product
  */
 extern int getActiveProductLedId(void);
+
+/**
+ * Display milk sensor state
+ */
+extern void showMilkSensor(int state);
+
+/**
+ * Display coffee sensor state
+ */
+extern void showCoffeeSensor(int state);
 
 #endif /* USERINTERFACE_H_ */
 

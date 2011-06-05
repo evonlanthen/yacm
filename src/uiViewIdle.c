@@ -51,6 +51,8 @@ static void run(void) {
 #endif
 		}
 	}
+	/* Show the pretty lights */
+	updateAllLeds();
 }
 
 static void update(void) {
@@ -80,6 +82,24 @@ static void update(void) {
 	}
 	else {
 		showMilkSelection(FALSE);
+	}
+
+	/*let's check the milk sensor*/
+	if (coffeemaker->isMilkAvailable == FALSE) {
+		/* indicate milk sensor state on display*/
+		showMilkSensor(TRUE);
+	}
+	else {
+		showMilkSensor(FALSE);
+	}
+
+	/*let's check the coffee sensor*/
+	if (coffeemaker->isCoffeeAvailable == FALSE) {
+		/* indicate coffee sensor state on display*/
+		showCoffeeSensor(TRUE);
+	}
+	else {
+		showCoffeeSensor(FALSE);
 	}
 
 }

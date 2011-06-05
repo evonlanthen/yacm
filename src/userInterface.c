@@ -116,6 +116,11 @@ int setUpDisplay(void) {
 	/* Init graphic contexts*/
 	displaystate.gMilkSelID = GrNewGC();
 	displaystate.gContextID = GrNewGC();
+	displaystate.gMilkSensorID = GrNewGC();
+	displaystate.gCoffeeSensorID = GrNewGC();
+
+	/*Move cursor out of view*/
+	GrMoveCursor(displaystate.screenInfo.cols,displaystate.screenInfo.rows);
 
 	/* Show the window */
 	GrMapWindow(displaystate.gWinID);
@@ -255,3 +260,52 @@ int getActiveProductLedId(void) {
 	}
 	return activeLed;
 }
+
+/**
+ * Display milk sensor state
+ */
+void showMilkSensor(int state) {
+	if (state) {
+		/* Back- Foreground color related stuff */
+		GrSetGCForeground(displaystate.gMilkSensorID, RED);
+		GrSetGCUseBackground(displaystate.gMilkSensorID, GR_FALSE);
+		/* Select fonts */
+		displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 12, NULL);
+		GrSetGCFont(displaystate.gMilkSensorID, displaystate.font);
+		GrText(displaystate.gWinID, displaystate.gMilkSensorID, 230, 60, "Milk empty!", -1, GR_TFASCII | GR_TFTOP);
+		GrDestroyFont(displaystate.font);
+
+		/* start blinking led for product */
+		setBlinkingFreq(MILK_SENSOR_LED, WARNING_BLINK_TIME_ON, WARNING_BLINK_TIME_OFF);
+
+		updateLed(MILK_SENSOR_LED, led_blinking);
+	}
+	else {
+		updateLed(MILK_SENSOR_LED, led_off);
+	}
+}
+
+/**
+ * Display coffee sensor state
+ */
+void showCoffeeSensor(int state) {
+	if (state) {
+		/* Back- Foreground color related stuff */
+		GrSetGCForeground(displaystate.gCoffeeSensorID, RED);
+		GrSetGCUseBackground(displaystate.gCoffeeSensorID, GR_FALSE);
+		/* Select fonts */
+		displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 12, NULL);
+		GrSetGCFont(displaystate.gCoffeeSensorID, displaystate.font);
+		GrText(displaystate.gWinID, displaystate.gCoffeeSensorID, 230, 80, "Coffee empty!", -1, GR_TFASCII | GR_TFTOP);
+		GrDestroyFont(displaystate.font);
+
+		/* start blinking led for product */
+		setBlinkingFreq(COFFEE_SENSOR_LED, WARNING_BLINK_TIME_ON, WARNING_BLINK_TIME_OFF);
+
+		updateLed(COFFEE_SENSOR_LED, led_blinking);
+	}
+	else {
+		updateLed(COFFEE_SENSOR_LED, led_off);
+	}
+}
+

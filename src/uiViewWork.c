@@ -55,20 +55,22 @@ static void run(void) {
 	updateAllLeds();
 }
 
-static void activate(void) {
+static void update(void) {
+	CoffeeMakerViewModel *coffeemaker = getNewCoffeeMakerState();
 	DisplayState *displaystate = getDisplayState();
 	displaystate->gContextID = GrNewGC();
 	MakeCoffeeProcessInstanceViewModel activeProduct = getCoffeeMakingProcessInstanceViewModel();
-	/*start Timer for button release delay*/
-	delayTimer = setUpTimer(BUTTON_DELAY);
+
 	/* Back- Foreground color related stuff */
 	GrSetGCForeground(displaystate->gContextID, YELLOW);
 	GrSetGCUseBackground(displaystate->gContextID, GR_FALSE);
+
 	/* Select fonts */
 	displaystate->font = GrCreateFont((unsigned char *) FONTNAME, 14, NULL);
 	GrSetGCFont(displaystate->gContextID, displaystate->font);
 	GrText(displaystate->gWinID, displaystate->gContextID, 120, 30, "Making coffee...", -1, GR_TFASCII | GR_TFTOP);
 	GrDestroyFont(displaystate->font);
+
 	/* display active product */
 #ifdef DEBUG
 	printf("uiViewWork.c: Calling showProduct(%d)\n",activeProduct.productIndex);
@@ -81,9 +83,36 @@ static void activate(void) {
 #endif
 	showMilkSelection(activeProduct.withMilk);
 
+	/*let's check the milk sensor*/
+	if (coffeemaker->isMilkAvailable == FALSE) {
+		/* indicate milk sensor state on display*/
+		showMilkSensor(TRUE);
+	}
+	else {
+		showMilkSensor(FALSE);
+	}
+
+	/*let's check the coffee sensor*/
+	if (coffeemaker->isCoffeeAvailable == FALSE) {
+		/* indicate coffee sensor state on display*/
+		showCoffeeSensor(TRUE);
+	}
+	else {
+		showCoffeeSensor(FALSE);
+	}
+}
+
+
+static void activate(void) {
+	/*start Timer for button release delay*/
+	delayTimer = setUpTimer(BUTTON_DELAY);
+
 	/* start blinking led for product */
 	setBlinkingFreq(getActiveProductLedId(), PRODUCT_BLINK_TIME_ON, PRODUCT_BLINK_TIME_OFF);
 	updateLed(getActiveProductLedId(), led_blinking);
+
+	/* update display */
+	update();
 }
 
 static void deactivate(void) {
@@ -98,11 +127,6 @@ static void deactivate(void) {
 	/*Clear screen*/
 	GrClearWindow(displaystate->gWinID,GR_FALSE);
 }
-
-static void update(void) {
-
-}
-
 
 CallViewActions getViewWorkActions(void) {
 	CallViewActions retval = { &run, &activate, &deactivate, &update };

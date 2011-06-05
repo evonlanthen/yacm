@@ -34,8 +34,17 @@ static void activate(void) {
 	GrSetGCFont(displaystate->gContextID, displaystate->font);
 	GrText(displaystate->gWinID, displaystate->gContextID, 120, 30, "Power Off!", -1, GR_TFASCII | GR_TFTOP);
 	GrDestroyFont(displaystate->font);
-	/* turn of power led */
+	/* turn off power led */
 	updateLed(POWER_LED,led_off);
+
+	/* turn off milk selection led */
+	updateLed(MILK_LED,led_off);
+
+	/* turn off milk sensor led */
+	updateLed(MILK_SENSOR_LED, led_off);
+
+	/* turn off coffee sensor led */
+	updateLed(COFFEE_SENSOR_LED, led_off);
 }
 
 static void deactivate(void) {
