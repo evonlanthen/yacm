@@ -14,8 +14,9 @@
  */
 #ifdef CARME
  #define POWER_SWITCH		SWITCH_5
- #define POWER_SWITCH_TEXT	S4
+ #define POWER_SWITCH_TEXT	"S4"
  #define MILK_SWITCH		SWITCH_6
+ #define MILK_SWITCH_TEXT	"S5"
  #define POWER_LED			LED_5
  #define MILK_LED			LED_6
  #define COFFEE_SENSOR_LED	LED_7
@@ -34,8 +35,9 @@
  #define PRODUCT_4_LED		LED_1
 #elif defined(ORCHID)
  #define POWER_SWITCH		SWITCH_1
- #define POWER_SWITCH_TEXT	S1
+ #define POWER_SWITCH_TEXT	"S1"
  #define MILK_SWITCH		SWITCH_2
+ #define MILK_SWITCH_TEXT	"S2"
  #define POWER_LED			LED_1
  #define MILK_LED			LED_2
  #define COFFEE_SENSOR_LED	LED_3
