@@ -1,4 +1,4 @@
-/*
+/**
  * @file   uiViewWork.c
  * @author Toni Baumann (bauma12@bfh.ch)
  * @date   May 23, 2011
@@ -13,18 +13,27 @@
 #include "logic.h"
 #include "timer.h"
 
+/* how long are we waiting until new button events register */
 #define BUTTON_DELAY	800
+
+/* blink interval definition */
 #define PRODUCT_BLINK_TIME_ON	250
 #define PRODUCT_BLINK_TIME_OFF	250
 
 static TIMER delayTimer;
 
+/**
+ * run action of work view
+ */
 static void run(void) {
 	MakeCoffeeProcessInstanceViewModel makingCoffee = getCoffeeMakingProcessInstanceViewModel();
 	int activeButton = PRODUCT_1_BUTTON;
+
+	/* wait a bit until we check anew for button events */
 	if ((delayTimer == NULL) || (isTimerElapsed(delayTimer))) {
 		/*make sure we don't use timer again */
 		delayTimer = NULL;
+
 		/* let's get the right button to query for stopping */
 		switch ( makingCoffee.productIndex ) {
 			case 0: activeButton = PRODUCT_1_BUTTON;
@@ -38,11 +47,13 @@ static void run(void) {
 			default: activeButton = PRODUCT_1_BUTTON;
 			break;
 		}
+
 		/* user tries to stop making coffee? */
 		if (getButtonState(activeButton) == button_on) {
 			abortMakingCoffee();
 		}
 	}
+
 	/* Did someone turn the coffeemaker off? */
 	if (getSwitchState(POWER_SWITCH) == switch_off) {
 #ifdef DEBUG
@@ -55,6 +66,9 @@ static void run(void) {
 	updateAllLeds();
 }
 
+/**
+ * update action of work view
+ */
 static void update(void) {
 	CoffeeMakerViewModel *coffeemaker = getNewCoffeeMakerState();
 	DisplayState *displaystate = getDisplayState();
@@ -83,7 +97,7 @@ static void update(void) {
 #endif
 	showMilkSelection(activeProduct.withMilk);
 
-	/*let's check the milk sensor*/
+	/* let's check the milk sensor */
 	if (coffeemaker->isMilkAvailable == FALSE) {
 		/* indicate milk sensor state on display*/
 		showMilkSensor(TRUE);
@@ -92,7 +106,7 @@ static void update(void) {
 		showMilkSensor(FALSE);
 	}
 
-	/*let's check the coffee sensor*/
+	/* let's check the coffee sensor */
 	if (coffeemaker->isCoffeeAvailable == FALSE) {
 		/* indicate coffee sensor state on display*/
 		showCoffeeSensor(TRUE);
@@ -103,6 +117,9 @@ static void update(void) {
 }
 
 
+/**
+ * activate action of work view
+ */
 static void activate(void) {
 	/*start Timer for button release delay*/
 	delayTimer = setUpTimer(BUTTON_DELAY);
@@ -115,6 +132,9 @@ static void activate(void) {
 	update();
 }
 
+/**
+ * deactivate action of work view
+ */
 static void deactivate(void) {
 	DisplayState *displaystate = getDisplayState();
 
@@ -128,6 +148,9 @@ static void deactivate(void) {
 	GrClearWindow(displaystate->gWinID,GR_FALSE);
 }
 
+/**
+ * @copydoc getViewWorkActions
+ */
 CallViewActions getViewWorkActions(void) {
 	CallViewActions retval = { &run, &activate, &deactivate, &update };
 	return retval;
