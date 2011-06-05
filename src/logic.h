@@ -26,7 +26,7 @@ extern int tearDownBusinessLogic();
 
 /**
  * Heartbeat function for ongoing business logic tasks.
- * Gets constantly called by controller.c
+ * Gets constantly called by the main controller.
  */
 extern void runBusinessLogic();
 
