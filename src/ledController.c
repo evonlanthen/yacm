@@ -1,9 +1,9 @@
 /**
- * Initializes and controls the LEDs.
- *
- * @file   ledController.c
- * @author Elmar Vonlanthen (vonle1@bfh.ch)
- * @date   May 20, 2011
+ * @brief   Initializes and controls the LEDs
+ * @version 1.0
+ * @file    ledController.c
+ * @author  Elmar Vonlanthen (vonle1@bfh.ch)
+ * @date    May 20, 2011
  */
 
 #include <stdio.h>

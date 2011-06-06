@@ -1,10 +1,9 @@
 /**
- * Read buttons on CARME board over Sysfs-GPIO
- *
  * @file    carme.c
- * @version 0.1
+ * @version 1.0
  * @author  Elmar Vonlanthen (vonle1@bfh.ch)
  * @date    Jun 2, 2011
+ * @brief   Read buttons on CARME board over Sysfs-GPIOs
  */
 
 #include <stdio.h>

@@ -1,8 +1,7 @@
 /**
- * Create timer objects
- *
+ * @brief   Create timer objects
  * @file    timer.h
- * @version 0.1
+ * @version 1.0
  * @author  Elmar Vonlanthen (vonle1@bfh.ch)
  * @date    May 26, 2011
  */

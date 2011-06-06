@@ -1,10 +1,7 @@
 /**
- * Machine controlling
- *
- * Initialize and control the coffee machine.
- *
+ * @brief   Initialize and control the coffee machine.
  * @file    machineController.h
- * @version 0.1
+ * @version 1.0
  * @author  Elmar Vonlanthen (vonle1@bfh.ch)
  * @date    May 20, 2011
  */

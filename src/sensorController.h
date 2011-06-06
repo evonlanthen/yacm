@@ -1,10 +1,7 @@
 /**
- * Sensor controlling
- *
- * Initialize and read the sensors.
- *
+ * @brief   Initialize and read the sensors
  * @file    sensorController.h
- * @version 0.1
+ * @version 1.0
  * @author  Elmar Vonlanthen (vonle1@bfh.ch)
  * @date    May 20, 2011
  */

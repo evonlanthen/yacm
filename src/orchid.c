@@ -1,4 +1,4 @@
-/*
+/**
  ***************************************************************************
  * \brief   GPIO dir/set/clear functions for the Orchid-IO Board
  * \file    orchid.c

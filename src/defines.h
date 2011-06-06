@@ -1,8 +1,7 @@
 /**
- * Preprocessor definitions
- *
+ * @brief   Preprocessor definitions
  * @file    defines.h
- * @version 0.1
+ * @version 1.0
  * @author  Elmar Vonlanthen (vonle1@bfh.ch)
  * @date    May 20, 2011
  */

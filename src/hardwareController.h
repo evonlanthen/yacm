@@ -1,8 +1,7 @@
 /**
- * Initialize memory mapping and gpio's
- *
+ * @brief   Initialize memory mapping and gpio's
  * @file    hardwareController.h
- * @version 0.1
+ * @version 1.0
  * @author  Elmar Vonlanthen (vonle1@bfh.ch)
  * @date    May 27, 2011
  */
