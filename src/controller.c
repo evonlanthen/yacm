@@ -2,13 +2,26 @@
  * @mainpage yacm - yet another coffee maker
  * @section intro Introduction
  *
- * This is the introduction.
+ * This software implements the logic for a coffee maker.
  *
  * @section usage Usage
  * @subsection step1 Step 1: Compile project
- * $ make
+ * @code
+ * <user>@<host> $ make
+ * @endcode
  * @subsection step2 Step 2: Install files
- * $ make install
+ * @code
+ * <user>@<host> $ make install
+ * @endcode
+ * @subsection step3 Step 3: Start program
+ * @code
+ * root@<target> # /usr/local/bin/yacm
+ * @endcode
+ *
+ * @section authors Authors
+ * @arg Toni Baumann (bauma12@bfh.ch)
+ * @arg Ronny Stauffer (staur3@bfh.ch)
+ * @arg Elmar Vonlanthen (vonle1@bfh.ch)
  *
  * @file   controller.c
  * @author Ronny Stauffer (staur3@bfh.ch)
