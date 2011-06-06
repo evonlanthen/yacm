@@ -1,15 +1,14 @@
 /**
- * @mainpage yacm Index Page
- *
- * @section intro_sec Introduction
+ * @mainpage yacm - yet another coffee maker
+ * @section intro Introduction
  *
  * This is the introduction.
  *
- * @section install_sec Installation
- *
- * @subsection step1 Step 1: blah, blah
- *
- * etc...
+ * @section usage Usage
+ * @subsection step1 Step 1: Compile project
+ * $ make
+ * @subsection step2 Step 2: Install files
+ * $ make install
  *
  * @file   controller.c
  * @author Ronny Stauffer (staur3@bfh.ch)
