@@ -2,4 +2,12 @@
                      yacm - yet another coffee maker
 ================================================================================
 
+Building:
+	$ make
+
+Installation:
+	$ sudo make install
+
+Usage:
+	/usr/local/bin/yacm
 

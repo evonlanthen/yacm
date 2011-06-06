@@ -2,6 +2,7 @@
 # Makefile for yacm 
 ################################################################################
 
+# Directory of root filesystem
 ROOTFS		= /carme/rootfs
 
 # Build settings
@@ -15,8 +16,8 @@ EXEC_NAME	= yacm
 # Make rules
 all: yacm
 
-yacm: 	${OBJS}
-	$(CC) $(CFLAGS) -o $(EXEC_NAME) *.c $(LDFLAGS)
+yacm:
+	$(CC) $(CFLAGS) -o $(EXEC_NAME) src/*.c $(LDFLAGS)
 
 clean:
 	$(RM) *.o $(EXEC_NAME)
@@ -24,5 +25,5 @@ clean:
 install:
 	cp $(EXEC_NAME) $(ROOTFS)/usr/local/bin
 	mkdir -p $(ROOTFS)/usr/local/share/yacm
-	cp ../resources/*.mp3 $(ROOTFS)/usr/local/share/yacm/
+	cp resources/*.mp3 $(ROOTFS)/usr/local/share/yacm/
 
