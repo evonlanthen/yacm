@@ -24,9 +24,9 @@
   #define SWITCH_8		(1 << 7)
   /* Define buttons */
   #define BUTTON_1		 99
-  #define BUTTON_2		100
-  #define BUTTON_3		101
-  #define BUTTON_4		102
+  #define BUTTON_2		101
+  #define BUTTON_3		102
+  #define BUTTON_4		103
 #elif defined(ORCHID)
   /* Define switches */
   #define SWITCH_1		(1 << 0)

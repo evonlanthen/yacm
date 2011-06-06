@@ -2,4 +2,18 @@
                      yacm - yet another coffee maker
 ================================================================================
 
+Building:
+	# for ORCHID:
+	$ make orchid
+	# for CARME:
+	$ make carme
+
+Installation:
+	# for ORCHID:
+	$ sudo make orchid-install
+	# for CARME:
+	$ sudo make carme-install
+
+Usage:
+	/usr/local/bin/yacm
 

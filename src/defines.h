@@ -20,9 +20,12 @@
 
 
 /**
- * Define symbols for the boolean values true and false
+ * Define symbol for the boolean value 'true'.
  */
 #define TRUE 1
+/**
+ * Define symbol for the boolean value 'false'.
+ */
 #define FALSE 0
 
 /**
