@@ -12,8 +12,14 @@
 #ifndef STATEMACHINEENGINE_H_
 #define STATEMACHINEENGINE_H_
 
+/**
+ * Special case value for 'no event'.
+ */
 #define NO_EVENT 999
 
+/**
+ * Represents an event.
+ */
 typedef int Event;
 
 /**
@@ -33,27 +39,11 @@ typedef Event (*DoStateAction)();
  * Represents a state.
  */
 typedef struct {
-	/**
-	 * The state's index.
-	 */
-	int stateIndex;
-	/**
-	 * The state's precondition predicate determines if a state can be activated or not.
-	 * If all preconditions to activate the state are met the predicate should return TRUE, otherwise FALSE.
-	 */
-	StatePrecondition precondition;
-	/**
-	 * The state's 'entry' action is called once after the state was activated.
-	 */
-	StateAction entryAction;
-	/**
-	 * The state's 'do' action is constantly called while the state is active.
-	 */
-	DoStateAction doAction;
-	/**
-	 * The state's 'exit' action is called once before the state will be deactivated.
-	 */
-	StateAction exitAction;
+	int stateIndex; /**< The state's index. */
+	StatePrecondition precondition; /**< The state's precondition predicate determines if a state can be activated or not. If all preconditions to activate the state are met the predicate should return TRUE, otherwise FALSE. */
+	StateAction entryAction; /**< The state's 'entry' action is called once after the state was activated. */
+	DoStateAction doAction; /**< The state's 'do' action is constantly called while the state is active. */
+	StateAction exitAction; /**< The state's 'exit' action is called once before the state will be deactivated. */
 } State;
 
 /**

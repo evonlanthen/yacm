@@ -30,23 +30,23 @@ typedef enum {
   milkPreselection_on
 } MilkPreselectionState;
 
-/*
+/**
  * Represents the coffee maker to a view.
  */
 typedef struct {
 	CoffeeMakerState state; /**< The coffee maker's state. */
-	int isCoffeeAvailable; /*< Is the coffee ingredient available? */
-	int isMilkAvailable; /*< Is the milk ingredient available? */
-	unsigned int numberOfProducts; /*< The number of defined products. */
-	int milkPreselectionState; /*< The milk preselection state. */
-	int isMakingCoffee; /*< Is the coffee maker currently making coffee? */
+	int isCoffeeAvailable; /**< Is the coffee ingredient available? */
+	int isMilkAvailable; /**< Is the milk ingredient available? */
+	unsigned int numberOfProducts; /**< The number of defined products. */
+	int milkPreselectionState; /**< The milk preselection state. */
+	int isMakingCoffee; /**< Is the coffee maker currently making coffee? */
 } CoffeeMakerViewModel;
 
-/*
+/**
  * Represents a product definition to a view.
  */
 typedef struct {
-	char name[256]; /*< The product's name. */
+	char name[256]; /**< The product's name. */
 } ProductViewModel;
 
 /**
@@ -62,7 +62,7 @@ typedef enum {
 	coffeeMakingActivity_undefined
 } CoffeeMakingActivity;
 
-/*
+/**
  * Represents an ongoing coffee making process instance to a view.
  */
 typedef struct {
