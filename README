@@ -1,5 +1,15 @@
 ================================================================================
+
                      yacm - yet another coffee maker
+
+This project implements the logic of a coffee maker. The code is written in C
+for CARME or Orchid hardware.
+
+Authors:
+	- Toni Baumann (bauma12@bfh.ch)
+	- Ronny Stauffer (@bfh.ch)
+	- Elmar Vonlanthen (vonle1@bfh.ch)
+
 ================================================================================
 
 Building:
@@ -18,5 +28,5 @@ Usage:
 	fbvncserver & # for orchid
 	/usr/local/bin/yacm
 
-Please read doc/index.html for details.
+Please read doc/html/index.html for full documentation.
 

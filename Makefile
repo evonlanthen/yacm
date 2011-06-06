@@ -38,7 +38,7 @@ resource-install:
 install:
 	@echo "Please use 'make orchid-install' or 'make carme-install'"
 
-doc:	.phony
+doc:
 	doxygen
 
-.phony:
+.PHONY:	doc
