@@ -34,6 +34,9 @@
  * @arg Blinking of leds with same frequency is not synchronized
  * @arg Vncserver (fbvncserver &) on ORCHID board should be started manually before executing this application
  *
+ * @section architecture Architecture
+ * @image html architecture.jpg
+ *
  * @file   controller.c
  * @author Ronny Stauffer (staur3@bfh.ch)
  * @date   May 23, 2011
