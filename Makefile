@@ -26,10 +26,10 @@ clean:
 	$(RM) *.o $(EXEC_NAME)_* $(EXEC_NAME)
 
 orchid-install: resource-install
-	cp $(EXEC_NAME)_orchid $(ROOTFS)/usr/local/bin
+	cp $(EXEC_NAME)_orchid $(ROOTFS)/usr/local/bin/$(EXEC_NAME)
 
 carme-install: resource-install
-	cp $(EXEC_NAME)_carme $(ROOTFS)/usr/local/bin
+	cp $(EXEC_NAME)_carme $(ROOTFS)/usr/local/bin/$(EXEC_NAME)
 	
 resource-install:
 	mkdir -p $(ROOTFS)/usr/local/share/yacm
