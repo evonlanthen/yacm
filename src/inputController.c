@@ -74,6 +74,8 @@ enum SwitchState getSwitchState(int id)
     switches = GPIO_read_switch();
 #endif
 
+    // mask value of all switches with switch id to get only the status of the
+    // selected switch:
     if (switches & id) {
     	return switch_on;
     } else {
@@ -93,6 +95,7 @@ enum ButtonState getButtonState(int id)
 	}
 
 #ifdef CARME
+	// on CARME board we read each single button state directly over GPIO
 	button = (UINT8) readGPIOButton(id);
 	if (button == 1) {
 		return button_on;
@@ -100,11 +103,14 @@ enum ButtonState getButtonState(int id)
 		return button_off;
 	}
 #elif defined(ORCHID)
-	/* It is important to read twice, else the result would not be reliable
-	 * (usleep for some microseconds would work as well) */
+	// on ORCHID board we get the states of all buttons.
+	// It is important to read twice, else the result would not be reliable
+	// (usleep for some microseconds would work as well)
 	GPIO_read_button();
 	button = GPIO_read_button();
 
+    // mask value of all buttons with button id to get only the status of the
+	// selected button
     if (button & id) {
     	return button_on;
     } else {

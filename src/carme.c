@@ -19,16 +19,24 @@
 #include "inputController.h"
 #include "carme.h"
 
+/**
+ * GPIO export states
+ */
 enum GPIOExportValue {
-	gpio_unexport = 0,
-	gpio_export
+	gpio_unexport = 0, /**< gpio_unexport */
+	gpio_export        /**< gpio_export   */
 };
 
+/**
+ * @copydoc exportGPIO
+ */
 static int exportGPIO(int id, enum GPIOExportValue val) {
 	int exportFD;
 	char exportFileName[50];
 	char idStr[4];
 
+	/* open gpio file handle according to the specific action
+	 * (export or unexport) */
 	if (val == gpio_export) {
 		strcpy(exportFileName, "/sys/class/gpio/export");
 	} else {
@@ -39,12 +47,16 @@ static int exportGPIO(int id, enum GPIOExportValue val) {
 		printf("Cannot open file %s\n", exportFileName);
 		return FALSE;
 	}
+	// write gpio number to the file
 	sprintf(idStr, "%d", id);
 	write(exportFD, idStr, 4);
 	close(exportFD);
 	return TRUE;
 }
 
+/**
+ * @copydoc setGPIODirection
+ */
 static int setGPIODirection(int id)
 {
 	int directionFD;
@@ -62,6 +74,9 @@ static int setGPIODirection(int id)
 	return TRUE;
 }
 
+/**
+ * @copydoc setUpButton
+ */
 static int setUpButton(int id) {
 	/* Export button GPIO */
 	if (!exportGPIO(id, gpio_export)) {
@@ -74,11 +89,15 @@ static int setUpButton(int id) {
 	return TRUE;
 }
 
+/**
+ * @copydoc readGPIOValue
+ */
 static int readGPIOValue(int id) {
 	int valueFD;
 	char valueFileName[50];
 	char value[3];
 
+	/* read value from gpio file in sysfs */
 	sprintf(valueFileName, "/sys/class/gpio/gpio%d/value", id);
 	valueFD = open(valueFileName, O_RDONLY);
 	if (valueFD < 0) {
@@ -88,12 +107,17 @@ static int readGPIOValue(int id) {
 	read(valueFD, value, 2);
 	close(valueFD);
 
+	/* return value as integer */
 	return atoi(value);
 }
 
+/**
+ * @copydoc setUpCarmeGPIO
+ */
 int setUpCarmeGPIO(void) {
 	int ret = TRUE;
 
+	/* Initialize all buttons */
 	if (!setUpButton(BUTTON_1)) {
 		ret = FALSE;
 	}
@@ -109,9 +133,13 @@ int setUpCarmeGPIO(void) {
 	return ret;
 }
 
+/**
+ * @copydoc tearDownCarmeGPIO
+ */
 int tearDownCarmeGPIO(void) {
 	int ret = TRUE;
 
+	/* unexport all GPIO buttons */
 	if (!exportGPIO(BUTTON_1, gpio_unexport)) {
 		ret = FALSE;
 	}
@@ -127,6 +155,9 @@ int tearDownCarmeGPIO(void) {
 	return ret;
 }
 
+/**
+ * @copydoc readGPIOButton
+ */
 int readGPIOButton(int id) {
 	return readGPIOValue(id);
 }
