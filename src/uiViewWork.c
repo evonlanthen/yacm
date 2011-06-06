@@ -71,9 +71,36 @@ static void run(void) {
  */
 static void update(void) {
 	CoffeeMakerViewModel *coffeemaker = getNewCoffeeMakerState();
+
+	/* string array for activity messages */
+	char *currentActivityText[4] = {
+			"Warming up!",
+			"Delivering milk!",
+			"Delivering coffee!",
+			""
+	};
+	int currentActivityIndex = 3;
+	CoffeeMakingActivity currentActivity;
 	DisplayState *displaystate = getDisplayState();
+
+	/*Clear activity message */
+	GrSetGCForeground(displaystate->gContextID, BLACK);
+	GrFillRect(displaystate->gWinID,displaystate->gContextID,120, 60, 150, 20);
+
 	displaystate->gContextID = GrNewGC();
 	MakeCoffeeProcessInstanceViewModel activeProduct = getCoffeeMakingProcessInstanceViewModel();
+
+	/* find out what activity message to show on screen */
+	currentActivity = activeProduct.currentActivity;
+	if (currentActivity == coffeeMakingActivity_warmingUp) {
+		currentActivityIndex = 0;
+	}
+	if (currentActivity == coffeeMakingActivity_deliveringMilk) {
+		currentActivityIndex = 1;
+	}
+	if (currentActivity == coffeeMakingActivity_deliveringCoffee) {
+		currentActivityIndex = 2;
+	}
 
 	/* Back- Foreground color related stuff */
 	GrSetGCForeground(displaystate->gContextID, YELLOW);
@@ -83,6 +110,9 @@ static void update(void) {
 	displaystate->font = GrCreateFont((unsigned char *) FONTNAME, 14, NULL);
 	GrSetGCFont(displaystate->gContextID, displaystate->font);
 	GrText(displaystate->gWinID, displaystate->gContextID, 120, 30, "Making coffee...", -1, GR_TFASCII | GR_TFTOP);
+
+	/* show the current activity */
+	GrText(displaystate->gWinID, displaystate->gContextID, 120, 60, currentActivityText[currentActivityIndex], -1, GR_TFASCII | GR_TFTOP);
 	GrDestroyFont(displaystate->font);
 
 	/* display active product */
