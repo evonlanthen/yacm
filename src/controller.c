@@ -11,7 +11,7 @@
  * @endcode
  * @subsection step2 Step 2: Install files
  * @code
- * <user>@<host> $ make install
+ * <user>@<host> $ sudo make install
  * @endcode
  * @subsection step3 Step 3: Start program
  * @code
