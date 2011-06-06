@@ -154,9 +154,13 @@ int startMachine(enum Ingredient ing, unsigned int time)
 	}
 	// print a ingredient specific message:
 	if (ing == ingredient_coffee) {
+#ifdef DEBUG
 		printf("Delivering coffee...\n");
+#endif
 	} else if (ing == ingredient_milk) {
+#ifdef DEBUG
 		printf("Delivering milk...\n");
+#endif
 	} else {
 		printf("Unknown ingredient selected!\n");
 		return FALSE;

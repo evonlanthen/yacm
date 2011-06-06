@@ -3,6 +3,9 @@
  *
  * Defines the view model types.
  *
+ * @section viewModel View Model
+ * @image html "view_model.jpg"
+ *
  * @file    model.h
  * @version 0.1
  * @author  Ronny Stauffer (staur3@bfh.ch)
