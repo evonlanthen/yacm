@@ -7,11 +7,17 @@
  * @section usage Usage
  * @subsection step1 Step 1: Compile project
  * @code
- * <user>@<host> $ make
+ * # for ORCHID:
+ * <user>@<host> $ make orchid
+ * # for CARME:
+ * <user>@<host> $ make carme
  * @endcode
  * @subsection step2 Step 2: Install files
  * @code
- * <user>@<host> $ sudo make install
+ * # for ORCHID:
+ * <user>@<host> $ sudo make orchid-install
+ * # for CARME:
+ * <user>@<host> $ sudo make carme-install
  * @endcode
  * @subsection step3 Step 3: Start program
  * @code
