@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "defines.h"
 #include "userInterface.h"
 #include "inputController.h"
@@ -32,6 +33,9 @@ static void run(void) {
 static void activate(void) {
 	DisplayState *displaystate = getDisplayState();
 	displaystate->gContextID = GrNewGC();
+	char powerOnUseText[30] = "Use ";
+	strcat(powerOnUseText, POWER_SWITCH_TEXT);
+	strcat(powerOnUseText, " to start!");
 
 	/* Back- Foreground color related stuff */
 	GrSetGCForeground(displaystate->gContextID, YELLOW);
@@ -41,6 +45,7 @@ static void activate(void) {
 	displaystate->font = GrCreateFont((unsigned char *) FONTNAME, 14, NULL);
 	GrSetGCFont(displaystate->gContextID, displaystate->font);
 	GrText(displaystate->gWinID, displaystate->gContextID, 120, 30, "Power Off!", -1, GR_TFASCII | GR_TFTOP);
+	GrText(displaystate->gWinID, displaystate->gContextID, 100, 50, powerOnUseText, -1, GR_TFASCII | GR_TFTOP);
 	GrDestroyFont(displaystate->font);
 
 	/* turn off power led */

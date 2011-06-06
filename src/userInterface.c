@@ -309,7 +309,7 @@ void showMilkSensor(int state) {
 	/* check if we ran out of milk */
 	if (state) {
 		/* Back- Foreground color related stuff */
-		GrSetGCForeground(displaystate.gMilkSensorID, RED);
+		GrSetGCForeground(displaystate.gMilkSensorID, LTRED);
 		GrSetGCUseBackground(displaystate.gMilkSensorID, GR_FALSE);
 
 		/* Select fonts */
@@ -335,7 +335,7 @@ void showCoffeeSensor(int state) {
 	/* check if we ran out of coffee */
 	if (state) {
 		/* Back- Foreground color related stuff */
-		GrSetGCForeground(displaystate.gCoffeeSensorID, RED);
+		GrSetGCForeground(displaystate.gCoffeeSensorID, LTRED);
 		GrSetGCUseBackground(displaystate.gCoffeeSensorID, GR_FALSE);
 
 		/* Select fonts */
