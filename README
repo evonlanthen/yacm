@@ -3,10 +3,16 @@
 ================================================================================
 
 Building:
-	$ make
+	# for ORCHID:
+	$ make orchid
+	# for CARME:
+	$ make carme
 
 Installation:
-	$ sudo make install
+	# for ORCHID:
+	$ sudo make orchid-install
+	# for CARME:
+	$ sudo make carme-install
 
 Usage:
 	/usr/local/bin/yacm
