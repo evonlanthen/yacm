@@ -8,16 +8,16 @@
  *
  * Module Contents:
  * - Constants
- * - Memory management interface
- * - Model observer registration and notification interface
- * - Domain model types and instances
+ * - (Internal) Memory management interface
+ * - (Public) Model observer registration and (internal) notification interface
+ * - (Internal) Domain model types and instances
  *   - Product collection helpers
  *   - Model initializers
  *   - State machine definitions
  *   - Ongoing tasks
- * - View Model presentation interface
- * - Operations presentation interface
- * - Initialization & Heartbeat interface
+ * - (Public) View Model presentation interface
+ * - (Public) Operations presentation interface
+ * - (Public) Initialization & Heartbeat interface
  */
 
 #include <stdlib.h>
@@ -39,9 +39,21 @@
 // Duration constants
 // -----------------------------------------------------------------------------
 
+/**
+ * The initialization duration.
+ */
 #define INITIALIZING_DURATION 2000
+/**
+ * The warming up duration.
+ */
 #define WARMING_UP_DURATION 1000
+/**
+ * The milk delivery duration.
+ */
 #define DELIVERING_MILK_DURATION 3000
+/**
+ * The coffee delivery duration.
+ */
 #define DELIVERING_COFFEE_DURATION 5000
 
 // =============================================================================
@@ -80,7 +92,7 @@ static void notifyObservers();
 static NotifyModelChanged observer;
 
 /**
- * @copydoc registerModelObserver
+ * @copydoc registerModelObserver(NotifyModelChanged pObserver)
  */
 void registerModelObserver(NotifyModelChanged pObserver) {
 	observer = pObserver;
@@ -111,52 +123,52 @@ static void notifyObservers() {
  * Represents the coffee ingredient.
  */
 typedef struct {
-	int isAvailable;
-	int emptyTankSensorId;
+	int isAvailable; /**< Is coffee available? */
+	int emptyTankSensorId; /**< Defines the coffee tank empty sensor. */
 } Coffee;
 
 /**
  * Represents the milk ingredient.
  */
 typedef struct {
-	int isAvailable;
-	int emptyTankSensorId;
+	int isAvailable; /**< Is milk available? */
+	int emptyTankSensorId; /**< Defines the milk tank empty sensor. */
 } Milk;
 
 /**
  * Represents a product definition.
  */
 typedef struct {
-	char name[256];
+	char name[256]; /**< The product's name. */
 } Product;
 
 /**
  * A wrapper for a 'Product' instance, allowing it to add the product to the product definition collection.
  */
 typedef struct ProductListElement {
-	Product *product;
-	struct ProductListElement *next;
+	Product *product; /**< The wrapped product. */
+	struct ProductListElement *next; /**< The next element in the collection. */
 } ProductListElement;
 
 /**
  * Represents an ongoing coffee making process instance.
  */
 typedef struct {
-	Product *product;
-	int withMilk;
-	CoffeeMakingActivity currentActivity;
+	Product *product; /**< The product currently produced. */
+	int withMilk; /**< Is the product produced with milk? */
+	CoffeeMakingActivity currentActivity; /**< The activity which is currently executed. */
 } MakeCoffeeProcessInstance;
 
 /**
  * Represents the coffee maker.
  */
 typedef struct {
-	CoffeeMakerState state;
-	Coffee coffee;
-	Milk milk;
-	ProductListElement *products;
-	MilkPreselectionState milkPreselectionState;
-	MakeCoffeeProcessInstance *ongoingCoffeeMaking;
+	CoffeeMakerState state; /**< The coffee maker's state. */
+	Coffee coffee; /**< The coffee ingredient. */
+	Milk milk; /**< The milk ingredient. */
+	ProductListElement *products; /**< The product definition collection. */
+	MilkPreselectionState milkPreselectionState; /**< The milk preselection state. */
+	MakeCoffeeProcessInstance *ongoingCoffeeMaking; /**< A possibly ongoing coffee making process instance. */
 } CoffeeMaker;
 
 /**
@@ -304,6 +316,9 @@ static StateMachine coffeeMakingProcessMachine;
 // Events
 // -----------------------------------------------------------------------------
 
+/**
+ * Represents a coffee maker event.
+ */
 typedef enum {
 	event_switchedOn,
 	event_switchedOff,
@@ -495,6 +510,9 @@ static StateMachine stateMachine = {
 // Events
 // -----------------------------------------------------------------------------
 
+/**
+ * Represents a coffee making event.
+ */
 typedef enum {
 	coffeeMakingEvent_isWarmedUp,
 	coffeeMakingEvent_deliverMilk,

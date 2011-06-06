@@ -40,9 +40,9 @@ typedef void (*NotifyModelChanged)();
 /**
  * Registers a model observer.
  * A model observer is notified if the model changes.
- * @param observer The handler which will be called if the model changes.
+ * @param pObserver The handler which will be called if the model changes.
  */
-extern void registerModelObserver(NotifyModelChanged observer);
+extern void registerModelObserver(NotifyModelChanged pObserver);
 
 /**
  * Gets the view model of the coffee maker.
