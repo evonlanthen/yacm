@@ -1,7 +1,5 @@
 /**
- * <short description>
- *
- * <long description>
+ * Read buttons on CARME board over Sysfs-GPIO
  *
  * @file    carme.c
  * @version 0.1
