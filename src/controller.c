@@ -35,7 +35,13 @@
  * @arg Vncserver (fbvncserver &) on ORCHID board should be started manually before executing this application
  *
  * @section architecture Architecture
- * @image html architecture.jpg
+ * @image html "architecture.jpg"
+ * @section stateEvent State Event Diagramm
+ * @image html "coffee_maker_state.jpg"
+ * @section model Model
+ * @image html "model.jpg"
+ * @section makingProcess Making Process
+ * @image html "coffee_making_process.jpg"
  *
  * @file   controller.c
  * @author Ronny Stauffer (staur3@bfh.ch)
