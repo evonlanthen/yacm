@@ -34,40 +34,19 @@ typedef enum {
  * Represents the coffee maker to a view.
  */
 typedef struct {
-	/**
-	 * The coffee maker's state.
-	 */
-	CoffeeMakerState state;
-	/*
-	 * Is the coffee ingredient available?
-	 */
-	int isCoffeeAvailable;
-	/*
-	 * Is the milk ingredient available?
-	 */
-	int isMilkAvailable;
-	/*
-	 * The number of defined products.
-	 */
-	unsigned int numberOfProducts;
-	/*
-	 * The milk preselection state.
-	 */
-	int milkPreselectionState;
-	/*
-	 * Is the coffee maker currently making coffee?
-	 */
-	int isMakingCoffee;
+	CoffeeMakerState state; /**< The coffee maker's state. */
+	int isCoffeeAvailable; /*< Is the coffee ingredient available? */
+	int isMilkAvailable; /*< Is the milk ingredient available? */
+	unsigned int numberOfProducts; /*< The number of defined products. */
+	int milkPreselectionState; /*< The milk preselection state. */
+	int isMakingCoffee; /*< Is the coffee maker currently making coffee? */
 } CoffeeMakerViewModel;
 
 /*
  * Represents a product definition to a view.
  */
 typedef struct {
-	/*
-	 * The product's name.
-	 */
-	char name[256];
+	char name[256]; /*< The product's name. */
 } ProductViewModel;
 
 /**
@@ -87,19 +66,9 @@ typedef enum {
  * Represents an ongoing coffee making process instance to a view.
  */
 typedef struct {
-	/**
-	 * The index of the product currently produced.
-	 * The index is starting with 0.
-	 */
-	unsigned int productIndex;
-	/**
-	 * Is the product produced with milk?
-	 */
-	int withMilk;
-	/**
-	 * The activity which is currently executed.
-	 */
-	CoffeeMakingActivity currentActivity;
+	unsigned int productIndex; /**< The index of the product currently produced. The index is starting with 0. */
+	int withMilk; /**< Is the product produced with milk? */
+	CoffeeMakingActivity currentActivity; /**< The activity which is currently executed. */
 } MakeCoffeeProcessInstanceViewModel;
 
 #endif /* MODEL_H_ */
