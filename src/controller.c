@@ -36,10 +36,10 @@
  *
  * @section architecture Architecture
  * @image html "architecture.jpg"
+ * @section model View Model
+ * @image html "view_model.jpg"
  * @section stateEvent State Event Diagramm
  * @image html "coffee_maker_state.jpg"
- * @section model Model
- * @image html "model.jpg"
  * @section makingProcess Making Process
  * @image html "coffee_making_process.jpg"
  *
@@ -77,7 +77,6 @@ static void sigCtrlC(int sig)
 static void setUpSubsystems();
 static void tearDownSubsystems();
 
-#ifndef TEST
 /**
  * The entry point of the application.
  */
@@ -93,7 +92,9 @@ int main(int argc, char* argv[]) {
 		runBusinessLogic();
 	}
 
+#ifdef DEBUG
 	printf("\nShutting down system...\n");
+#endif
 	tearDownSubsystems();
 #ifdef DEBUG
 	printf("Shutdown successful, terminating!\n");
@@ -101,6 +102,9 @@ int main(int argc, char* argv[]) {
 	exit(0);
 }
 
+/**
+ * Sets up all subsystems.
+ */
 void setUpSubsystems() {
 	setUpHardwareController();
 	setUpMachineController();
@@ -111,6 +115,9 @@ void setUpSubsystems() {
 	setUpDisplay();
 }
 
+/**
+ * Tears down all subsystems.
+ */
 void tearDownSubsystems() {
 	tearDownDisplay();
 	tearDownBusinessLogic();
@@ -120,5 +127,3 @@ void tearDownSubsystems() {
 	tearDownMachineController();
 	tearDownHardwareController();
 }
-
-#endif
