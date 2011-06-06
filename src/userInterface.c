@@ -315,7 +315,7 @@ void showMilkSensor(int state) {
 		/* Select fonts */
 		displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 12, NULL);
 		GrSetGCFont(displaystate.gMilkSensorID, displaystate.font);
-		GrText(displaystate.gWinID, displaystate.gMilkSensorID, 230, 60, "Milk empty!", -1, GR_TFASCII | GR_TFTOP);
+		GrText(displaystate.gWinID, displaystate.gMilkSensorID, 230, 80, "Milk empty!", -1, GR_TFASCII | GR_TFTOP);
 		GrDestroyFont(displaystate.font);
 
 		/* start blinking led for product */
@@ -341,7 +341,7 @@ void showCoffeeSensor(int state) {
 		/* Select fonts */
 		displaystate.font = GrCreateFont((unsigned char *) FONTNAME, 12, NULL);
 		GrSetGCFont(displaystate.gCoffeeSensorID, displaystate.font);
-		GrText(displaystate.gWinID, displaystate.gCoffeeSensorID, 230, 80, "Coffee empty!", -1, GR_TFASCII | GR_TFTOP);
+		GrText(displaystate.gWinID, displaystate.gCoffeeSensorID, 230, 100, "Coffee empty!", -1, GR_TFASCII | GR_TFTOP);
 		GrDestroyFont(displaystate.font);
 
 		/* start blinking led for product */
