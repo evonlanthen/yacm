@@ -23,6 +23,10 @@
  * @arg Ronny Stauffer (staur3@bfh.ch)
  * @arg Elmar Vonlanthen (vonle1@bfh.ch)
  *
+ * @section knownProblems Known Problems
+ * @arg Sound is not working on CARME board (mplayer doesn't work too!)
+ * @arg Blinking of leds with same frequency is not synchronized
+ *
  * @file   controller.c
  * @author Ronny Stauffer (staur3@bfh.ch)
  * @date   May 23, 2011
