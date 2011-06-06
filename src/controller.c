@@ -32,6 +32,7 @@
  * @section knownProblems Known Problems
  * @arg Sound is not working on CARME board (mplayer doesn't work too!)
  * @arg Blinking of leds with same frequency is not synchronized
+ * @arg Vncserver (fbvncserver &) on ORCHID board should be started manually before executing this application
  *
  * @file   controller.c
  * @author Ronny Stauffer (staur3@bfh.ch)
