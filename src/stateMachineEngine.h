@@ -63,7 +63,7 @@ typedef struct {
 	int isInitialized; /**< Is the state machine already initialized? */
 	unsigned int numberOfEvents; /**<  The number of defined events. */
 	State *initialState; /**< Defines the state machine's initial state. */
-	State *activeState; /**< The current state.
+	State *activeState; /**< The current state. */
 	State *transitions[]; /**< Defines the state machine's state transitions. */
 } StateMachine;
 
