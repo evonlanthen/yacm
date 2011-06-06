@@ -1,7 +1,7 @@
 /**
- * Domain model
+ * View model
  *
- * Defines the domain model types.
+ * Defines the view model types.
  *
  * @file    model.h
  * @version 0.1
@@ -87,8 +87,18 @@ typedef enum {
  * Represents an ongoing coffee making process instance to a view.
  */
 typedef struct {
+	/**
+	 * The index of the product currently produced.
+	 * The index is starting with 0.
+	 */
 	unsigned int productIndex;
+	/**
+	 * Is the product produced with milk?
+	 */
 	int withMilk;
+	/**
+	 * The activity which is currently executed.
+	 */
 	CoffeeMakingActivity currentActivity;
 } MakeCoffeeProcessInstanceViewModel;
 

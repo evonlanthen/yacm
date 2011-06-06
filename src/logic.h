@@ -26,7 +26,7 @@ extern int tearDownBusinessLogic();
 
 /**
  * Heartbeat function for ongoing business logic tasks.
- * Gets constantly called by controller.c
+ * Gets constantly called by the main controller.
  */
 extern void runBusinessLogic();
 
@@ -51,6 +51,7 @@ extern CoffeeMakerViewModel getCoffeeMakerViewModel();
 /**
  * Gets the view model of the specified product definition.
  * @param productIndex The index of the product definition.
+ *   The index is starting with 0.
  * @return The view model.
  */
 extern ProductViewModel getProductViewModel(unsigned int productIndex);

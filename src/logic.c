@@ -5,6 +5,19 @@
  * @brief  Contains the business logic.
  *
  * Contains the business logic.
+ *
+ * Module Contents:
+ * - Constants
+ * - Memory management interface
+ * - Model observer registration and notification interface
+ * - Domain model types and instances
+ *   - Product collection helpers
+ *   - Model initializers
+ *   - State machine definitions
+ *   - Ongoing tasks
+ * - View Model presentation interface
+ * - Operations presentation interface
+ * - Initialization & Heartbeat interface
  */
 
 #include <stdlib.h>
@@ -13,19 +26,87 @@
 
 #include "defines.h"
 #include "logic.h"
-#include "timer.h"
+#include "stateMachineEngine.h"
 #include "sensorController.h"
 #include "machineController.h"
+#include "timer.h"
 
-// Durations
+// =============================================================================
+// Constants
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Duration constants
+// -----------------------------------------------------------------------------
+
 #define INITIALIZING_DURATION 2000
 #define WARMING_UP_DURATION 1000
-#define DELIVERING_MILK_DURATION 2000
+#define DELIVERING_MILK_DURATION 3000
 #define DELIVERING_COFFEE_DURATION 5000
 
-static int isBusinessLogicSetUp = FALSE;
+// =============================================================================
+// Memory management interface
+// =============================================================================
 
-// Business model
+static void * newObject(void *initializer, size_t size);
+static void deleteObject(void *object);
+
+/**
+ * Instanciates and initializes a new object.
+ */
+static void * newObject(void *initializer, size_t size) {
+	void *object = malloc(size);
+	memcpy(object, initializer, size);
+
+	return object;
+}
+
+/**
+ * Deletes an object
+ */
+static void deleteObject(void *object) {
+	free(object);
+}
+
+// =============================================================================
+// Model observer registration and notification interface
+// =============================================================================
+
+static void notifyObservers();
+
+/**
+ * A registered model observer.
+ */
+static NotifyModelChanged observer;
+
+/**
+ * @copydoc registerModelObserver
+ */
+void registerModelObserver(NotifyModelChanged pObserver) {
+	observer = pObserver;
+}
+
+/**
+ * Notifies the model observers of a model change.
+ */
+static void notifyObservers() {
+#ifdef DEBUG
+	printf("Notifying model observers...\n");
+#endif
+
+	if (observer) {
+		(*observer)();
+	}
+
+#ifdef DEBUG
+	printf("Model observers notified.\n");
+#endif
+}
+
+// =============================================================================
+// Domain model types and instances
+// =============================================================================
+
 /**
  * Represents the coffee ingredient.
  */
@@ -49,6 +130,9 @@ typedef struct {
 	char name[256];
 } Product;
 
+/**
+ * A wrapper for a 'Product' instance, allowing it to add the product to the product definition collection.
+ */
 typedef struct ProductListElement {
 	Product *product;
 	struct ProductListElement *next;
@@ -56,7 +140,6 @@ typedef struct ProductListElement {
 
 /**
  * Represents an ongoing coffee making process instance.
- *
  */
 typedef struct {
 	Product *product;
@@ -76,72 +159,6 @@ typedef struct {
 	MakeCoffeeProcessInstance *ongoingCoffeeMaking;
 } CoffeeMaker;
 
-// Model observers
-static NotifyModelChanged observer;
-static void notifyObservers();
-
-// Memory management
-static void * newObject(void *initializer, size_t size);
-static void deleteObject(void *object);
-
-// Product list helpers
-static unsigned int getNumberOfProducts();
-static Product * getProduct(unsigned int productIndex);
-
-// Model initialization
-static void setUpProducts();
-
-// State machine
-// Events
-typedef enum {
-	event_switchedOn,
-	event_switchedOff,
-	event_isInitialized,
-	event_productSelected,
-	event_productionProcessAborted,
-	event_productionProcessIsFinished,
-	event_ingredientTankIsEmpty,
-	event_none
-} Event;
-
-typedef enum {
-	coffeeMakingEvent_isWarmedUp,
-	coffeeMakingEvent_deliverMilk,
-	coffeeMakingEvent_milkDelivered,
-	coffeeMakingEvent_deliverCoffee,
-	coffeeMakingEvent_coffeeDelivered,
-	coffeeMakingEvent_ingredientTankIsEmpty,
-	coffeeMakingEvent_none
-} CoffeeMakingEvent;
-
-static unsigned int selectedProductIndex;
-
-static void processEvent(Event event);
-
-static void checkIngredientTankSensors();
-
-// Timers
-static TIMER initTimer;
-static TIMER warmingUpTimer;
-
-/**
- * Notify the model observers of a model change.
- */
-static void notifyObservers() {
-#ifdef DEBUG
-	printf("Notifying model observers...\n");
-#endif
-
-	if (observer) {
-		(*observer)();
-	}
-
-#ifdef DEBUG
-	printf("Model observers notified.\n");
-#endif
-}
-
-
 /**
  * The coffee maker model instance.
  */
@@ -153,9 +170,6 @@ static CoffeeMaker coffeeMaker = {
 		.milk.emptyTankSensorId = SENSOR_2,
 		.milkPreselectionState = milkPreselection_off
 };
-
-static enum SensorState lastEmptyCoffeeTankSensorState = sensor_unknown;
-static enum SensorState lastEmptyMilkTankSensorState = sensor_unknown;
 
 /**
  * Special case value for an undefined product index.
@@ -176,24 +190,13 @@ static enum SensorState lastEmptyMilkTankSensorState = sensor_unknown;
 		.currentActivity = coffeeMakingActivity_undefined \
 }
 
+// =============================================================================
+// Product collection helpers
+// =============================================================================
 
-
-/**
- * Instanciates and initializes a new object.
- */
-static void * newObject(void *initializer, size_t size) {
-	void *object = malloc(size);
-	memcpy(object, initializer, size);
-
-	return object;
-}
-
-/**
- * Deletes an object
- */
-static void deleteObject(void *object) {
-	free(object);
-}
+static unsigned int getNumberOfProducts();
+static Product * getProduct(unsigned int productIndex);
+static unsigned int getProductIndex(Product *product);
 
 /**
  * Gets the number of product definitions.
@@ -211,6 +214,9 @@ static unsigned int getNumberOfProducts() {
 	return numberOfProducts;
 }
 
+/**
+ * Returns the index of the given product.
+ */
 static unsigned int getProductIndex(Product *product) {
 	unsigned int productIndex = 0;
 
@@ -228,6 +234,9 @@ static unsigned int getProductIndex(Product *product) {
 	return UNDEFINED_PRODUCT_INDEX;
 }
 
+/**
+ * Returns the product with the specified index.
+ */
 static Product * getProduct(unsigned int productIndex) {
 	unsigned int i = 0;
 
@@ -245,240 +254,70 @@ static Product * getProduct(unsigned int productIndex) {
 	return NULL;
 }
 
+// =============================================================================
+// Model initializers
+// =============================================================================
 
-
-
-
-
-
-
-
-// State machine engine
-
-typedef int (*StatePrecondition)();
-typedef void (*StateAction)();
-typedef Event (*DoStateAction)();
-
-typedef struct {
-	int stateIndex;
-	StatePrecondition precondition;
-	StateAction entryAction;
-	DoStateAction doAction;
-	StateAction exitAction;
-} State;
-
-typedef struct {
-	int isInitialized;
-	unsigned int numberOfEvents;
-	State *initialState;
-	State *activeState;
-	State *transitions[];
-} StateMachine;
-
-static void setUpStateMachine(StateMachine *stateMachine);
-static void runStateMachine(StateMachine *stateMachine);
-static void abortStateMachine(StateMachine *stateMachine);
-static Event runState(State *state);
-static void processEventInt(StateMachine *stateMachine, Event event);
-static void activateState(StateMachine *stateMachine, State *nextState);
-
-static void setUpStateMachine(StateMachine *stateMachine) {
-	if (stateMachine->isInitialized) {
-		return;
-	}
-
-	activateState(stateMachine, stateMachine->initialState);
-
-	stateMachine->isInitialized = TRUE;
-}
-
-static void runStateMachine(StateMachine *stateMachine) {
-	if (!stateMachine->isInitialized) {
-		return;
-	}
-
-	// Run active state and process events
-	Event event = runState(stateMachine->activeState);
-	if (event != event_none) {
-		processEventInt(stateMachine, event);
-	}
-}
-
-static void abortStateMachine(StateMachine *stateMachine) {
-	if (!stateMachine->isInitialized) {
-		return;
-	}
-
-	if (stateMachine->activeState->exitAction) {
-		stateMachine->activeState->exitAction();
-	}
-
-	stateMachine->isInitialized = FALSE;
-}
-
-static Event runState(State *state) {
-	Event event = event_none;
-
-	// If the state has a 'do' action, then run it
-	if (state->doAction) {
-		event = state->doAction();
-	}
-
-	return event;
-}
-
-static void processEventInt(StateMachine *stateMachine, Event event) {
-	if (!stateMachine->isInitialized) {
-		return;
-	}
-
-	// Processing an event means looking up the state machine's next state in the transition table
-	State *nextState = stateMachine->transitions[stateMachine->activeState->stateIndex * stateMachine->numberOfEvents + event];
-	if (nextState) {
-		// If next state either has no precondition
-		// or the precondition is true...
-		if (!nextState->precondition
-			|| nextState->precondition()) {
-			// Activate next state
-			activateState(stateMachine, nextState);
-		}
-	}
-}
-
-static void activateState(StateMachine *stateMachine, State *nextState) {
-	// If a state is currently active and the state has an exit action,
-	// then run the state's exit action
-	if (stateMachine->activeState) {
-		if (stateMachine->activeState->exitAction) {
-			stateMachine->activeState->exitAction();
-		}
-	}
-	// Make the next state the currently active state
-	stateMachine->activeState = nextState;
-	// If the (now currently active) state has an entry action,
-	// run the state's entry action
-	if (stateMachine->activeState->entryAction) {
-		stateMachine->activeState->entryAction();
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void registerModelObserver(NotifyModelChanged pObserver) {
-	observer = pObserver;
-}
-
-
-
-// View Model
-
-CoffeeMakerViewModel getCoffeeMakerViewModel() {
-	// Map to view model
-	CoffeeMakerViewModel coffeeMakerViewModel = {
-		.state = coffeeMaker.state,
-		.isCoffeeAvailable = coffeeMaker.coffee.isAvailable,
-		.isMilkAvailable = coffeeMaker.milk.isAvailable,
-		.numberOfProducts = getNumberOfProducts(),
-		.milkPreselectionState = coffeeMaker.milkPreselectionState,
-		.isMakingCoffee = coffeeMaker.ongoingCoffeeMaking ? TRUE : FALSE
+/**
+ * Sets up product definitions.
+ * Preliminary the setup is done hardcoded.
+ * In the future definitions could possibly read from a file?
+ */
+static void setUpProducts() {
+	Product *coffeeProduct = newObject(&(Product) {
+		.name = "Coffee"
+	}, sizeof(Product));
+	Product *espressoProduct = newObject(&(Product) {
+		.name = "Espresso"
+	}, sizeof(Product));
+	Product *ristrettoProduct = newObject(&(Product) {
+		.name = "Ristretto"
+	}, sizeof(Product));
+	Product *products[] = {
+			coffeeProduct,
+			espressoProduct,
+			ristrettoProduct
 	};
-
-	return coffeeMakerViewModel;
-}
-
-ProductViewModel getProductViewModel(unsigned int productIndex) {
-	 Product *product = getProduct(productIndex);
-	if (product) {
-		// Map to view model
-		ProductViewModel productViewModel = {
-			//.name = product->name
-		};
-		strcpy(productViewModel.name, product->name);
-
-		return productViewModel;
+	ProductListElement *nextProductListElement = NULL;
+	int i;
+	for (i = 2; i >= 0; i--) {
+		ProductListElement *productListElement = newObject(&(ProductListElement) {
+			.product = products[i],
+			.next = nextProductListElement
+		}, sizeof(ProductListElement));
+		nextProductListElement = productListElement;
 	}
-
-	return UNDEFINED_PRODUCT;
+	coffeeMaker.products = nextProductListElement;
 }
 
-MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewModel() {
-	if (coffeeMaker.ongoingCoffeeMaking) {
-		MakeCoffeeProcessInstanceViewModel coffeeMakingViewModel = {
-			.productIndex =  getProductIndex(coffeeMaker.ongoingCoffeeMaking->product),
-			.withMilk = coffeeMaker.ongoingCoffeeMaking->withMilk,
-			.currentActivity = coffeeMaker.ongoingCoffeeMaking->currentActivity
-		};
+// =============================================================================
+// State machine definitions
+// =============================================================================
 
-		return coffeeMakingViewModel;
-	}
-
-	return INEXISTENT_COFFEE_MAKING_PROCESS_INSTANCE;
-}
-
-
-
-// Presentation interface
-
-void switchOn() {
-	processEvent(event_switchedOn);
-}
-
-void switchOff() {
-	processEvent(event_switchedOff);
-}
-
-void setMilkPreselection(MilkPreselectionState state) {
-	coffeeMaker.milkPreselectionState = state;
-
-	notifyObservers();
-}
-
-void startMakingCoffee(unsigned int productIndex) {
-	selectedProductIndex = productIndex;
-
-	processEvent(event_productSelected);
-}
-
-void abortMakingCoffee() {
-	processEvent(event_productionProcessAborted);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// State machines
-
+// =============================================================================
 // Main state machine
+// =============================================================================
+
 static StateMachine coffeeMakingProcessMachine;
 
+// -----------------------------------------------------------------------------
+// Events
+// -----------------------------------------------------------------------------
+
+typedef enum {
+	event_switchedOn,
+	event_switchedOff,
+	event_isInitialized,
+	event_productSelected,
+	event_productionProcessAborted,
+	event_productionProcessIsFinished,
+	event_ingredientTankIsEmpty
+} CoffeeMakerEvent;
+
+// -----------------------------------------------------------------------------
 // Off state
+// -----------------------------------------------------------------------------
+
 static void offStateEntryAction() {
 	coffeeMaker.state = coffeeMaker_off;
 
@@ -490,7 +329,13 @@ static State offState = {
 	.entryAction = offStateEntryAction
 };
 
+// -----------------------------------------------------------------------------
 // Initializing state
+// -----------------------------------------------------------------------------
+
+// Timers
+static TIMER initTimer;
+
 static void initializingStateEntryAction() {
 	coffeeMaker.state = coffeeMaker_initializing;
 
@@ -504,7 +349,7 @@ static Event initializingStateDoAction() {
 		return event_isInitialized;
 	}
 
-	return event_none;
+	return NO_EVENT;
 }
 
 static State initializingState = {
@@ -513,7 +358,10 @@ static State initializingState = {
 	.doAction = initializingStateDoAction
 };
 
+// -----------------------------------------------------------------------------
 // Idle state
+// -----------------------------------------------------------------------------
+
 static void idleStateEntryAction() {
 	coffeeMaker.state = coffeeMaker_idle;
 
@@ -525,7 +373,12 @@ static State idleState = {
 	.entryAction = idleStateEntryAction
 };
 
+// -----------------------------------------------------------------------------
 // Producing state
+// -----------------------------------------------------------------------------
+
+static unsigned int selectedProductIndex;
+
 static int producingStatePrecondition() {
 	// Only start production if...
 	// - no coffee making process is already running
@@ -565,7 +418,7 @@ static Event producingStateDoAction() {
 		return event_productionProcessIsFinished;
 	}
 
-	return event_none;
+	return NO_EVENT;
 }
 
 static void abortMakeCoffeeProcessInstance() {
@@ -591,10 +444,13 @@ static State producingState = {
 	.exitAction = producingStateExitAction
 };
 
+// -----------------------------------------------------------------------------
+// State transitions
+// -----------------------------------------------------------------------------
+
 static StateMachine stateMachine = {
 	.numberOfEvents = 7,
 	.initialState = &offState,
-//static State * stateTransitions[][event_none] = {
 	.transitions = {
 		/* coffeeMaker_off: */
 			/* event_switchedOn: */ &initializingState,
@@ -631,9 +487,30 @@ static StateMachine stateMachine = {
 		}
 };
 
-// Make coffee process
+// =============================================================================
+// 'Make coffee' process
+// =============================================================================
 
+// -----------------------------------------------------------------------------
+// Events
+// -----------------------------------------------------------------------------
+
+typedef enum {
+	coffeeMakingEvent_isWarmedUp,
+	coffeeMakingEvent_deliverMilk,
+	coffeeMakingEvent_milkDelivered,
+	coffeeMakingEvent_deliverCoffee,
+	coffeeMakingEvent_coffeeDelivered,
+	coffeeMakingEvent_ingredientTankIsEmpty
+} CoffeeMakingEvent;
+
+// -----------------------------------------------------------------------------
 // Warming Up activity
+// -----------------------------------------------------------------------------
+
+// Timer
+static TIMER warmingUpTimer;
+
 static void warmingUpActivityEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_warmingUp;
 
@@ -647,7 +524,7 @@ static Event warmingUpActivityDoAction() {
 		return coffeeMakingEvent_isWarmedUp;
 	}
 
-	return coffeeMakingEvent_none;
+	return NO_EVENT;
 }
 
 static State warmingUpActivity = {
@@ -656,7 +533,10 @@ static State warmingUpActivity = {
 	.doAction = warmingUpActivityDoAction
 };
 
+// -----------------------------------------------------------------------------
 // With Milk gateway
+// -----------------------------------------------------------------------------
+
 static Event withMilkGatewayDoAction() {
 	if (coffeeMaker.ongoingCoffeeMaking->withMilk) {
 		return coffeeMakingEvent_deliverMilk;
@@ -664,7 +544,7 @@ static Event withMilkGatewayDoAction() {
 		return coffeeMakingEvent_deliverCoffee;
 	}
 
-	return coffeeMakingEvent_none;
+	return NO_EVENT;
 }
 
 static State withMilkGateway = {
@@ -672,7 +552,10 @@ static State withMilkGateway = {
 	.doAction = withMilkGatewayDoAction
 };
 
+// -----------------------------------------------------------------------------
 // Delivering Milk activity
+// -----------------------------------------------------------------------------
+
 static void deliveringMilkActivityEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_deliveringMilk;
 
@@ -690,7 +573,7 @@ static Event deliveringMilkActivityDoAction() {
 		return coffeeMakingEvent_ingredientTankIsEmpty;
 	}
 
-	return coffeeMakingEvent_none;
+	return NO_EVENT;
 }
 
 static void deliveringMilkActivityExitAction() {
@@ -704,7 +587,10 @@ static State deliveringMilkActivity = {
 	.exitAction = deliveringMilkActivityExitAction
 };
 
+// -----------------------------------------------------------------------------
 // Delivering Coffe activity
+// -----------------------------------------------------------------------------
+
 static void deliveringCoffeeActivityEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_deliveringCoffee;
 
@@ -722,7 +608,7 @@ static Event deliveringCoffeeActivityDoAction() {
 		return coffeeMakingEvent_ingredientTankIsEmpty;
 	}
 
-	return coffeeMakingEvent_none;
+	return NO_EVENT;
 }
 
 static void deliveringCoffeeActivityExitAction() {
@@ -736,7 +622,10 @@ static State deliveringCoffeeActivity = {
 	.exitAction = deliveringCoffeeActivityExitAction
 };
 
+// -----------------------------------------------------------------------------
 // Finished state
+// -----------------------------------------------------------------------------
+
 static void finishedStateEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_finished;
 
@@ -748,7 +637,10 @@ static State finishedState = {
 	.entryAction = finishedStateEntryAction
 };
 
-// Error activity
+// -----------------------------------------------------------------------------
+// Error state
+// -----------------------------------------------------------------------------
+
 static void errorStateEntryAction() {
 	coffeeMaker.ongoingCoffeeMaking->currentActivity = coffeeMakingActivity_error;
 
@@ -760,10 +652,12 @@ static State errorState = {
 	.entryAction = errorStateEntryAction
 };
 
+// -----------------------------------------------------------------------------
+// Activity/state transitions
+// -----------------------------------------------------------------------------
 static StateMachine coffeeMakingProcessMachine = {
 	.numberOfEvents = 6,
 	.initialState = &warmingUpActivity,
-//static State * coffeeMakingActivityTransitions[][coffeeMakingEvent_none] = {
 	.transitions = {
 		/* coffeeMakingActivity_warmingUp: */
 			/* coffeeMakingEvent_isWarmedUp: */ &withMilkGateway,
@@ -796,20 +690,57 @@ static StateMachine coffeeMakingProcessMachine = {
 		}
 };
 
+// =============================================================================
+// Ongoing tasks
+// =============================================================================
 
+// Sensor states
+static enum SensorState lastEmptyCoffeeTankSensorState = sensor_unknown;
+static enum SensorState lastEmptyMilkTankSensorState = sensor_unknown;
 
+/**
+ * Checks the ingredient tank sensors.
+ */
+static void checkIngredientTankSensors() {
+	// Coffee sensor
+	enum SensorState emptyCoffeeTankSensorState = getSensorState(coffeeMaker.coffee.emptyTankSensorId);
+	// If sensor state has changed...
+	if (emptyCoffeeTankSensorState != lastEmptyCoffeeTankSensorState) {
+		// Update model
+		coffeeMaker.coffee.isAvailable = !(emptyCoffeeTankSensorState == sensor_alert);
 
-// Logic
+		notifyObservers();
 
+		lastEmptyCoffeeTankSensorState = emptyCoffeeTankSensorState;
+	}
+
+	// Milk sensor
+	enum SensorState emptyMilkTankSensorState = getSensorState(coffeeMaker.milk.emptyTankSensorId);
+	// If sensor state has changed...
+	if (emptyMilkTankSensorState != lastEmptyMilkTankSensorState) {
+		// Update model
+		coffeeMaker.milk.isAvailable = !(emptyMilkTankSensorState == sensor_alert);
+
+		notifyObservers();
+
+		lastEmptyMilkTankSensorState = emptyMilkTankSensorState;
+	}
+}
+
+// =============================================================================
+// Initialization & Heartbeat interface
+// =============================================================================
+
+static int isBusinessLogicSetUp = FALSE;
+
+/**
+ * @copydoc setUpBusinessLogic
+ */
 int setUpBusinessLogic() {
 	// Check if business logic is already set up
 	if (isBusinessLogicSetUp) {
 		return FALSE;
 	}
-
-#ifdef DEBUG
-
-#endif
 
 	// Load product definitions
 	setUpProducts();
@@ -821,6 +752,9 @@ int setUpBusinessLogic() {
 	return TRUE;
 }
 
+/**
+ * @copydoc tearDownBusinessLogic
+ */
 int tearDownBusinessLogic() {
 	if (!isBusinessLogicSetUp) {
 		return FALSE;
@@ -846,42 +780,9 @@ int tearDownBusinessLogic() {
 }
 
 /**
- * Sets up product definitions.
- * Preliminary the setup is done hardcoded.
- * In the future definitions could possibly read from a file?
+ * @copydoc runBusinessLogic
  */
-static void setUpProducts() {
-	Product *coffeeProduct = newObject(&(Product) {
-		.name = "Coffee"
-	}, sizeof(Product));
-	Product *espressoProduct = newObject(&(Product) {
-		.name = "Espresso"
-	}, sizeof(Product));
-	Product *ristrettoProduct = newObject(&(Product) {
-		.name = "Ristretto"
-	}, sizeof(Product));
-	Product *products[] = {
-			coffeeProduct,
-			espressoProduct,
-			ristrettoProduct
-	};
-	ProductListElement *nextProductListElement = NULL;
-	int i;
-	for (i = 2; i >= 0; i--) {
-		ProductListElement *productListElement = newObject(&(ProductListElement) {
-			.product = products[i],
-			.next = nextProductListElement
-		}, sizeof(ProductListElement));
-		nextProductListElement = productListElement;
-	}
-	coffeeMaker.products = nextProductListElement;
-}
-
 void runBusinessLogic() {
-	//if (!stateMachine.isInitialized) {
-	//	setUpStateMachine(&stateMachine);
-	//}
-
 	// Check ingredient tank sensors
 	checkIngredientTankSensors();
 
@@ -889,42 +790,110 @@ void runBusinessLogic() {
 	runStateMachine(&stateMachine);
 }
 
-static void processEvent(Event event) {
-	processEventInt(&stateMachine, event);
+// =============================================================================
+// View Model presentation interface
+// =============================================================================
+
+/**
+ * @copydoc getCoffeeMakerViewModel
+ */
+CoffeeMakerViewModel getCoffeeMakerViewModel() {
+	// Map to view model
+	CoffeeMakerViewModel coffeeMakerViewModel = {
+		.state = coffeeMaker.state,
+		.isCoffeeAvailable = coffeeMaker.coffee.isAvailable,
+		.isMilkAvailable = coffeeMaker.milk.isAvailable,
+		.numberOfProducts = getNumberOfProducts(),
+		.milkPreselectionState = coffeeMaker.milkPreselectionState,
+		.isMakingCoffee = coffeeMaker.ongoingCoffeeMaking ? TRUE : FALSE
+	};
+
+	return coffeeMakerViewModel;
 }
 
-static void checkIngredientTankSensors() {
-	// Coffee sensor
-	enum SensorState emptyCoffeeTankSensorState = getSensorState(coffeeMaker.coffee.emptyTankSensorId);
-	// If sensor state has changed...
-	if (emptyCoffeeTankSensorState != lastEmptyCoffeeTankSensorState) {
-		// Update model
-		coffeeMaker.coffee.isAvailable = !(emptyCoffeeTankSensorState == sensor_alert);
+/**
+ * @copydoc getProductViewModel
+ */
+ProductViewModel getProductViewModel(unsigned int productIndex) {
+	 Product *product = getProduct(productIndex);
+	if (product) {
+		// Map to view model
+		ProductViewModel productViewModel = {
+			//.name = product->name
+		};
+		strcpy(productViewModel.name, product->name);
 
-		notifyObservers();
-
-		// Fire event
-		//if (emptyCoffeeTankSensorState == sensor_alert) {
-		//	processEvent(event_ingredientTankIsEmpty);
-		//}
-
-		lastEmptyCoffeeTankSensorState = emptyCoffeeTankSensorState;
+		return productViewModel;
 	}
 
-	// Milk sensor
-	enum SensorState emptyMilkTankSensorState = getSensorState(coffeeMaker.milk.emptyTankSensorId);
-	// If sensor state has changed...
-	if (emptyMilkTankSensorState != lastEmptyMilkTankSensorState) {
-		// Update model
-		coffeeMaker.milk.isAvailable = !(emptyMilkTankSensorState == sensor_alert);
+	return UNDEFINED_PRODUCT;
+}
 
-		notifyObservers();
+/**
+ * @copydoc getCoffeeMakingProcessInstanceViewModel
+ */
+MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewModel() {
+	if (coffeeMaker.ongoingCoffeeMaking) {
+		MakeCoffeeProcessInstanceViewModel coffeeMakingViewModel = {
+			.productIndex =  getProductIndex(coffeeMaker.ongoingCoffeeMaking->product),
+			.withMilk = coffeeMaker.ongoingCoffeeMaking->withMilk,
+			.currentActivity = coffeeMaker.ongoingCoffeeMaking->currentActivity
+		};
 
-		// Fire event
-		//if (emptyMilkTankSensorState == sensor_alert) {
-		//	processEvent(event_ingredientTankIsEmpty);
-		//}
-
-		lastEmptyMilkTankSensorState = emptyMilkTankSensorState;
+		return coffeeMakingViewModel;
 	}
+
+	return INEXISTENT_COFFEE_MAKING_PROCESS_INSTANCE;
+}
+
+// =============================================================================
+// Operations presentation interface
+// =============================================================================
+
+static void processEvent(CoffeeMakerEvent event);
+
+/**
+ * @copydoc switchOn
+ */
+void switchOn() {
+	processEvent(event_switchedOn);
+}
+
+/**
+ * @copydoc switchOff
+ */
+void switchOff() {
+	processEvent(event_switchedOff);
+}
+
+/**
+ * @copydoc setMilkPreselection
+ */
+void setMilkPreselection(MilkPreselectionState state) {
+	coffeeMaker.milkPreselectionState = state;
+
+	notifyObservers();
+}
+
+/**
+ * @copydoc startMakingCoffee
+ */
+void startMakingCoffee(unsigned int productIndex) {
+	selectedProductIndex = productIndex;
+
+	processEvent(event_productSelected);
+}
+
+/**
+ * @copydoc abortMakingCoffee
+ */
+void abortMakingCoffee() {
+	processEvent(event_productionProcessAborted);
+}
+
+/**
+ * Processes an event by delegating it to the main state machine.
+ */
+static void processEvent(CoffeeMakerEvent event) {
+	processStateMachineEvent(&stateMachine, event);
 }

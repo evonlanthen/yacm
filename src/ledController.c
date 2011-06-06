@@ -90,7 +90,7 @@ int tearDownLedController(void)
 /**
  * @copydoc updateBlinkingState
  */
-int updateBlinkingState(LedDescriptor *led) {
+static int updateBlinkingState(LedDescriptor *led) {
 	if (!isLedControllerSetUp) {
 		return FALSE;
 	}
@@ -120,7 +120,9 @@ int updateAllLeds() {
 	int ret = TRUE;
 	LedDescriptor *led;
 
-	// update structure:
+	// Read all values from leds structure and set the leds according to the
+	// configured state. Link the state of each value with the variable
+	// newStates ('OR operation') and update all leds at once
 	for (int i = 0; i < NUM_OF_LEDS; i++) {
 
 		if (leds[i].state == led_on) {
@@ -128,6 +130,9 @@ int updateAllLeds() {
 		// update blinking states an get new states:
 		} else if (leds[i].state == led_blinking) {
 			led = &leds[i];
+			// if the state is 'blinking' we let the function updateBlinkingState
+			// decide if the led has to be on or off. The state is stored in the
+			// structure value 'blinkingState'
 			updateBlinkingState(led);
 			if (leds[i].blinkingState == led_on) {
 				newStates |= leds[i].id;
@@ -135,6 +140,7 @@ int updateAllLeds() {
 		}
 	}
 
+	// Now update the LEDs:
 	#ifdef CARME
 		*(volatile unsigned char *) (mmap_base + LED_OFFSET) = newStates;
 	#elif defined(ORCHID)
@@ -143,12 +149,16 @@ int updateAllLeds() {
 	return ret;
 }
 
+/**
+ * @copydoc updateLed
+ */
 int updateLed(int id, enum LedState state)
 {
 	if (!isLedControllerSetUp) {
 		return FALSE;
 	}
-	// update structure:
+	// we change only the value in the led structure and use the function
+	// updateAllLeds() to really change the LED states:
 	for (int i = 0; i < NUM_OF_LEDS; i++) {
 		// update led state for specified id in structure:
 		if (leds[i].id == id) {
@@ -161,14 +171,20 @@ int updateLed(int id, enum LedState state)
 	return FALSE;
 }
 
+/**
+ * @copydoc setBlinkingFreq
+ */
 int setBlinkingFreq(int id, int durationOn, int durationOff)
 {
 	if (!isLedControllerSetUp) {
 		return FALSE;
 	}
+	// change the blinking frequence for one led:
 	for (int i = 0; i < NUM_OF_LEDS; i++) {
 		if (leds[i].id == id) {
+			// duration in milliseconds while the led is on:
 			leds[i].durationOn = durationOn;
+			// duration in milliseconds while the led is off:
 			leds[i].durationOff = durationOff;
 			return TRUE;
 		}

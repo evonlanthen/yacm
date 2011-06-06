@@ -75,6 +75,8 @@ enum SensorState getSensorState(int id)
     sensors = GPIO_read_switch();
 #endif
 
+    // mask value of all sensors with sensor id to get only the status of the
+    // selected sensor:
     if (sensors & id) {
     	return sensor_alert;
     } else {
