@@ -16,11 +16,13 @@
 
 /**
  * Sets up the business logic.
+ * @return Returns TRUE if successful, otherwise FALSE.
  */
 extern int setUpBusinessLogic();
 
 /**
  * Tears down the business logic.
+ * @return Returns TRUE if successful, otherwise FALSE.
  */
 extern int tearDownBusinessLogic();
 
@@ -44,7 +46,7 @@ extern void registerModelObserver(NotifyModelChanged observer);
 
 /**
  * Gets the view model of the coffee maker.
- * @return The view model.
+ * @return The coffee maker view model.
  */
 extern CoffeeMakerViewModel getCoffeeMakerViewModel();
 
@@ -52,13 +54,13 @@ extern CoffeeMakerViewModel getCoffeeMakerViewModel();
  * Gets the view model of the specified product definition.
  * @param productIndex The index of the product definition.
  *   The index is starting with 0.
- * @return The view model.
+ * @return The product view model.
  */
 extern ProductViewModel getProductViewModel(unsigned int productIndex);
 
 /**
  * Gets the view model of an ongoing coffee making process instance.
- * @return The view model.
+ * @return The coffee making process instance view model.
  */
 extern MakeCoffeeProcessInstanceViewModel getCoffeeMakingProcessInstanceViewModel();
 
@@ -86,7 +88,7 @@ extern void setMilkPreselection(MilkPreselectionState state);
 extern void startMakingCoffee(unsigned int productIndex);
 
 /**
- * Aborts an ongoing coffee making process.
+ * Aborts an ongoing coffee making process instance.
  */
 extern void abortMakingCoffee();
 
