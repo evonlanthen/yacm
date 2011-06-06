@@ -7,7 +7,7 @@ ROOTFS		= /carme/rootfs
 
 # Build settings
 CC		= arm-linux-gcc
-CFLAGS		= -g -Wall -std=c99 -I$(ROOTFS)/usr/include -I$(ROOTFS)/usr/include/microwin
+CFLAGS		= -Wall -std=c99 -I$(ROOTFS)/usr/include -I$(ROOTFS)/usr/include/microwin
 LDFLAGS 	= -lnano-X -lvncserver -lm -lpng -lfreetype -ljpeg -lz -lSDL -lSDL_mixer -ldirectfb -ldirect -lfusion -lmad -L$(ROOTFS)/usr/lib
 
 # Installation variables
