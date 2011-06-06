@@ -1,8 +1,12 @@
-/*
- * machineController.c
+/**
+ * Machine controlling
  *
- *  Created on: May 20, 2011
- *      Author: elmar
+ * Initialize and control the coffee machine.
+ *
+ * @file    machineController.c
+ * @version 0.1
+ * @author  Elmar Vonlanthen (vonle1@bfh.ch)
+ * @date    May 20, 2011
  */
 
 #include <stdio.h>

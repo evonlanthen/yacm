@@ -1,7 +1,7 @@
 /**
  * Sensor controlling
  *
- * Initialize and control the sensors.
+ * Initialize and read the sensors.
  *
  * @file    sensorController.h
  * @version 0.1

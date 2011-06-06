@@ -1,8 +1,12 @@
-/*
- * inputController.c
+/**
+ * Input controlling
  *
- *  Created on: May 20, 2011
- *      Author: elmar
+ * Initialize and read buttons and switches.
+ *
+ * @file    inputController.c
+ * @version 0.1
+ * @author  Elmar Vonlanthen (vonle1@bfh.ch)
+ * @date    May 27, 2011
  */
 
 #include <stdio.h>

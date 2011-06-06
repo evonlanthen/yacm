@@ -1,7 +1,5 @@
 /**
- * LED controlling
- *
- * Initialize and control the LEDs.
+ * Initializes and controls the LEDs.
  *
  * @file    ledController.h
  * @version 0.1

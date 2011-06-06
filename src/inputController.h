@@ -1,7 +1,7 @@
 /**
  * Input controlling
  *
- * Initialize and control buttons and switches.
+ * Initialize and read buttons and switches.
  *
  * @file    inputController.h
  * @version 0.1

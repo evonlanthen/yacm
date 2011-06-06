@@ -1,8 +1,12 @@
-/*
- * sensorController.c
+/**
+ * Sensor controlling
  *
- *  Created on: May 20, 2011
- *      Author: elmar
+ * Initialize and read the sensors.
+ *
+ * @file    sensorController.c
+ * @version 0.1
+ * @author  Elmar Vonlanthen (vonle1@bfh.ch)
+ * @date    May 20, 2011
  */
 
 #include <unistd.h>

@@ -1,7 +1,7 @@
 /**
  * Functions for memory mapping
  *
- * @file    mmap.c
+ * @file    hardwareController.c
  * @version 0.1
  * @author  Elmar Vonlanthen (vonle1@bfh.ch)
  * @date    May 27, 2011
