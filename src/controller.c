@@ -6,24 +6,43 @@
  *
  * @section usage Usage
  * @subsection step1 Step 1: Compile project
+ * for ORCHID:
  * @code
- * # for ORCHID:
  * <user>@<host> $ make orchid
- * # for CARME:
+ * @endcode
+ * for CARME:
+ * @code
  * <user>@<host> $ make carme
  * @endcode
  * @subsection step2 Step 2: Install files
+ * for ORCHID:
  * @code
- * # for ORCHID:
  * <user>@<host> $ sudo make orchid-install
- * # for CARME:
+ * @endcode
+ * for CARME:
+ * @code
  * <user>@<host> $ sudo make carme-install
  * @endcode
  * @subsection step3 Step 3: Start program
+ * for ORCHID:
+ * @code
+ * root@<target> # fbvncserver &
+ * root@<target> # /usr/local/bin/yacm
+ * <user>@<host> $ xtightvncviewer <target-ip-address>
+ * @endcode
+ * for CARME:
  * @code
  * root@<target> # /usr/local/bin/yacm
  * @endcode
+ * @subsection step4 Step 4: Simulate sensors
+ * for ORCHID:
+ * @arg @b S3: Coffee tank is empty
+ * @arg @b S4: Milk tank is empty
  *
+ * for CARME:
+ * @arg @b S6: Coffee tank is empty
+ * @arg @b S7: Milk tank is empty
+ * @endverbatim
  * @section authors Authors
  * @arg Toni Baumann (bauma12@bfh.ch)
  * @arg Ronny Stauffer (staur3@bfh.ch)
@@ -36,9 +55,7 @@
  *
  * @section architecture Architecture
  * @image html "architecture.jpg"
- * @section model View Model
- * @image html "view_model.jpg"
- * @section stateEvent State Event Diagramm
+ * @section stateEvent State Event Diagram
  * @image html "coffee_maker_state.jpg"
  * @section makingProcess Making Process
  * @image html "coffee_making_process.jpg"

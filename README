@@ -15,5 +15,8 @@ Installation:
 	$ sudo make carme-install
 
 Usage:
+	fbvncserver & # for orchid
 	/usr/local/bin/yacm
+
+Please read doc/index.html for details.
 
