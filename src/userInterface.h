@@ -142,13 +142,13 @@ extern CoffeeMakerViewModel * getNewCoffeeMakerState(void);
 
 /**
  * Display milk selection state
- * @param int state TRUE if milk selected, otherwise FALSE
+ * @param state TRUE if milk selected, otherwise FALSE
  */
 extern void showMilkSelection(int state);
 
 /**
  * Show Product X in view
- * @param int productIndex (1-4)
+ * @param productIndex (1-4)
  */
 extern void showProduct(int productIndex);
 
@@ -167,13 +167,13 @@ extern int getActiveProductLedId(void);
 
 /**
  * Display milk sensor state
- * @param int state TRUE if no milk detected, FALSE otherwise
+ * @param state TRUE if no milk detected, FALSE otherwise
  */
 extern void showMilkSensor(int state);
 
 /**
  * Display coffee sensor state
- * @param int state TRUE if no coffee detected, FALSE otherwise
+ * @param state TRUE if no coffee detected, FALSE otherwise
  */
 extern void showCoffeeSensor(int state);
 
