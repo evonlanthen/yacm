@@ -87,9 +87,16 @@ int tearDownLedController(void)
 }
 
 /**
- * @copydoc updateBlinkingState
+ * Update specified led if its state is set to blinking
+ *
+ * The functions sets a timer for each status interval (off/on) an switches
+ * its state, if the timer is elapsed.
+ *
+ * @param led Pointer to LED descriptor structure
+ * @return Returns TRUE if update was successful
  */
-static int updateBlinkingState(LedDescriptor *led) {
+static int updateBlinkingState(LedDescriptor *led)
+{
 	if (!isLedControllerSetUp) {
 		return FALSE;
 	}
