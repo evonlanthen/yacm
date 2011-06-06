@@ -15,8 +15,13 @@
 /**
  * Sensor definitions
  */
-#define SENSOR_1		(1 << 2)
-#define SENSOR_2		(1 << 3)
+#ifdef CARME
+  #define SENSOR_1		(1 << 6)
+  #define SENSOR_2		(1 << 7)
+#elif defined(ORCHID)
+  #define SENSOR_1		(1 << 2)
+  #define SENSOR_2		(1 << 3)
+#endif
 
 /**
  * Predefined sensor states
