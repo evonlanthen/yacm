@@ -34,6 +34,7 @@
  * @code
  * root@<target> # /usr/local/bin/yacm
  * @endcode
+ * Be sure the speakers or headphones are plugged in.
  * @subsection step4 Step 4: Simulate sensors
  * for ORCHID:
  * @arg @b S3: Coffee tank is empty
